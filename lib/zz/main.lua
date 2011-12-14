@@ -221,7 +221,7 @@ function main ()
   -- that act on a buffer have something to act on.
   create_scratch_window ()
   scratch_bp = cur_bp
-  insert_string (";; This buffer is for notes you don't want to save.\n;; If you want to create a file, visit that file with C-x C-f,\n;; then enter the text in that file's own buffer.\n\n")
+  insert_string ("-- This buffer is for notes you don't want to save.\n-- If you want to create a file, visit that file with C-x C-f,\n-- then enter the text in that file's own buffer.\n\n")
   cur_bp.modified = false
 
   if not qflag then
