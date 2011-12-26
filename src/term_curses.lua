@@ -304,6 +304,56 @@ function term_ungetkey (key)
   unget_codes (codevec)
 end
 
+local usedpairs
+
+local init_pair = memoize (function (fg, bg)
+  local r
+  if curses.has_colors () then
+    if not usedpairs then
+      curses.start_color ()
+      curses.use_default_colors ()
+      usedpairs = 0
+    end
+
+    -- FIXME: fallback to white on black if use_default_colors is not available
+    if fg == -1 and bg == -1 then
+      return curses.color_pair (0)
+    else
+      usedpairs = usedpairs + 1
+      curses.init_pair (usedpairs, fg, bg)
+      return curses.color_pair (usedpairs)
+    end
+  end
+
+  return 0
+end
+)
+
+function term_get_attribute (settings)
+  if not settings then return nil end
+
+  local attr = 0
+  if type (settings) == "string" and settings:match "#%x+" then
+    -- FIXME: color strings not yet implemented
+  elseif type (settings) == "string" then
+    if display[settings] then
+      attr = bit32.bor (attr, init_pair (display[settings], -1))
+    end
+  else
+    local fg = settings.foreground and display[settings.foreground] or -1
+    local bg = settings.background and display[settings.background] or -1
+    attr = bit32.bor (attr, init_pair (fg, bg))
+
+    if settings.fontStyle then
+      for w in settings.fontStyle:gmatch "%S+" do
+        attr = bit32.bor (attr, display[w] or 0)
+      end
+    end
+  end
+
+  return attr
+end
+
 function term_buf_len ()
   return #key_buf
 end

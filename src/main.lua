@@ -48,6 +48,8 @@ X = nil
 -- uniarg_empty:   current universal arg is just C-u's with no number.
 -- defining_macro: we are defining a macro.
 
+-- The active display theme.
+theme = {}
 
 -- The current window
 cur_wp = nil
@@ -240,6 +242,11 @@ function main ()
     if s then
       evaluate_file (s .. "/." .. PACKAGE)
     end
+  end
+
+  -- If there is still no theme set, load the basic zile theme.
+  if not theme[{"normal"}] then
+    zi.set_theme ("zi")
   end
 
   -- Create the splash buffer & message only if no files, function or
