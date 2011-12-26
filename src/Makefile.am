@@ -34,6 +34,7 @@ src_zi_LUA =						\
 	src/basic.lua					\
 	src/bind.lua					\
 	src/buffer.lua					\
+	src/bundle.lua					\
 	src/completion.lua				\
 	src/editfns.lua					\
 	src/funcs.lua					\
