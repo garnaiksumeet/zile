@@ -18,8 +18,8 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun set-fill-column (number)
-  "Set `fill-column' to specified argument.
+(defun set_fill_column (number)
+  "Set `fill_column' to specified argument.
 Use C-u followed by a number to specify a column.
 Just C-u as argument means to use the current column."
   (interactive)
@@ -29,7 +29,7 @@ Just C-u as argument means to use the current column."
       if lastflag.set_uniarg then
         n = current_prefix_arg
       else
-        n = minibuf_read_number (string.format ('Set fill-column to (default %d): ', o))
+        n = minibuf_read_number (string.format ('Set fill_column to (default %d): ', o))
         if not n then -- cancelled
           return false
         elseif n == '' then
@@ -39,15 +39,15 @@ Just C-u as argument means to use the current column."
     end
 
     if not n then
-      return minibuf_error ('set-fill-column requires an explicit argument')
+      return minibuf_error ('set_fill_column requires an explicit argument')
     end
 
-    minibuf_write (string.format ('Fill column set to %d (was %d)', n, get_variable_number ('fill-column')))
-    set_variable ('fill-column', tostring (n))
+    minibuf_write (string.format ('Fill column set to %d (was %d)', n, get_variable_number ('fill_column')))
+    set_variable ('fill_column', tostring (n))
     return true"))
 
 
-(defun quoted-insert ()
+(defun quoted_insert ()
   "Read next input character and insert it.
 This is useful for inserting control characters."
   (interactive)
@@ -57,7 +57,7 @@ This is useful for inserting control characters."
     minibuf_clear ()"))
 
 
-(defun fill-paragraph ()
+(defun fill_paragraph ()
   "Fill paragraph at or after point."
   (interactive)
   (lambda ()
@@ -65,13 +65,13 @@ This is useful for inserting control characters."
 
     undo_start_sequence ()
 
-    lisp.execute_function ('forward-paragraph')
+    lisp.execute_function ('forward_paragraph')
     if is_empty_line () then
       previous_line ()
     end
     local m_end = point_marker ()
 
-    lisp.execute_function ('backward-paragraph')
+    lisp.execute_function ('backward_paragraph')
     if is_empty_line () then -- Move to next line if between two paragraphs.
       next_line ()
     end
@@ -79,12 +79,12 @@ This is useful for inserting control characters."
     while buffer_end_of_line (cur_bp, get_buffer_pt (cur_bp)) < m_end.o do
     end_of_line ()
       delete_char ()
-      lisp.execute_function ('just-one-space')
+      lisp.execute_function ('just_one_space')
     end
     unchain_marker (m_end)
 
     end_of_line ()
-    while get_goalc () > get_variable_number ('fill-column') + 1 and fill_break_line () do end
+    while get_goalc () > get_variable_number ('fill_column') + 1 and fill_break_line () do end
 
     goto_offset (m.o)
     unchain_marker (m)
@@ -92,7 +92,7 @@ This is useful for inserting control characters."
     undo_end_sequence ()"))
 
 
-(defun shell-command (string boolean)
+(defun shell_command (string boolean)
   "Execute string @i{command} in inferior shell; display output, if any.
 With prefix argument, insert the command's output at point.
 
@@ -102,7 +102,7 @@ in the echo area, it is shown there, but it is nonetheless available
 in buffer `*Shell Command Output*' even though that buffer is not
 automatically displayed.
 
-The optional second argument @i{output-buffer}, if non-nil,
+The optional second argument @i{output_buffer}, if non-nil,
 says to insert the output in some other buffer.
 If @i{buffer} is a buffer or buffer name, put the output there,
 If @i{buffer} is not a buffer and not nil,
@@ -128,7 +128,7 @@ inserted after point (leaving mark after it)."
 
 -- The `start' and `finish' arguments are fake, hence their string type,
 -- so they can be ignored.
-(defun shell-command-on-region (string string string boolean boolean)
+(defun shell_command_on_region (string string string boolean boolean)
   "Execute string @i{command} in inferior shell with region as input.
 Normally display output (if any) in temp buffer `*Shell Command Output*'
 Prefix arg means replace the region with it.  Return the exit code of
@@ -167,14 +167,14 @@ around it."
     return true"))
 
 
-(defun delete-region ()
+(defun delete_region ()
   "Delete the text between point and mark."
   (interactive)
   (lambda ()
     "return delete_region (calculate_the_region ())"))
 
 
-(defun delete-blank-lines ()
+(defun delete_blank_lines ()
   "On blank line, delete all surrounding blank lines, leaving just one.
 On isolated blank line, delete that one.
 On nonblank line, delete any immediately following blank lines."
@@ -235,21 +235,21 @@ On nonblank line, delete any immediately following blank lines."
     deactivate_mark ()"))
 
 
-(defun downcase-word (number)
+(defun downcase_word (number)
   "Convert following word (or @i{arg} words) to lower case, moving over."
   (interactive)
   (lambda (arg)
     "return execute_with_uniarg (true, arg, function () return setcase_word ('lower') end)"))
 
 
-(defun upcase-word (number)
+(defun upcase_word (number)
   "Convert following word (or @i{arg} words) to upper case, moving over."
   (interactive)
   (lambda (arg)
     "return execute_with_uniarg (true, arg, function () return setcase_word ('upper') end)"))
 
 
-(defun capitalize-word (number)
+(defun capitalize_word (number)
   "Capitalize the following word (or @i{arg} words), moving over.
 This gives the word(s) a first character in upper case
 and the rest lower case."
@@ -258,21 +258,21 @@ and the rest lower case."
     "return execute_with_uniarg (true, arg, function () return setcase_word ('capitalized') end)"))
 
 
-(defun upcase-region ()
+(defun upcase_region ()
   "Convert the region to upper case."
   (interactive)
   (lambda ()
     "return setcase_region (string.upper)"))
 
 
-(defun downcase-region ()
+(defun downcase_region ()
   "Convert the region to lower case."
   (interactive)
   (lambda ()
     "return setcase_region (string.lower)"))
 
 
-(defun transpose-chars (number)
+(defun transpose_chars (number)
   "Interchange characters around point, moving forward one character.
 With prefix arg ARG, effect is to take character before point
 and drag it forward past ARG other characters (backward if ARG negative).
@@ -282,7 +282,7 @@ If no argument and at end of line, the previous two chars are exchanged."
     "return transpose (n or 1, move_char)"))
 
 
-(defun transpose-words (number)
+(defun transpose_words (number)
   "Interchange words around point, leaving point at end of them.
 With prefix arg ARG, effect is to take word before or around point
 and drag it forward past ARG other words (backward if ARG negative).
@@ -293,14 +293,14 @@ are interchanged."
     "return transpose (n or 1, move_word)"))
 
 
-(defun transpose-sexps (number)
-  "Like @kbd{M-x transpose-words} but applies to sexps."
+(defun transpose_sexps (number)
+  "Like @kbd{M-x transpose_words} but applies to sexps."
   (interactive)
   (lambda (n)
     "return transpose (n or 1, move_sexp)"))
 
 
-(defun transpose-lines (number)
+(defun transpose_lines (number)
   "Exchange current line and previous line, leaving point after both.
 With argument ARG, takes previous line and moves it past ARG lines.
 With argument 0, interchanges line point is in with line mark is in."

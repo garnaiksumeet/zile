@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun start-kbd-macro ()
+(defun start_kbd_macro ()
   "Record subsequent keyboard input, defining a keyboard macro.
 The commands are recorded even as they are executed.
 Use @kbd{C-x )} to finish recording and make the macro available."
@@ -39,7 +39,7 @@ Use @kbd{C-x )} to finish recording and make the macro available."
     cur_mp = {}"))
 
 
-(defun end-kbd-macro ()
+(defun end_kbd_macro ()
   "Finish defining a keyboard macro.
 The definition was started by @kbd{C-x (}.
 The macro is now available for use via @kbd{C-x e}."
@@ -53,7 +53,7 @@ The macro is now available for use via @kbd{C-x e}."
     thisflag.defining_macro = false"))
 
 
-(defun call-last-kbd-macro ()
+(defun call_last_kbd_macro ()
   "Call the last keyboard macro that you defined with @kbd{C-x (}.
 A prefix argument serves as a repeat count."
   (interactive)
@@ -63,12 +63,12 @@ A prefix argument serves as a repeat count."
       return false
     end
 
-    -- FIXME: Call execute-kbd-macro (needs a way to reverse keystrtovec)
+    -- FIXME: Call execute_kbd_macro (needs a way to reverse keystrtovec)
     macro_keys = cur_mp
     execute_with_uniarg (true, current_prefix_arg, call_macro)"))
 
 
-(defun execute-kbd-macro (string)
+(defun execute_kbd_macro (string)
   "Execute macro as string of editor command characters."
   (lambda (keystr)
     "local keys = keystrtovec (keystr)

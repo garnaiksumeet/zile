@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun self-insert-command ()
+(defun self_insert_command ()
   "Insert the character you type.
 Whichever character you type to run this command is inserted."
   (interactive)
@@ -26,7 +26,7 @@ Whichever character you type to run this command is inserted."
     "return execute_with_uniarg (true, current_prefix_arg, self_insert_command)"))
 
 
-(defun where-is ()
+(defun where_is ()
   "Print message listing key sequences that invoke the command DEFINITION.
 Argument is a command name."
   (interactive)
@@ -59,7 +59,7 @@ Argument is a command name."
   walk_bindings (root_bindings, print_binding)")
 
 
-(defun describe-bindings ()
+(defun describe_bindings ()
   "Show a list of all defined keys, and their definitions."
   (interactive)
   (lambda ()
@@ -67,7 +67,7 @@ Argument is a command name."
     return true"))
 
 
-(defun global-set-key (string string)
+(defun global_set_key (string string)
   "Bind a command to a key sequence.
 Read key sequence and function name, and bind the function to the key
 sequence."
@@ -96,7 +96,7 @@ sequence."
     return true"))
 
 
-(defun global-unset-key (string)
+(defun global_unset_key (string)
   "Remove global binding of a key sequence.
 Read key sequence and unbind any function already bound to that sequence."
   (interactive)
@@ -112,7 +112,7 @@ Read key sequence and unbind any function already bound to that sequence."
     return true"))
 
 
-(defun universal-argument ()
+(defun universal_argument ()
   "Begin a numeric argument for the following command.
 Digits or minus sign following @kbd{C-u} make up the numeric argument.
 @kbd{C-u} following the digits or minus sign ends the argument.
@@ -123,7 +123,7 @@ by 4 each time."
   (lambda ()
     "local ok = true
 
-    -- Need to process key used to invoke universal-argument.
+    -- Need to process key used to invoke universal_argument.
     pushkey (lastkey ())
 
     thisflag.uniarg_empty = true
@@ -190,13 +190,13 @@ by 4 each time."
     return ok"))
 
 
-(defun keyboard-quit ()
+(defun keyboard_quit ()
   "Cancel current command."
   (interactive)
   "keyboard_quit")
 
 
-(defun suspend-zz ()
+(defun suspend_zz ()
   "Stop and return to superior process."
   (interactive)
   "suspend")

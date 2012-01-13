@@ -44,7 +44,7 @@ Repeat this command to undo more changes."
     command.attach_label ':undo'"))
 
 
-(defun revert-buffer ()
+(defun revert_buffer ()
   "Undo until buffer is unmodified."
   (interactive)
   (lambda ()

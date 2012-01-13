@@ -45,7 +45,7 @@ The values val are expressions; they are evaluated."
     return ret"))
 
 
-(defun execute-extended-command (number)
+(defun execute_extended_command (number)
   "Read function name, then read its arguments and call it."
   (interactive)
   (lambda (n)
@@ -64,7 +64,7 @@ The values val are expressions; they are evaluated."
     return name and lisp.execute_function (name, n) or nil"))
 
 
-(defun eval-buffer (string)
+(defun eval_buffer (string)
   "Execute the current buffer as Lisp code.
 
 When called from a Lisp program (i.e., not interactively), this
@@ -79,7 +79,7 @@ means use current buffer)."
 (localvar exprs_history
   "history_new ()")
 
-(defun eval-expression (string)
+(defun eval_expression (string)
   "Evaluate a lisp expression and print result in the minibuffer."
   (interactive)
   (lambda (expr)

@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun exchange-point-and-mark ()
+(defun exchange_point_and_mark ()
   "Put the mark where point is now, and point where the mark is now."
   (interactive)
   (lambda ()
@@ -33,68 +33,68 @@
     thisflag.need_resync = true"))
 
 
-(defun set-mark ()
+(defun set_mark ()
   "Set this buffer's mark to point."
   (lambda ()
     "set_mark ()
     activate_mark ()"))
 
 
-(defun set-mark-command ()
+(defun set_mark_command ()
   "Set the mark where point is."
   (interactive)
   (lambda ()
-    "lisp.execute_function ('set-mark')
+    "lisp.execute_function ('set_mark')
     minibuf_write ('Mark set')"))
 
 
 (localfun mark (uniarg func)
-  "lisp.execute_function ('set-mark')
+  "lisp.execute_function ('set_mark')
   local ret = lisp.execute_function (func, uniarg)
   if ret then
-    lisp.execute_function ('exchange-point-and-mark')
+    lisp.execute_function ('exchange_point_and_mark')
   end
   return ret")
 
 
-(defun mark-word (number)
+(defun mark_word (number)
   "Set mark argument words away from point."
   (interactive)
   (lambda (n)
-    "return mark (n, 'forward-word')"))
+    "return mark (n, 'forward_word')"))
 
 
-(defun mark-sexp (number)
+(defun mark_sexp (number)
   "Set mark @i{arg} sexps from point.
 The place mark goes is the same place @kbd{C-M-f} would
 move to with the same argument."
   (interactive)
   (lambda (n)
-    "return mark (n, 'forward-sexp')"))
+    "return mark (n, 'forward_sexp')"))
 
 
-(defun mark-paragraph ()
+(defun mark_paragraph ()
   "Put point at beginning of this paragraph, mark at end.
 The paragraph marked is the one that contains point or follows point."
   (interactive)
   (lambda ()
-    "if command.was_labelled ':mark-paragraph' then
-      lisp.execute_function ('exchange-point-and-mark')
-      lisp.execute_function ('forward-paragraph')
-      lisp.execute_function ('exchange-point-and-mark')
+    "if command.was_labelled ':mark_paragraph' then
+      lisp.execute_function ('exchange_point_and_mark')
+      lisp.execute_function ('forward_paragraph')
+      lisp.execute_function ('exchange_point_and_mark')
     else
-      lisp.execute_function ('forward-paragraph')
-      lisp.execute_function ('set-mark')
-      lisp.execute_function ('backward-paragraph')
+      lisp.execute_function ('forward_paragraph')
+      lisp.execute_function ('set_mark')
+      lisp.execute_function ('backward_paragraph')
     end
 
-    command.attach_label ':mark-paragraph'"))
+    command.attach_label ':mark_paragraph'"))
 
 
-(defun mark-whole-buffer ()
+(defun mark_whole_buffer ()
   "Put point at beginning and mark at end of buffer."
   (interactive)
   (lambda ()
     "goto_offset (get_buffer_size (cur_bp) + 1)
-    lisp.execute_function ('set-mark-command')
+    lisp.execute_function ('set_mark_command')
     goto_offset (1)"))

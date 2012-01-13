@@ -18,35 +18,35 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun search-forward (string)
+(defun search_forward (string)
   "Search forward from point for the user specified text."
   (interactive)
   (lambda (pattern)
     "return do_search (true, false, pattern)"))
 
 
-(defun search-backward (string)
+(defun search_backward (string)
   "Search backward from point for the user specified text."
   (interactive)
   (lambda (pattern)
     "return do_search (false, false, pattern)"))
 
 
-(defun search-forward-regexp (string)
+(defun search_forward_regexp (string)
   "Search forward from point for regular expression REGEXP."
   (interactive)
   (lambda (pattern)
     "return do_search (true, true, pattern)"))
 
 
-(defun search-backward-regexp (string)
+(defun search_backward_regexp (string)
   "Search backward from point for match for regular expression REGEXP."
   (interactive)
   (lambda (pattern)
     "return do_search (false, true, pattern)"))
 
 
-(defun isearch-forward ()
+(defun isearch_forward ()
   "Do incremental search forward.
 With a prefix argument, do an incremental regular expression search instead.
 As you type characters, they add to the search string and are found.
@@ -58,7 +58,7 @@ Type @kbd{C-s} to search again forward, @kbd{C-r} to search again backward.
     "return isearch (true, lastflag.set_uniarg)"))
 
 
-(defun isearch-backward ()
+(defun isearch_backward ()
   "Do incremental search backward.
 With a prefix argument, do a regular expression search instead.
 As you type characters, they add to the search string and are found.
@@ -70,21 +70,21 @@ Type @kbd{C-r} to search again backward, @kbd{C-s} to search again forward.
     "return isearch (false, lastflag.set_uniarg)"))
 
 
-(defun isearch-forward-regexp ()
+(defun isearch_forward_regexp ()
   "Do incremental search forward for regular expression.
 With a prefix argument, do a regular string search instead.
 Like ordinary incremental search except that your input
-is treated as a regexp.  See @kbd{M-x isearch-forward} for more info."
+is treated as a regexp.  See @kbd{M-x isearch_forward} for more info."
   (interactive)
   (lambda ()
     "return isearch (true, not lastflag.set_uniarg)"))
 
 
-(defun isearch-backward-regexp ()
+(defun isearch_backward_regexp ()
   "Do incremental search backward for regular expression.
 With a prefix argument, do a regular string search instead.
 Like ordinary incremental search except that your input
-is treated as a regexp.  See @kbd{M-x isearch-backward} for more info."
+is treated as a regexp.  See @kbd{M-x isearch_backward} for more info."
   (interactive)
   (lambda ()
     "return isearch (false, not lastflag.set_uniarg)"))
@@ -101,7 +101,7 @@ the first letter is, and nil otherwise."
   end")
 
 
-(defun query-replace ()
+(defun query_replace ()
   "Replace occurrences of a string with other text.
 As each match is found, the user must type a character saying
 what to do with it."
@@ -150,7 +150,7 @@ what to do with it."
         count = count + 1
         local case_repl = repl
         local r = region_new (get_buffer_pt (cur_bp) - #find, get_buffer_pt (cur_bp))
-        if find_no_upper and get_variable_bool ('case-replace') then
+        if find_no_upper and get_variable_bool ('case_replace') then
           local case_type = check_case (tostring (get_buffer_region (cur_bp, r))) -- FIXME
           if case_type then
             case_repl = recase (repl, case_type)

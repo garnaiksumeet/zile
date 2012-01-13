@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun delete-window ()
+(defun delete_window ()
   "Remove the current window from the screen."
   (interactive)
   (lambda ()
@@ -30,7 +30,7 @@
     delete_window (cur_wp)"))
 
 
-(defun enlarge-window ()
+(defun enlarge_window ()
   "Make current window one line bigger."
   (interactive)
   (lambda ()
@@ -63,7 +63,7 @@
     end"))
 
 
-(defun shrink-window ()
+(defun shrink_window ()
   "Make current window one line smaller."
   (interactive)
   (lambda ()
@@ -81,7 +81,7 @@
     end"))
 
 
-(defun delete-other-windows ()
+(defun delete_other_windows ()
   "Make the selected window fill the screen."
   (interactive)
   (lambda ()
@@ -92,7 +92,7 @@
     end"))
 
 
-(defun other-window ()
+(defun other_window ()
   "Select the first different window on the screen.
 All windows are arranged in a cyclic order.
 This command selects the window one step away in that order."
@@ -101,7 +101,7 @@ This command selects the window one step away in that order."
     "set_current_window (window_next (cur_wp))"))
 
 
-(defun split-window ()
+(defun split_window ()
   "Split current window into two windows, one above the other.
 Both windows display the same buffer now current."
   (interactive)
@@ -114,21 +114,21 @@ Both windows display the same buffer now current."
   "interactive_recenter")
 
 
-(defun screen-height ()
+(defun screen_height ()
   "The total number of lines available for display on the screen."
   (interactive)
   (lambda ()
     "minibuf_write (tostring (term_height ()))"))
 
 
-(defun screen-width ()
+(defun screen_width ()
   "The total number of lines available for display on the screen."
   (interactive)
   (lambda ()
     "minibuf_write (tostring (term_width ()))"))
 
 
-(defun set-screen-height (number)
+(defun set_screen_height (number)
   "Set the usable number of lines for display on the screen."
   (interactive)
   (lambda (lines)
@@ -140,7 +140,7 @@ Both windows display the same buffer now current."
     return ok"))
 
 
-(defun set-screen-size (number number)
+(defun set_screen_size (number number)
   "Set the number of usable lines and columns for display on the screen."
   (interactive)
   (lambda (lines cols)
@@ -153,7 +153,7 @@ Both windows display the same buffer now current."
     return ok"))
 
 
-(defun set-screen-width (number)
+(defun set_screen_width (number)
   "Set the usable number of columns for display on the screen."
   (interactive)
   (lambda (cols)

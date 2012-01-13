@@ -234,7 +234,7 @@ function main ()
   -- Create the splash buffer & message only if no files, function or
   -- load file is specified on the command line, and there has been no
   -- error.
-  if #zarg == 0 and not minibuf_contents and not get_variable_bool ("inhibit-splash-screen") then
+  if #zarg == 0 and not minibuf_contents and not get_variable_bool ("inhibit_splash_screen") then
     local bp = create_auto_buffer ("*GNU " .. prog.Name .. "*")
     switch_to_buffer (bp)
     insert_string (splash_str)
@@ -260,7 +260,7 @@ function main ()
     elseif type == "file" then
       ok = find_file (arg)
       if ok then
-        lisp.execute_function ("goto-line", line)
+        lisp.execute_function ("goto_line", line)
       end
     end
     if thisflag.quit then
@@ -279,9 +279,9 @@ function main ()
     -- *scratch* and two files.
     split_window ()
     switch_to_buffer (buffers[#buffers -1])
-    lisp.execute_function ("other-window")
+    lisp.execute_function ("other_window")
   elseif #buffers > 3 then
-    lisp.execute_function ("list-buffers")
+    lisp.execute_function ("list_buffers")
   end
 
   -- Reinitialise the scratch buffer to catch settings

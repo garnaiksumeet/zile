@@ -26,13 +26,13 @@ function init_default_bindings ()
   -- Bind all printing keys to self-insert-command
   for i = 0, 0xff do
     if posix.isprint (string.char (i)) then
-      root_bindings[{keycode (string.char (i))}] = lisp.command["self-insert-command"]
+      root_bindings[{keycode (string.char (i))}] = lisp.command.self_insert_command
     end
   end
 
   -- Bind special key names to self-insert-command
   list.map (function (e)
-              root_bindings[{keycode (e)}] = lisp.command["self-insert-command"]
+              root_bindings[{keycode (e)}] = lisp.command.self_insert_command
             end,
             {"\\SPC", "\\TAB", "\\RET", "\\\\"})
 

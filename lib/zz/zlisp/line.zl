@@ -20,27 +20,27 @@
 ;; MA 02111-1301, USA.
 
 
-(defun indent-for-tab-command ()
+(defun indent_for_tab_command ()
   "Indent line or insert a tab.
-Depending on `tab-always-indent', either insert a tab or indent.
+Depending on `tab_always_indent', either insert a tab or indent.
 If initial point was within line's indentation, position after
 the indentation.  Else stay at same point in text."
   (interactive)
   (lambda ()
-    "if get_variable_bool ('tab-always-indent') then
+    "if get_variable_bool ('tab_always_indent') then
       return insert_tab ()
     elseif (get_goalc () < previous_line_indent ()) then
-      return lisp.execute_function ('indent-relative')
+      return lisp.execute_function ('indent_relative')
     end"))
 
 
-(defun indent-relative ()
+(defun indent_relative ()
   "Space out to under next indent point in previous nonblank line.
 An indent point is a non-whitespace character following whitespace.
 The following line shows the indentation points in this line.
     ^         ^    ^     ^   ^           ^      ^  ^    ^
 If the previous nonblank line has no indent points beyond the
-column point starts at, `tab-to-tab-stop' is done instead, unless
+column point starts at, `tab_to_tab_stop' is done instead, unless
 this command is invoked with a numeric argument, in which case it
 does nothing."
   (interactive)
@@ -111,9 +111,9 @@ does nothing."
     return ok"))
 
 
-(defun newline-and-indent ()
+(defun newline_and_indent ()
   "Insert a newline, then indent.
-Indentation is done using the `indent-for-tab-command' function."
+Indentation is done using the `indent_for_tab_command' function."
   (interactive)
   (lambda ()
     "local ok = false
@@ -138,7 +138,7 @@ Indentation is done using the `indent-for-tab-command' function."
       -- Only indent if we're in column > 0 or we're in column 0 and
       -- there is a space character there in the last non-blank line.
       if indent then
-        lisp.execute_function ('indent-for-tab-command')
+        lisp.execute_function ('indent_for_tab_command')
       end
       ok = true
     end
@@ -148,27 +148,27 @@ Indentation is done using the `indent-for-tab-command' function."
 
 
 
-(defun delete-char (number)
+(defun delete_char (number)
   "Delete the following @i{n} characters (previous if @i{n} is negative)."
   (interactive)
   (lambda (n)
     "return execute_with_uniarg (true, n, delete_char, backward_delete_char)"))
 
 
-(defun backward-delete-char (number)
+(defun backward_delete_char (number)
   "Delete the previous @i{n} characters (following if @i{n} is negative)."
   (interactive)
   (lambda (n)
     "return execute_with_uniarg (true, n, backward_delete_char, delete_char)"))
 
 
-(defun delete-horizontal-space ()
+(defun delete_horizontal_space ()
   "Delete all spaces and tabs around point."
   (interactive)
   "delete_horizontal_space")
 
 
-(defun just-one-space ()
+(defun just_one_space ()
   "Delete all spaces and tabs around point, leaving one space."
   (interactive)
   (lambda ()
@@ -178,7 +178,7 @@ Indentation is done using the `indent-for-tab-command' function."
     undo_end_sequence ()"))
 
 
-(defun tab-to-tab-stop (number)
+(defun tab_to_tab_stop (number)
   "Insert a tabulation at the current point position into the current
 buffer."
   (interactive)
@@ -187,7 +187,7 @@ buffer."
 
 
 (localfun newline ()
-  "if cur_bp.autofill and get_goalc () > get_variable_number ('fill-column') then
+  "if cur_bp.autofill and get_goalc () > get_variable_number ('fill_column') then
     fill_break_line ()
   end
   return insert_newline ()")
@@ -201,7 +201,7 @@ the current buffer."
     "return execute_with_uniarg (true, n, newline)"))
 
 
-(defun open-line (number)
+(defun open_line (number)
   "Insert a newline and leave point before it."
   (interactive)
   (lambda (n)

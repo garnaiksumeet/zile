@@ -28,7 +28,7 @@
      doc))")
 
 
-(defun describe-function (string)
+(defun describe_function (string)
   "Display the full documentation of a function."
   (interactive)
   (lambda (func)
@@ -59,7 +59,7 @@
     binding, name, _interactive and 'an interactive' or 'a', doc))")
 
 
-(defun describe-key (string)
+(defun describe_key (string)
   "Display documentation of the command invoked by a key sequence."
   (interactive)
   (lambda (keystr)
@@ -101,7 +101,7 @@
     name, curval, doc))")
 
 
-(defun describe-variable (string)
+(defun describe_variable (string)
   "Display the full documentation of a variable."
   (interactive)
   (lambda (name)
@@ -140,30 +140,30 @@
   goto_offset (1)")
 
 
-(defun describe-copying ()
+(defun describe_copying ()
   "Display info on how you may redistribute copies of GNU Zz."
   (interactive)
   (lambda ()
     "find_or_create_buffer_from_module ('COPYING')"))
 
 
-(defun describe-no-warranty ()
+(defun describe_no_warranty ()
   "Display info on all the kinds of warranty Zz does NOT have."
   (interactive)
   (lambda ()
     "find_or_create_buffer_from_module ('COPYING')
-    lisp.execute_function ('search-forward', ' Disclaimer of Warranty.')
+    lisp.execute_function ('search_forward', ' Disclaimer of Warranty.')
     beginning_of_line ()"))
 
 
-(defun view-emacs-FAQ ()
+(defun view_zz_FAQ ()
   "Display the Zz Frequently Asked Questions (FAQ) file."
   (interactive)
   (lambda ()
     "find_or_create_buffer_from_module ('FAQ')"))
 
 
-(defun view-emacs-news ()
+(defun view_zz_news ()
   "Display info on recent changes to Zz."
   (interactive)
   (lambda ()

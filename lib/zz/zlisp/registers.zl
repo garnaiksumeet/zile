@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun copy-to-register (number)
+(defun copy_to_register (number)
   "Copy region into register @i{register}."
   (interactive)
   (lambda (reg)
@@ -42,7 +42,7 @@
     return true"))
 
 
-(defun insert-register (number)
+(defun insert_register (number)
   "Insert contents of the user specified register.
 Puts point before and mark after the inserted text."
   (interactive)
@@ -66,7 +66,7 @@ Puts point before and mark after the inserted text."
         minibuf_error ('Register does not contain text')
         ok = false
       else
-        lisp.execute_function ('set-mark-command')
+        lisp.execute_function ('set_mark_command')
 	regnum = reg
         execute_with_uniarg (true, current_prefix_arg, insert_register)
         lisp.execute_function ('exchange_point_and_mark')
@@ -77,7 +77,7 @@ Puts point before and mark after the inserted text."
     return ok"))
 
 
-(defun list-registers ()
+(defun list_registers ()
   "List defined registers."
   (interactive)
   (lambda ()

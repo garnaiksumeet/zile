@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun kill-buffer (string)
+(defun kill_buffer (string)
   "Kill buffer BUFFER.
 With a nil argument, kill the current buffer."
   (interactive)
@@ -56,7 +56,7 @@ With a nil argument, kill the current buffer."
     return ok"))
 
 
-(defun switch-to-buffer (string)
+(defun switch_to_buffer (string)
   "Select buffer @i{buffer} in the current window."
   (interactive)
   (lambda (buffer)
@@ -90,14 +90,14 @@ With a nil argument, kill the current buffer."
     return ok"))
 
 
-(defun toggle-read-only ()
+(defun toggle_read_only ()
   "Change whether this buffer is visiting its file read-only."
   (interactive)
   (lambda ()
     "cur_bp.readonly = not cur_bp.readonly"))
 
 
-(defun auto-fill-mode ()
+(defun auto_fill_mode ()
   "Toggle Auto Fill mode.
 In Auto Fill mode, inserting a space at a column beyond `fill-column'
 automatically breaks the line at a previous space."
@@ -138,7 +138,7 @@ automatically breaks the line at a previous space."
   end")
 
 
-(defun list-buffers ()
+(defun list_buffers ()
   "Display a list of names of existing buffers.
 The list is displayed in a buffer named `*Buffer List*'.
 

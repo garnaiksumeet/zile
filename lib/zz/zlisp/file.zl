@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun find-file (string)
+(defun find_file (string)
   "Edit file @i{filename}.
 Switch to a buffer visiting file @i{filename},
 creating one if none already exists."
@@ -39,19 +39,19 @@ creating one if none already exists."
     return ok"))
 
 
-(defun find-file-read-only (string)
+(defun find_file_read_only (string)
   "Edit file @i{filename} but don't allow changes.
-Like `find-file' but marks buffer as read-only.
-Use @kbd{M-x toggle-read-only} to permit editing."
+Like `find_file' but marks buffer as read-only.
+Use @kbd{M-x toggle_read_only} to permit editing."
   (interactive)
   (lambda (filename)
-    "local ok = lisp.execute_function ('find-file', filename)
+    "local ok = lisp.execute_function ('find_file', filename)
     if ok then
       cur_bp.readonly = true
     end"))
 
 
-(defun find-alternate-file ()
+(defun find_alternate_file ()
   "Find the file specified by the user, select its buffer, kill previous buffer.
 If the current buffer now contains an empty file that you just visited
 (presumably by mistake), use this command to visit the file you really want."
@@ -78,7 +78,7 @@ If the current buffer now contains an empty file that you just visited
     return ok"))
 
 
-(defun insert-file (string)
+(defun insert_file (string)
   "Insert contents of file FILENAME into buffer after point.
 Set mark after the inserted text."
   (interactive)
@@ -104,7 +104,7 @@ Set mark after the inserted text."
       local s = io.slurp (file)
       if s then
         insert_estr (EStr (s))
-        lisp.execute_function ('set-mark-command')
+        lisp.execute_function ('set_mark_command')
       else
         ok = minibuf_error ('%s: %s', file, posix.errno ())
       end
@@ -113,7 +113,7 @@ Set mark after the inserted text."
     return ok"))
 
 
-(defun save-buffer ()
+(defun save_buffer ()
   "Save current buffer in visited file if modified.  By default, makes the
 previous version into a backup file if this is the first save."
   (interactive)
@@ -121,7 +121,7 @@ previous version into a backup file if this is the first save."
     "return save_buffer (cur_bp)"))
 
 
-(defun write-file (string)
+(defun write_file (string)
   "Write current buffer into file @i{filename}.
 This makes the buffer visit that file, and marks it as not modified.
 
@@ -133,14 +133,14 @@ Interactively, confirmation is required unless you supply a prefix argument."
                          filename, 'Write file: ')"))
 
 
-(defun save-some-buffers ()
+(defun save_some_buffers ()
   "Save some modified file-visiting buffers.  Asks user about each one."
   (interactive)
   (lambda ()
     "return save_some_buffers ()"))
 
 
-(defun save-buffers-kill-zz ()
+(defun save_buffers_kill_zz ()
   "Offer to save each buffer, then kill this process."
   (interactive)
   (lambda ()
@@ -190,7 +190,7 @@ Interactively, confirmation is required unless you supply a prefix argument."
     end"))
 
 
-(defun insert-buffer (string)
+(defun insert_buffer (string)
   "Insert after point the contents of BUFFER.
 Puts mark after the inserted text."
   (interactive)
@@ -232,7 +232,7 @@ Puts mark after the inserted text."
 
       if ok then
         insert_buffer (bp)
-        lisp.execute_function ('set-mark-command')
+        lisp.execute_function ('set_mark_command')
       end
     end
 
