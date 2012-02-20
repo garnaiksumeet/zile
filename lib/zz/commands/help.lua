@@ -17,15 +17,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
-local lisp = require "zz.eval"
-local Defun, Defvar = lisp.Defun, lisp.Defvar
+local eval = require "zz.eval"
+local Defun, zz = eval.Defun, eval.sandbox
 
 
 local function write_function_description (name, doc)
   insert_string (string.format (
      '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n%s',
      name,
-     lisp.get_function_interactive (name) and 'an interactive' or 'a',
+     eval.get_function_interactive (name) and 'an interactive' or 'a',
      doc))
 end
 
@@ -44,7 +44,7 @@ Display the full documentation of a function.
       end
     end
 
-    local doc = lisp.get_function_doc (func)
+    local doc = eval.get_function_doc (func)
     if not doc then
       return false
     else
@@ -57,7 +57,7 @@ Display the full documentation of a function.
 
 
 local function write_key_description (name, doc, binding)
-  local _interactive = lisp.get_function_interactive (name)
+  local _interactive = eval.get_function_interactive (name)
   assert (_interactive ~= nil)
 
   insert_string (string.format (
@@ -80,12 +80,12 @@ Display documentation of the command invoked by a key sequence.
       if not keys then
         return false
       end
-      func = get_function_by_keys (keys, lisp.command)
+      func = get_function_by_keys (keys, eval.command)
       binding = tostring (keys)
     else
       minibuf_write ('Describe key:')
       local keys = get_key_sequence ()
-      func = get_function_by_keys (keys, lisp.command)
+      func = get_function_by_keys (keys, eval.command)
       binding = tostring (keys)
 
       if not func then
@@ -181,7 +181,7 @@ Display info on all the kinds of warranty Zz does NOT have.
   true,
   function ()
     find_or_create_buffer_from_module ('COPYING')
-    lisp.execute_function ('search_forward', ' Disclaimer of Warranty.')
+    zz.search_forward (' Disclaimer of Warranty.')
     beginning_of_line ()
   end
 )

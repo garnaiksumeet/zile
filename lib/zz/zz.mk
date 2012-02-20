@@ -23,7 +23,7 @@
 ## ------------- ##
 
 zzdatadir = $(datadir)/zz
-zzcmdsdir = $(zzdatadir)/zlisp
+zzcmdsdir = $(zzdatadir)/commands
 
 
 ## ------ ##
@@ -44,7 +44,7 @@ dist_zzcmds_DATA =					\
 	lib/zz/commands/killring.lua			\
 	lib/zz/commands/help.lua			\
 	lib/zz/commands/line.lua			\
-	lib/zz/commands/lisp.lua			\
+	lib/zz/commands/lua.lua				\
 	lib/zz/commands/macro.lua			\
 	lib/zz/commands/marker.lua			\
 	lib/zz/commands/minibuf.lua			\
@@ -57,13 +57,12 @@ dist_zzcmds_DATA =					\
 	$(NOTHING_ELSE)
 
 dist_zzdata_DATA =					\
-	lib/zz/default-bindings-el.lua			\
+	lib/zz/default-bindings.lua			\
 	lib/zz/callbacks.lua				\
 	lib/zz/commands.lua				\
 	lib/zz/keymaps.lua				\
 	lib/zz/eval.lua					\
 	lib/zz/main.lua					\
-	lib/zz/zlisp.lua				\
 	$(dist_zzcmds_DATA)				\
 	$(NOTHING_ELSE)
 

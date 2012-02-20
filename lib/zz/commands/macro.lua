@@ -17,8 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
-local lisp = require "zz.eval"
-local Defun, Defvar = lisp.Defun, lisp.Defvar
+local eval  = require "zz.eval"
+local Defun = eval.Defun
 
 
 Defun ("start_kbd_macro",

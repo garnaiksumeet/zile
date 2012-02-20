@@ -17,8 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
-local lisp = require "zz.eval"
-local Defun, Defvar = lisp.Defun, lisp.Defvar
+local eval  = require "zz.eval"
+local Defun = eval.Defun
 
 
 Defun ("self_insert_command",
@@ -44,7 +44,7 @@ Argument is a command name.
   function ()
     local name = minibuf_read_function_name ('Where is command: ')
 
-    if name and lisp.function_exists (name) then
+    if name and eval.function_exists (name) then
       local g = { f = name, bindings = '' }
 
       walk_bindings (root_bindings, gather_bindings, g)
@@ -109,12 +109,12 @@ sequence.
       end
     end
 
-    if not lisp.function_exists (name) then -- Possible if called non-interactively
+    if not eval.function_exists (name) then -- Possible if called non-interactively
       minibuf_error (string.format ([[No such function `%s']], name))
       return
     end
 
-    root_bindings[keys] = lisp.get_function_by_name (name)
+    root_bindings[keys] = eval.get_function_by_name (name)
 
     return true
   end

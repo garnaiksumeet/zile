@@ -17,19 +17,19 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
-local lisp = require "zz.eval"
-local Defun, Defvar = lisp.Defun, lisp.Defvar
+local eval = require "zz.eval"
+local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("load",
   {"string"},
 [[
-Execute a file of Lisp code named FILE.
+Execute a file of Lua code named FILE.
 ]],
   true,
   function (file)
     if file then
-      return lisp.loadfile (file)
+      return eval.loadfile (file)
     end
   end
 )
@@ -49,10 +49,9 @@ The values val are expressions; they are evaluated.
     local ret
     local l = {...}
     for i = 1, #l/2 do
-      ret = lisp.evalexpr (l[i + 1])
-      set_variable (l[i].value, ret.value)
+      set_variable (l[2*i -1], l[2*i])
     end
-    return ret
+    return l[#l]
   end
 )
 
@@ -76,7 +75,7 @@ Read function name, then read its arguments and call it.
     msg = msg .. 'M-x '
 
     local name = minibuf_read_function_name (msg)
-    return name and lisp.execute_function (name, n) or nil
+    return zz[name] and zz[name] (n) or nil
   end
 )
 
@@ -84,16 +83,16 @@ Read function name, then read its arguments and call it.
 Defun ("eval_buffer",
   {"string"},
 [[
-Execute the current buffer as Lisp code.
+Execute the current buffer as Lua code.
 
-When called from a Lisp program (i.e., not interactively), this
+When called from a Lua program (i.e., not interactively), this
 function accepts an optional argument, the buffer to evaluate (nil
 means use current buffer).
 ]],
   true,
   function (buffer)
     local bp = (buffer and buffer ~= '') and find_buffer (buffer) or cur_bp
-    return lisp.loadstring (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))
+    return eval.loadstring (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))
   end
 )
 
@@ -104,7 +103,7 @@ local exprs_history = history_new ()
 Defun ("eval_expression",
   {"string"},
 [[
-Evaluate a lisp expression and print result in the minibuffer.
+Evaluate a lua expression and print result in the minibuffer.
 ]],
   true,
   function (expr)
@@ -112,7 +111,7 @@ Evaluate a lisp expression and print result in the minibuffer.
       expr = minibuf_read ('Eval: ', '', nil, exprs_history)
     end
 
-    lisp.loadstring (expr)
+    eval.loadstring (expr)
 
     if expr then
       add_history_element (exprs_history, expr)

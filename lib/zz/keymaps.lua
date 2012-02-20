@@ -17,7 +17,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local lisp  = require "zz.eval"
+local eval  = require "zz.eval"
 local posix = require "posix"
 
 root_bindings = tree.new ()
@@ -26,13 +26,13 @@ function init_default_bindings ()
   -- Bind all printing keys to self-insert-command
   for i = 0, 0xff do
     if posix.isprint (string.char (i)) then
-      root_bindings[{keycode (string.char (i))}] = lisp.command.self_insert_command
+      root_bindings[{keycode (string.char (i))}] = eval.sandbox.self_insert_command
     end
   end
 
   -- Bind special key names to self-insert-command
   list.map (function (e)
-              root_bindings[{keycode (e)}] = lisp.command.self_insert_command
+              root_bindings[{keycode (e)}] = eval.sandbox.self_insert_command
             end,
             {"\\SPC", "\\TAB", "\\RET", "\\\\"})
 
@@ -41,8 +41,8 @@ function init_default_bindings ()
   package.path:gsub ("[^;]+",
                     function (path)
                       if ok == nil then
-                        path = path:gsub ("%?", "zz/default-bindings-el", 1)
-                        ok, errmsg = lisp.loadfile (path)
+                        path = path:gsub ("%?", "zz/default-bindings", 1)
+                        ok, errmsg = eval.loadfile (path)
                       end
                     end)
   return ok, errmsg

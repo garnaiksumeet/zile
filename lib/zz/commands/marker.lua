@@ -17,8 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
-local lisp = require "zz.eval"
-local Defun, Defvar = lisp.Defun, lisp.Defvar
+local eval = require "zz.eval"
+local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("exchange_point_and_mark",
@@ -61,17 +61,17 @@ Set the mark where point is.
 ]],
   true,
   function ()
-    lisp.execute_function ('set_mark')
+    zz.set_mark ()
     minibuf_write ('Mark set')
   end
 )
 
 
 local function mark (uniarg, func)
-  lisp.execute_function ('set_mark')
-  local ret = lisp.execute_function (func, uniarg)
+  zz.set_mark ()
+  local ret = func and zz[func] (uniarg)
   if ret then
-    lisp.execute_function ('exchange_point_and_mark')
+    zz.exchange_point_and_mark ()
   end
   return ret
 end
@@ -112,13 +112,13 @@ The paragraph marked is the one that contains point or follows point.
   true,
   function ()
     if command.was_labelled ':mark_paragraph' then
-      lisp.execute_function ('exchange_point_and_mark')
-      lisp.execute_function ('forward_paragraph')
-      lisp.execute_function ('exchange_point_and_mark')
+      zz.exchange_point_and_mark ()
+      zz.forward_paragraph ()
+      zz.exchange_point_and_mark ()
     else
-      lisp.execute_function ('forward_paragraph')
-      lisp.execute_function ('set_mark')
-      lisp.execute_function ('backward_paragraph')
+      zz.forward_paragraph ()
+      zz.set_mark ()
+      zz.backward_paragraph ()
     end
 
     command.attach_label ':mark_paragraph'
@@ -134,7 +134,7 @@ Put point at beginning and mark at end of buffer.
   true,
   function ()
     goto_offset (get_buffer_size (cur_bp) + 1)
-    lisp.execute_function ('set_mark_command')
+    zz.set_mark_command ()
     goto_offset (1)
   end
 )

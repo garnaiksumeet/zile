@@ -17,8 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
-local lisp = require "zz.eval"
-local Defun, Defvar = lisp.Defun, lisp.Defvar
+local eval = require "zz.eval"
+local Defun, zz = eval.Defun, eval.sandbox
 
 
 local function kill_text (uniarg, mark_func)
@@ -30,8 +30,8 @@ local function kill_text (uniarg, mark_func)
 
   push_mark ()
   undo_start_sequence ()
-  lisp.execute_function (mark_func, uniarg)
-  lisp.execute_function ('kill_region')
+  zz[mark_func] (uniarg)
+  zz.kill_region ()
   undo_end_sequence ()
   pop_mark ()
   minibuf_clear () -- Erase 'Set mark' message.
@@ -98,7 +98,7 @@ killed @i{or} yanked.  Put point at end, and set mark at beginning.
       return false
     end
 
-    lisp.execute_function ('set_mark_command')
+    zz.set_mark_command ()
     killring_yank ()
     deactivate_mark ()
   end

@@ -17,8 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
-local lisp = require "zz.eval"
-local Defun, Defvar = lisp.Defun, lisp.Defvar
+local eval = require "zz.eval"
+local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("set_fill_column",
@@ -81,13 +81,13 @@ Fill paragraph at or after point.
 
     undo_start_sequence ()
 
-    lisp.execute_function ('forward_paragraph')
+    zz.forward_paragraph ()
     if is_empty_line () then
       previous_line ()
     end
     local m_end = point_marker ()
 
-    lisp.execute_function ('backward_paragraph')
+    zz.backward_paragraph ()
     if is_empty_line () then -- Move to next line if between two paragraphs.
       next_line ()
     end
@@ -95,7 +95,7 @@ Fill paragraph at or after point.
     while buffer_end_of_line (cur_bp, get_buffer_pt (cur_bp)) < m_end.o do
     end_of_line ()
       delete_char ()
-      lisp.execute_function ('just_one_space')
+      zz.just_one_space ()
     end
     unchain_marker (m_end)
 

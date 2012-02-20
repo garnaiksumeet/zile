@@ -1,4 +1,4 @@
--- Zile Lisp interpreter
+-- Zz Evaluator
 --
 -- Copyright (c) 2009-2013 Free Software Foundation, Inc.
 --
@@ -18,18 +18,6 @@
 -- along with this program; see the file COPYING.  If not, write to the
 -- Free Software Foundation, Fifth Floor, 51 Franklin Street, Boston,
 -- MA 02111-1301, USA.
-
-zz = require "zz.zlisp"
-
-
-local M = {
-  -- Copy some commands into our namespace directly.
-  command   = zz.symbol,
-  commands  = zz.symbols,
-  cons      = zz.cons,
-}
-
-local cons = M.cons
 
 
 
@@ -67,7 +55,7 @@ main_vars = setmetatable ({values = {}}, {
 })
 
 
-function M.Defvar (name, value, doc)
+function Defvar (name, value, doc)
   local key = name_to_key (name)
   main_vars[key] = value
   metadata[key] = { doc = texi (doc:chomp ()) }
@@ -142,118 +130,22 @@ end
 
 
 
---[[ ======================== ]]--
---[[ Symbol Table Management. ]]--
---[[ ======================== ]]--
+--[[ ================== ]]--
+--[[ Command Evaluator. ]]--
+--[[ ================== ]]--
 
 
 -- The symbol table is a symbol-name:symbol-func-table mapping.
-local symbol   = zz.symbol
+local sandbox = {}
 
--- Shared metatable for symbol-func-tables.
-local symbol_mt = {
-  __call        = function (self, arglist)
-                    local args = {}
-                    local i = 1
-                    while arglist and arglist.car do
-                      local val = arglist.car
-                      local ty = self.argtypes[i]
-                      if ty == "number" then
-                        val = tonumber (val.value, 10)
-                      elseif ty == "boolean" then
-                        val = val.value ~= "nil"
-                      elseif ty == "string" then
-                        val = tostring (val.value)
-                      end
-                      table.insert (args, val)
-                      arglist = arglist.cdr
-                      i = i + 1
-                    end
-                    current_prefix_arg = prefix_arg
-                    prefix_arg = false
-                    local ret = self.func (unpack (args))
-                    if ret == nil then
-                      ret = true
-                    end
-                    return ret
-                  end,
-
-  __tostring    = function (self)
-	            return self.name
-	          end,
-}
-
--- Define symbols for the evaluator.
-function M.Defun (name, argtypes, doc, interactive, func)
-  local introspect = {
-    argtypes    = argtypes,
-    doc         = texi (doc:chomp ()),
-    func        = func,
-    interactive = interactive,
-    name        = name,
-  }
-  zz.define (name, setmetatable (introspect, symbol_mt))
-end
-
-
--- Return true if there is a symbol `name' in the symbol-table.
-function M.function_exists (name)
-  return symbol[name] ~= nil
-end
-
-
--- Return the named symbol-func-table.
-function M.get_function_by_name (name)
-  return symbol[name]
-end
-
-
--- Return the docstring for symbol-name.
-function M.get_function_doc (name)
-  local value = symbol[name]
-  return value and value.doc or nil
-end
-
-
--- Return function's interactive field, or nil if not found.
-function M.get_function_interactive (name)
-  local value = symbol[name]
-  return value and value.interactive or nil
-end
-
-
-
---[[ ================ ]]--
---[[ ZLisp Evaluator. ]]--
---[[ ================ ]]--
-
-
--- Execute a function non-interactively.
-function M.execute_function (func_or_name, uniarg)
-  local func, ok = func_or_name, false
-
-  if type (func_or_name) ~= "table" then
-    func = symbol[func_or_name]
-  end
-
-  if uniarg ~= nil and type (uniarg) ~= "table" then
-    uniarg = cons ({value = uniarg and tostring (uniarg) or nil})
-  end
-
-  command.attach_label (nil)
-  ok = func and func (uniarg)
-  command.next_label ()
-
-  return ok
-end
 
 -- Call an interactive command.
-function M.call_command (func, list)
+local function call_command (f, ...)
   thisflag = {defining_macro = lastflag.defining_macro}
 
   -- Execute the command.
   command.interactive_enter ()
-  local ok = M.execute_function (func, list)
+  local ok = f (...)
   command.interactive_exit ()
 
   -- Only add keystrokes if we were already in macro defining mode
@@ -272,47 +164,122 @@ function M.call_command (func, list)
 end
 
 
--- Evalute one command expression.
-local function evalcommand (list)
-  return list and list.car and M.call_command (list.car.value, list.cdr) or nil
+-- Shared metatable for symbol-func-tables.
+local symbol_mt = {
+  __call        = function (self, ...)
+                    local args = {...}
+                    for i, v in ipairs (args) do
+                      -- When given, argtypes must match, though "function"
+                      -- can match anything callable.
+                      if self.argtypes
+                         and not (self.argtypes[i] == type (v)
+                                  or self.argtypes[i] == "function" and iscallable (v))
+                      then
+                        -- Undo mangled prefix_arg when called from minibuf.
+                        if i == 1 and args[1] == prefix_arg then
+                          args[1] = nil
+                        else
+                          return minibuf_error (
+                            string.format (
+                              "bad argument #%d to '%s' (%s expected, got %s): %s",
+                              i, self.name, self.argtypes[i], type (v), tostring (v))
+                          )
+                        end
+                      end
+                    end
+                    current_prefix_arg = prefix_arg
+                    prefix_arg = false
+                    local ret = call_command (self.func, unpack (args))
+                    if ret == nil then
+                      ret = true
+                    end
+                    return ret
+                  end,
+
+  __tostring    = function (self)
+	            return self.name
+	          end,
+}
+
+
+
+-- Define symbols for the evaluator.
+local function Defun (name, argtypes, doc, interactive, func)
+  local introspect = {
+    argtypes    = argtypes,
+    doc         = texi (doc:chomp ()),
+    func        = func,
+    interactive = interactive,
+    name        = name,
+  }
+  sandbox[name] = setmetatable (introspect, symbol_mt)
 end
 
 
--- Evaluate one arbitrary expression.
-function M.evalexpr (node)
-  if M.function_exists (node.value) then
-    return node.quoted and node or evalcommand (node)
-  elseif node.value == "t" or node.value == "nil" then
-    return node
+-- Return true if there is a symbol `name' in the symbol-table.
+local function function_exists (name)
+  return sandbox[name] ~= nil
+end
+
+
+-- Return the named symbol-func-table.
+local function get_function_by_name (name)
+  return sandbox[name]
+end
+
+
+-- Return the docstring for symbol-name.
+local function get_function_doc (name)
+  local value = sandbox[name]
+  return value and value.doc or nil
+end
+
+
+-- Return function's interactive field, or nil if not found.
+local function get_function_interactive (name)
+  local value = sandbox[name]
+  return value and value.interactive or nil
+end
+
+
+-- Evaluate a string of Lua.
+local function evaluate_string (s)
+  local f, errmsg = load (s, nil, 't', sandbox)
+  if f == nil then
+    return nil, errmsg
   end
-  return cons (get_variable (node.value) or node)
+  return f ()
 end
 
 
--- Evaluate a string of ZLisp.
-function M.loadstring (s)
-  local ok, list = pcall (zz.parse, s)
-  if not ok then return nil, list end
-
-  local result = true
-  while list do
-    result = evalcommand (list.car.value)
-    list = list.cdr
-  end
-  return result
-end
-
-
--- Evaluate a file of ZLisp.
-function M.loadfile (file)
+-- Evaluate a file of Lua.
+local function evaluate_file (file)
   local s, errmsg = io.slurp (file)
 
   if s then
-    s, errmsg = M.loadstring (s)
+    s, errmsg = evaluate_string (s)
+
+    if s == nil and errmsg ~= nil then
+      minibuf_error (string.format ("%s: %s", file:gsub ("^.*/", "..."), errmsg))
+    end
+    return true
   end
 
   return s, errmsg
 end
 
 
-return M
+return {
+  sandbox = sandbox,
+  Defun   = Defun,
+  Defvar  = Defvar,
+
+  function_exists            = function_exists,
+  get_function_by_name       = get_function_by_name,
+  get_function_interactive   = get_function_interactive,
+  get_function_doc           = get_function_doc,
+
+  call_command     = call_command,
+  loadstring       = evaluate_string,
+  loadfile         = evaluate_file,
+}

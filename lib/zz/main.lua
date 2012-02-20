@@ -18,7 +18,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-local lisp = require "zz.eval"
+local eval = require "zz.eval"
 
 prog = require "zile.version"
 prog.name = "zz"
@@ -227,7 +227,7 @@ function main ()
   if not qflag then
     local s = os.getenv ("HOME")
     if s then
-      lisp.loadfile (s .. "/." .. prog.name)
+      eval.loadfile (s .. "/." .. prog.name)
     end
   end
 
@@ -248,19 +248,19 @@ function main ()
     local type, arg, line = zarg[i][1], zarg[i][2], zarg[i][3]
 
     if type == "function" then
-      ok = lisp.execute_function (arg)
+      ok = eval.sandbox[arg] and eval.sandbox[arg] ()
       if ok == nil then
         minibuf_error (string.format ("Function `%s' not defined", arg))
       end
     elseif type == "loadfile" then
-      ok = lisp.loadfile (arg)
+      ok = eval.loadfile (arg)
       if not ok then
         minibuf_error (string.format ("Cannot open load file: %s\n", arg))
       end
     elseif type == "file" then
       ok = find_file (arg)
       if ok then
-        lisp.execute_function ("goto_line", line)
+        eval.sandbox.goto_line (line)
       end
     end
     if thisflag.quit then
@@ -279,9 +279,9 @@ function main ()
     -- *scratch* and two files.
     split_window ()
     switch_to_buffer (buffers[#buffers -1])
-    lisp.execute_function ("other_window")
+    eval.sandbox.other_window ()
   elseif #buffers > 3 then
-    lisp.execute_function ("list_buffers")
+    eval.sandbox.list_buffers ()
   end
 
   -- Reinitialise the scratch buffer to catch settings

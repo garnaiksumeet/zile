@@ -17,8 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
-local lisp = require "zz.eval"
-local Defun, Defvar = lisp.Defun, lisp.Defvar
+local eval = require "zz.eval"
+local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("indent_for_tab_command",
@@ -34,7 +34,7 @@ the indentation.  Else stay at same point in text.
     if get_variable_bool ('tab_always_indent') then
       return insert_tab ()
     elseif (get_goalc () < previous_line_indent ()) then
-      return lisp.execute_function ('indent_relative')
+      return zz.indent_relative ()
     end
   end
 )
@@ -152,7 +152,7 @@ Indentation is done using the `indent_for_tab_command' function.
       -- Only indent if we're in column > 0 or we're in column 0 and
       -- there is a space character there in the last non-blank line.
       if indent then
-        lisp.execute_function ('indent_for_tab_command')
+        zz.indent_for_tab_command ()
       end
       ok = true
     end

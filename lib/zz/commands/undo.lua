@@ -17,8 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local lisp = require "zz.eval"
-local Defun, Defvar = lisp.Defun, lisp.Defvar
+local eval = require "zz.eval"
+local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("undo",
@@ -60,7 +60,7 @@ Undo until buffer is unmodified.
   true,
   function ()
     while cur_bp.modified do
-      lisp.execute_function ('undo')
+      zz.undo ()
     end
   end
 )

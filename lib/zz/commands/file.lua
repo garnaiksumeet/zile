@@ -17,8 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
-local lisp = require "zz.eval"
-local Defun, Defvar = lisp.Defun, lisp.Defvar
+local eval = require "zz.eval"
+local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("find_file",
@@ -56,7 +56,7 @@ Use @kbd{M-x toggle_read_only} to permit editing.
 ]],
   true,
   function (filename)
-    local ok = lisp.execute_function ('find_file', filename)
+    local ok = zz.find_file (filename)
     if ok then
       cur_bp.readonly = true
     end
@@ -125,7 +125,7 @@ Set mark after the inserted text.
       local s = io.slurp (file)
       if s then
         insert_estr (EStr (s))
-        lisp.execute_function ('set_mark_command')
+        zz.set_mark_command ()
       else
         ok = minibuf_error ('%s: %s', file, posix.errno ())
       end
@@ -283,7 +283,7 @@ Puts mark after the inserted text.
 
       if ok then
         insert_buffer (bp)
-        lisp.execute_function ('set_mark_command')
+        zz.set_mark_command ()
       end
     end
 

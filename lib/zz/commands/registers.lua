@@ -17,8 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local lisp = require "zz.eval"
-local Defun, Defvar = lisp.Defun, lisp.Defvar
+local eval = require "zz.eval"
+local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("copy_to_register",
@@ -77,10 +77,10 @@ Puts point before and mark after the inserted text.
         minibuf_error ('Register does not contain text')
         ok = false
       else
-        lisp.execute_function ('set_mark_command')
+        zz.set_mark_command ()
 	regnum = reg
         execute_with_uniarg (true, current_prefix_arg, insert_register)
-        lisp.execute_function ('exchange_point_and_mark')
+        zz.exchange_point_and_mark ()
         deactivate_mark ()
       end
     end
