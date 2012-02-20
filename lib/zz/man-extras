@@ -1,6 +1,9 @@
 [description]
-Zz is a lightweight Emacs clone that provides a subset of Emacs's
-functionality suitable for basic editing.
+Zz is a lightweight text editor descended from GNU Zile's zmacs.
+It has functionality suitable for basic editing. Compared to
+zmacs, the Lisp Evaluator has been removed in favour of direct
+evaluation in the source language, Lua - with which it is easily
+extended and customized.
 
 /then go to/
 Exit status is 0 if OK, 1 if it cannot start up, for example because
@@ -11,10 +14,8 @@ of memory.
 ~/.zz \(em user's Zz init file
 
 [author]
-Zz was written by Reuben Thomas and Gary V. Vaughan, based on the
-C version by Sandro Sigala, Reuben Thomas, David A. Capello and Scott
-Lawrence.
+Zz was written by Gary V. Vaughan, based Lua Zile by Reuben Thomas.
 
 [see also]
-.BR emacs (1),
+.BR zmacs (1),
 .BR lua (1)
