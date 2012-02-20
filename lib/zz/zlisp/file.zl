@@ -140,7 +140,7 @@ Interactively, confirmation is required unless you supply a prefix argument."
     "return save_some_buffers ()"))
 
 
-(defun save-buffers-kill-emacs ()
+(defun save-buffers-kill-zz ()
   "Offer to save each buffer, then kill this process."
   (interactive)
   (lambda ()
