@@ -146,7 +146,7 @@ function process_args ()
     elseif longindex == 4 then
       io.write ("Usage: " .. arg[0] .. " [OPTION-OR-FILENAME]...\n" ..
                 "\n" ..
-                "Run " .. prog.Name .. ", a lightweight Emacs clone.\n" ..
+                "Run " .. prog.Name .. ", a lightweight text editor.\n" ..
                 "\n")
 
       for _, v in ipairs (options) do
