@@ -28,10 +28,10 @@ require "zz.commands"
 
 io.stdout:write (
   [[
-;;;; .]] .. os.getenv ("PACKAGE") .. [[ configuration
+-- .]] .. os.getenv ("PACKAGE") .. [[ configuration
 
-;; Rebind keys with:
-;; (global-set-key "key" 'func)
+-- Rebind keys with:
+-- global-set-key ("key", func)
 
 ]])
 
@@ -39,8 +39,8 @@ io.stdout:write (
 -- auto-generated, because it's ugly in a user configuration file.
 
 for k, v in pairs (main_vars) do
-  io.stdout:writelines ("; " .. (get_variable_doc (k)):gsub ("\n", "\n; "),
-                        "; Default value is " .. v .. ".",
-                        "(setq " .. k .. " " .. v .. ")",
+  io.stdout:writelines ("-- " .. get_variable_doc (k):gsub ("\n", "\n-- "),
+                        "-- Default value is " .. tostring (v.val) .. ".",
+                        "setq (" .. k .. ", " .. tostring (v.val) .. ")",
                         "")
 end
