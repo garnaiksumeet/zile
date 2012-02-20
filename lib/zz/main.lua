@@ -80,8 +80,8 @@ lastflag = {}
 -- Option: "opt", long name, short name ('\0' for none), argument, argument docstring, docstring)
 -- Action: "act", ARGUMENT, DOCSTRING
 --
--- Options which take no argument have an optional_argument, so that,
--- as in Emacs, no argument is signalled as extraneous.
+-- Options which take no argument have an optional_argument, so that no
+-- argument is signalled as extraneous.
 
 local options = {
   {"doc", "Initialization options:"},
