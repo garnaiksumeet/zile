@@ -196,7 +196,7 @@ by 4 each time."
   "keyboard_quit")
 
 
-(defun suspend-emacs ()
+(defun suspend-zz ()
   "Stop and return to superior process."
   (interactive)
   "suspend")
