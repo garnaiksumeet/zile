@@ -1,138 +1,161 @@
-global_set_key ("\\M-m",	back_to_indentation)
-global_set_key ("\\C-b",	backward_char)
-global_set_key ("\\LEFT",	backward_char)
-global_set_key ("\\BACKSPACE",	backward_delete_char)
-global_set_key ("\\C-?",	backward_delete_char)
-global_set_key ("\\M-\\BACKSPACE",	backward_kill_word)
-global_set_key ("\\C-\\M-?",	backward_kill_word)
-global_set_key ("\\M-{",	backward_paragraph)
-global_set_key ("\\C-\\M-b",	backward_sexp)
-global_set_key ("\\M-b",	backward_word)
-global_set_key ("\\M-\\LEFT",	backward_word)
-global_set_key ("\\M-<",	beginning_of_buffer)
-global_set_key ("\\C-a",	beginning_of_line)
-global_set_key ("\\HOME",	beginning_of_line)
-global_set_key ("\\C-xe",	call_last_kbd_macro)
-global_set_key ("\\M-c",	capitalize_word)
-global_set_key ("\\M-w",	copy_region_as_kill)
-global_set_key ("\\C-xrx",	copy_to_register)
-global_set_key ("\\C-xrs",	copy_to_register)
-global_set_key ("\\C-x\\C-o",	delete_blank_lines)
-global_set_key ("\\C-d",	delete_char)
-global_set_key ("\\DELETE",	delete_char)
-global_set_key ("\\M-\\\\",	delete_horizontal_space)
-global_set_key ("\\C-x1",	delete_other_windows)
-global_set_key ("\\C-x0",	delete_window)
-global_set_key ("\\C-hb",	describe_bindings)
-global_set_key ("\\F1b",	describe_bindings)
-global_set_key ("\\C-h\\C-c",	describe_copying)
-global_set_key ("\\F1\\C-c",	describe_copying)
-global_set_key ("\\C-hf",	describe_function)
-global_set_key ("\\F1f",	describe_function)
-global_set_key ("\\C-hk",	describe_key)
-global_set_key ("\\F1k",	describe_key)
-global_set_key ("\\C-h\\C-w",	describe_no_warranty)
-global_set_key ("\\F1\\C-w",	describe_no_warranty)
-global_set_key ("\\C-hv",	describe_variable)
-global_set_key ("\\F1v",	describe_variable)
-global_set_key ("\\C-x\\C-l",	downcase_region)
-global_set_key ("\\M-l",	downcase_word)
-global_set_key ("\\C-x)",	end_kbd_macro)
-global_set_key ("\\M->",	end_of_buffer)
-global_set_key ("\\C-e",	end_of_line)
-global_set_key ("\\END",	end_of_line)
-global_set_key ("\\C-x^",	enlarge_window)
-global_set_key ("\\M-:",	eval_expression)
-global_set_key ("\\C-x\\C-x",	exchange_point_and_mark)
-global_set_key ("\\M-x",	execute_extended_command)
-global_set_key ("\\M-q",	fill_paragraph)
-global_set_key ("\\C-x\\C-v",	find_alternate_file)
-global_set_key ("\\C-x\\C-f",	find_file)
-global_set_key ("\\C-x\\C-r",	find_file_read_only)
-global_set_key ("\\RIGHT",	forward_char)
-global_set_key ("\\C-f",	forward_char)
-global_set_key ("\\M-}",	forward_paragraph)
-global_set_key ("\\C-\\M-f",	forward_sexp)
-global_set_key ("\\M-f",	forward_word)
-global_set_key ("\\M-\\RIGHT",	forward_word)
-global_set_key ("\\M-gg",	goto_line)
-global_set_key ("\\M-g\\M-g",	goto_line)
-global_set_key ("\\TAB",	indent_for_tab_command)
-global_set_key ("\\C-xi",	insert_file)
-global_set_key ("\\C-xrg",	insert_register)
-global_set_key ("\\C-xri",	insert_register)
-global_set_key ("\\C-r",	isearch_backward)
-global_set_key ("\\C-\\M-r",	isearch_backward_regexp)
-global_set_key ("\\C-s",	isearch_forward)
-global_set_key ("\\C-\\M-s",	isearch_forward_regexp)
-global_set_key ("\\M-\\SPC",	just_one_space)
-global_set_key ("\\C-g",	keyboard_quit)
-global_set_key ("\\C-xk",	kill_buffer)
-global_set_key ("\\C-k",	kill_line)
-global_set_key ("\\C-w",	kill_region)
-global_set_key ("\\C-\\M-k",	kill_sexp)
-global_set_key ("\\M-d",	kill_word)
-global_set_key ("\\C-x\\C-b",	list_buffers)
-global_set_key ("\\M-h",	mark_paragraph)
-global_set_key ("\\C-\\M-@",	mark_sexp)
-global_set_key ("\\C-xh",	mark_whole_buffer)
-global_set_key ("\\M-@",	mark_word)
-global_set_key ("\\RET",	newline)
-global_set_key ("\\C-j",	newline_and_indent)
-global_set_key ("\\C-n",	next_line)
-global_set_key ("\\DOWN",	next_line)
-global_set_key ("\\C-o",	open_line)
-global_set_key ("\\C-xo",	other_window)
-global_set_key ("\\C-p",	previous_line)
-global_set_key ("\\UP",		previous_line)
-global_set_key ("\\M-%",	query_replace)
-global_set_key ("\\C-q",	quoted_insert)
-global_set_key ("\\C-l",	recenter)
-global_set_key ("\\C-x\\C-s",	save_buffer)
-global_set_key ("\\C-x\\C-c",	save_buffers_kill_zz)
-global_set_key ("\\C-xs",	save_some_buffers)
-global_set_key ("\\M-v",	scroll_down)
-global_set_key ("\\PRIOR",	scroll_down)
-global_set_key ("\\C-v",	scroll_up)
-global_set_key ("\\NEXT",	scroll_up)
-global_set_key ("\\C-xf",	set_fill_column)
-global_set_key ("\\C-@",	set_mark_command)
-global_set_key ("\\M-!",	shell_command)
-global_set_key ("\\M-|",	shell_command_on_region)
-global_set_key ("\\C-x2",	split_window)
-global_set_key ("\\C-x(",	start_kbd_macro)
-global_set_key ("\\C-x\\C-z",	suspend_zz)
-global_set_key ("\\C-z",	suspend_zz)
-global_set_key ("\\C-xb",	switch_to_buffer)
-global_set_key ("\\M-i",	tab_to_tab_stop)
-global_set_key ("\\C-x\\C-q",	toggle_read_only)
-global_set_key ("\\C-t",	transpose_chars)
-global_set_key ("\\C-x\\C-t",	transpose_lines)
-global_set_key ("\\C-\\M-t",	transpose_sexps)
-global_set_key ("\\M-t",	transpose_words)
-global_set_key ("\\C-xu",	undo)
-global_set_key ("\\C-_",	undo)
-global_set_key ("\\M--",	universal_argument)
-global_set_key ("\\M-0",	universal_argument)
-global_set_key ("\\M-1",	universal_argument)
-global_set_key ("\\M-2",	universal_argument)
-global_set_key ("\\M-3",	universal_argument)
-global_set_key ("\\M-4",	universal_argument)
-global_set_key ("\\M-5",	universal_argument)
-global_set_key ("\\M-6",	universal_argument)
-global_set_key ("\\M-7",	universal_argument)
-global_set_key ("\\M-8",	universal_argument)
-global_set_key ("\\M-9",	universal_argument)
-global_set_key ("\\C-u",	universal_argument)
-global_set_key ("\\C-x\\C-u",	upcase_region)
-global_set_key ("\\M-u",	upcase_word)
-global_set_key ("\\C-h\\C-f",	view_zz_FAQ)
-global_set_key ("\\F1\\C-f",	view_zz_FAQ)
-global_set_key ("\\C-hn",	view_zz_news)
-global_set_key ("\\C-h\\C-n",	view_zz_news)
-global_set_key ("\\F1n",	view_zz_news)
-global_set_key ("\\F1\\C-n",	view_zz_news)
-global_set_key ("\\C-hw",	where_is)
-global_set_key ("\\F1w",	where_is)
-global_set_key ("\\C-x\\C-w",	write_file)
-global_set_key ("\\C-y",	yank)
+-- Default keybindings for Zz.
+--
+-- Copyright (c) 2010-2013 Free Software Foundation, Inc.
+--
+-- This file is part of GNU Zile.
+--
+-- This program is free software; you can redistribute it and/or modify it
+-- under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 3, or (at your option)
+-- any later version.
+--
+-- This program is distributed in the hope that it will be useful, but
+-- WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-- General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+for keys, func in pairs ({
+  ["\\M-m"]		= back_to_indentation,
+  ["\\C-b"]		= backward_char,
+  ["\\LEFT"]		= backward_char,
+  ["\\BACKSPACE"]	= backward_delete_char,
+  ["\\C-?"]		= backward_delete_char,
+  ["\\M-\\BACKSPACE"]	= backward_kill_word,
+  ["\\C-\\M-?"]		= backward_kill_word,
+  ["\\M-{"]		= backward_paragraph,
+  ["\\C-\\M-b"]		= backward_sexp,
+  ["\\M-b"]		= backward_word,
+  ["\\M-\\LEFT"]	= backward_word,
+  ["\\M-<"]		= beginning_of_buffer,
+  ["\\C-a"]		= beginning_of_line,
+  ["\\HOME"]		= beginning_of_line,
+  ["\\C-xe"]		= call_last_kbd_macro,
+  ["\\M-c"]		= capitalize_word,
+  ["\\M-w"]		= copy_region_as_kill,
+  ["\\C-xrx"]		= copy_to_register,
+  ["\\C-xrs"]		= copy_to_register,
+  ["\\C-x\\C-o"]	= delete_blank_lines,
+  ["\\C-d"]		= delete_char,
+  ["\\DELETE"]		= delete_char,
+  ["\\M-\\\\"]		= delete_horizontal_space,
+  ["\\C-x1"]		= delete_other_windows,
+  ["\\C-x0"]		= delete_window,
+  ["\\C-hb"]		= describe_bindings,
+  ["\\F1b"]		= describe_bindings,
+  ["\\C-h\\C-c"]	= describe_copying,
+  ["\\F1\\C-c"]		= describe_copying,
+  ["\\C-hf"]		= describe_function,
+  ["\\F1f"]		= describe_function,
+  ["\\C-hk"]		= describe_key,
+  ["\\F1k"]		= describe_key,
+  ["\\C-h\\C-w"]	= describe_no_warranty,
+  ["\\F1\\C-w"]		= describe_no_warranty,
+  ["\\C-hv"]		= describe_variable,
+  ["\\F1v"]		= describe_variable,
+  ["\\C-x\\C-l"]	= downcase_region,
+  ["\\M-l"]		= downcase_word,
+  ["\\C-x)"]		= end_kbd_macro,
+  ["\\M->"]		= end_of_buffer,
+  ["\\C-e"]		= end_of_line,
+  ["\\END"]		= end_of_line,
+  ["\\C-x^"]		= enlarge_window,
+  ["\\M-:"]		= eval_expression,
+  ["\\C-x\\C-x"]	= exchange_point_and_mark,
+  ["\\M-x"]		= execute_extended_command,
+  ["\\M-q"]		= fill_paragraph,
+  ["\\C-x\\C-v"]	= find_alternate_file,
+  ["\\C-x\\C-f"]	= find_file,
+  ["\\C-x\\C-r"]	= find_file_read_only,
+  ["\\RIGHT"]		= forward_char,
+  ["\\C-f"]		= forward_char,
+  ["\\M-}"]		= forward_paragraph,
+  ["\\C-\\M-f"]		= forward_sexp,
+  ["\\M-f"]		= forward_word,
+  ["\\M-\\RIGHT"]	= forward_word,
+  ["\\M-gg"]		= goto_line,
+  ["\\M-g\\M-g"]	= goto_line,
+  ["\\TAB"]		= indent_for_tab_command,
+  ["\\C-xi"]		= insert_file,
+  ["\\C-xrg"]		= insert_register,
+  ["\\C-xri"]		= insert_register,
+  ["\\C-r"]		= isearch_backward,
+  ["\\C-\\M-r"]		= isearch_backward_regexp,
+  ["\\C-s"]		= isearch_forward,
+  ["\\C-\\M-s"]		= isearch_forward_regexp,
+  ["\\M-\\SPC"]		= just_one_space,
+  ["\\C-g"]		= keyboard_quit,
+  ["\\C-xk"]		= kill_buffer,
+  ["\\C-k"]		= kill_line,
+  ["\\C-w"]		= kill_region,
+  ["\\C-\\M-k"]		= kill_sexp,
+  ["\\M-d"]		= kill_word,
+  ["\\C-x\\C-b"]	= list_buffers,
+  ["\\M-h"]		= mark_paragraph,
+  ["\\C-\\M-@"]		= mark_sexp,
+  ["\\C-xh"]		= mark_whole_buffer,
+  ["\\M-@"]		= mark_word,
+  ["\\RET"]		= newline,
+  ["\\C-j"]		= newline_and_indent,
+  ["\\C-n"]		= next_line,
+  ["\\DOWN"]		= next_line,
+  ["\\C-o"]		= open_line,
+  ["\\C-xo"]		= other_window,
+  ["\\C-p"]		= previous_line,
+  ["\\UP"]		= previous_line,
+  ["\\M-%"]		= query_replace,
+  ["\\C-q"]		= quoted_insert,
+  ["\\C-l"]		= recenter,
+  ["\\C-x\\C-s"]	= save_buffer,
+  ["\\C-x\\C-c"]	= save_buffers_kill_zz,
+  ["\\C-xs"]		= save_some_buffers,
+  ["\\M-v"]		= scroll_down,
+  ["\\PRIOR"]		= scroll_down,
+  ["\\C-v"]		= scroll_up,
+  ["\\NEXT"]		= scroll_up,
+  ["\\C-xf"]		= set_fill_column,
+  ["\\C-@"]		= set_mark_command,
+  ["\\M-!"]		= shell_command,
+  ["\\M-|"]		= shell_command_on_region,
+  ["\\C-x2"]		= split_window,
+  ["\\C-x("]		= start_kbd_macro,
+  ["\\C-x\\C-z"]	= suspend_zz,
+  ["\\C-z"]		= suspend_zz,
+  ["\\C-xb"]		= switch_to_buffer,
+  ["\\M-i"]		= tab_to_tab_stop,
+  ["\\C-x\\C-q"]	= toggle_read_only,
+  ["\\C-t"]		= transpose_chars,
+  ["\\C-x\\C-t"]	= transpose_lines,
+  ["\\C-\\M-t"]		= transpose_sexps,
+  ["\\M-t"]		= transpose_words,
+  ["\\C-xu"]		= undo,
+  ["\\C-_"]		= undo,
+  ["\\M--"]		= universal_argument,
+  ["\\M-0"]		= universal_argument,
+  ["\\M-1"]		= universal_argument,
+  ["\\M-2"]		= universal_argument,
+  ["\\M-3"]		= universal_argument,
+  ["\\M-4"]		= universal_argument,
+  ["\\M-5"]		= universal_argument,
+  ["\\M-6"]		= universal_argument,
+  ["\\M-7"]		= universal_argument,
+  ["\\M-8"]		= universal_argument,
+  ["\\M-9"]		= universal_argument,
+  ["\\C-u"]		= universal_argument,
+  ["\\C-x\\C-u"]	= upcase_region,
+  ["\\M-u"]		= upcase_word,
+  ["\\C-h\\C-f"]	= view_zz_FAQ,
+  ["\\F1\\C-f"]		= view_zz_FAQ,
+  ["\\C-hn"]		= view_zz_news,
+  ["\\C-h\\C-n"]	= view_zz_news,
+  ["\\F1n"]		= view_zz_news,
+  ["\\F1\\C-n"]		= view_zz_news,
+  ["\\C-hw"]		= where_is,
+  ["\\F1w"]		= where_is,
+  ["\\C-x\\C-w"]	= write_file,
+  ["\\C-y"]		= yank,
+}) do
+  global_set_key (keys, func)
+end
