@@ -20,6 +20,9 @@
 -- MA 02111-1301, USA.
 
 
+local onig = require "rex_onig"
+
+
 -- Load a Zi bundle - a lua table defining editor extensions.
 local function load_bundle (filename)
   local function load_bundle_string (s)
@@ -61,4 +64,38 @@ function set_theme (themename)
       theme[v.scope] = term_get_attribute (v.settings)
     end
   end
+end
+
+
+-- Load the grammar description for modename.
+function load_grammar (modename)
+  local g = load_bundle (PATH_GRAMMARDIR .. "/" .. modename .. ".syntax")
+
+  if g and g.patterns then
+    for _,v in ipairs (g.patterns) do
+      if v.name then
+        local key = {}
+        for w in v.name:gmatch "[^.]+" do
+          table.insert (key, w)
+        end
+
+        repeat
+          local scope = table.concat (key, ".")
+          if theme[scope] then
+            v.attrs = theme[scope]
+            break
+          end
+          table.remove (key)
+        until #key == 0
+      end
+
+      local ok
+      ok, v.match = pcall (onig.new, v.match, 0)
+      if not ok then
+        v.match = nil
+      end
+    end
+  end
+
+  return g
 end

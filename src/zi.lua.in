@@ -30,6 +30,7 @@ VERSION = "@VERSION@"
 PATH_DATA = "@pkgdatadir@"
 PATH_DOCDIR = "@pkgdocdir@"
 PATH_THEMEDIR = "@pkgthemedir@"
+PATH_GRAMMARDIR = "@pkggrammardir@"
 
 -- Remove current directory from package search path
 package.path = package.path:gsub (";%./%?.lua;", ";")

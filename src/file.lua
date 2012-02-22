@@ -615,6 +615,7 @@ function find_file (filename)
         s = ""
       end
       bp.text = EStr (s)
+      bp.grammar = load_grammar ("lua")
 
       -- Reset undo history
       bp.next_undop = nil

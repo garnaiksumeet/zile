@@ -249,6 +249,9 @@ function main ()
     set_theme ("zi")
   end
 
+  -- Rehighlight the scratch buffer now that we have a theme loaded.
+  scratch_bp.grammar = load_grammar ("lua")
+
   -- Create the splash buffer & message only if no files, function or
   -- load file is specified on the command line, and there has been no
   -- error.

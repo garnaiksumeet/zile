@@ -29,16 +29,19 @@ DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 
 pkgthemedir = $(pkgdatadir)/theme
+pkggrammardir = $(pkgdatadir)/grammar
 
 install_edit = sed \
 	-e 's|@pkgdatadir[@]|$(pkgdatadir)|g' \
 	-e 's|@pkgdocdir[@]|$(docdir)|g' \
-	-e 's|@pkgthemedir[@]|$(pkgthemedir)|g'
+	-e 's|@pkgthemedir[@]|$(pkgthemedir)|g' \
+	-e 's|@pkggrammardir[@]|$(pkggrammardir)|g'
 
 inplace_edit = sed \
 	-e 's|@pkgdatadir[@]|$(abs_top_srcdir)/src|g' \
 	-e 's|@pkgdocdir[@]|$(abs_top_srcdir)|g' \
-	-e 's|@pkgthemedir[@]|$(abs_top_srcdir)/theme|g'
+	-e 's|@pkgthemedir[@]|$(abs_top_srcdir)/theme|g' \
+	-e 's|@pkggrammardir[@]|$(abs_top_srcdir)/grammar|g'
 
 EXTRA_DIST =						\
 	FAQ						\
@@ -49,6 +52,7 @@ doc_DATA = AUTHORS FAQ NEWS
 
 include build-aux/Makefile.am
 include doc/Makefile.am
+include grammar/Makefile.am
 include src/Makefile.am
 include tests/Makefile.am
 include theme/Makefile.am
@@ -90,6 +94,7 @@ uninstall-hook:
 	@test -d $(DESTDIR)$(datadir)/doc && rmdir $(DESTDIR)$(datadir)/doc || :
 	@test -d $(DESTDIR)$(man1dir) && rmdir $(DESTDIR)$(man1dir) || :
 	@test -d $(DESTDIR)$(mandir) && rmdir $(DESTDIR)$(mandir) || :
+	@test -d $(DESTDIR)$(pkggrammardir) && rmdir $(DESTDIR)$(pkggrammardir) || :
 	@test -d $(DESTDIR)$(pkgthemedir) && rmdir $(DESTDIR)$(pkgthemedir) || :
 	@test -d $(DESTDIR)$(pkgdatadir) && rmdir $(DESTDIR)$(pkgdatadir) || :
 	@test -d $(DESTDIR)$(datadir) && rmdir $(DESTDIR)$(datadir) || :

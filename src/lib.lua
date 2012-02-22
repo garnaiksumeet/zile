@@ -45,3 +45,47 @@ function texi (s)
   s = string.gsub (s, "@end%s[^\n]*\n", "")
   return s
 end
+
+
+-- Basic stack operations
+stack = {}
+
+local metatable = {}
+
+-- Pops and Pushes must balance, so instead of pushing `nil', which
+-- already means "no entry" and cause the matching pop to remove an
+-- unmatched value beneath the "missing" nil, use stack.empty:
+stack.empty = math.huge
+
+-- Return a new stack, optionally initialised with elements from t.
+function stack.new (t)
+  return setmetatable (t or {}, metatable)
+end
+
+-- Push v on top of a stack, creating an empty cell when v is nil.
+function stack:push (v)
+  table.insert (self, v or stack.empty)
+  return self[#self]
+end
+
+-- Pop and return the top of a stack, or nil for empty cells.
+function stack:pop ()
+  local v = table.remove (self)
+  return v ~= stack.empty and v or nil
+end
+
+-- Return the value from the top of a stack, ignoring empty cells.
+function stack:top ()
+  if #self < 1 then return nil end
+  local n = 0
+  while n + 1 < #self and self[#self - n] == stack.empty do
+    n = n + 1
+  end
+  assert (n < #self)
+  local v = self[#self - n]
+  return v ~= stack.empty and v or nil
+end
+
+-- Metamethods for stack tables
+-- stack:method ()
+metatable.__index = stack
