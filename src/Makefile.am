@@ -50,6 +50,7 @@ src_zi_LUA =						\
 	src/redisplay.lua				\
 	src/registers.lua				\
 	src/search.lua					\
+	src/syntax.lua					\
 	src/tbl_vars.lua				\
 	src/undo.lua					\
 	src/window.lua					\

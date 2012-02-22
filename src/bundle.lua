@@ -71,3 +71,18 @@ Set the current display attributes according to @i{theme_name}.
     end
   end
 )
+
+
+-- Load the grammar description for mode_name.
+Defun ("set_grammar",
+       {"string"},
+[[
+Set the current language grammar to @i{language_name}.
+]],
+  true,
+  function (language_name)
+    language_name = language_name or minibuf_read ("Language: ", "")
+
+   return require ("grammar." .. language_name)
+  end
+)
