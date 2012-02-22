@@ -87,27 +87,60 @@ local function scopetoattr (name)
 end
 
 
+-- Call scopetoattr for each element of captures.
+local function capturestoattr (captures)
+  if not captures then return nil end
+
+  for i,t in pairs (captures) do
+    captures[i] = scopetoattr (t.name)
+  end
+
+  if not table.empty (captures) then return captures end
+end
+
+
+-- precompile a valid expression
+local function compile_rex (match)
+  local ok, rex = pcall (onig.new, match, 0)
+  if not ok then return nil end
+
+  return rex
+end
+
+
+-- Compile patterns values from grammar file format to fast lookup table.
+local function compile_patterns (patterns)
+  if not patterns then return nil end
+
+  for i,v in ipairs (patterns) do
+    patterns[i] = {
+      rex      = compile_rex (v.match or v.begin),
+      captures = capturestoattr (v.captures or v.beginCaptures),
+      colors   = scopetoattr (v.name),
+      patterns = compile_patterns (v.patterns),
+    }
+
+    -- append optional sentinel to end of pattarns:
+    if v["end"] then
+      patterns[i].patterns = patterns[i].patterns or {}
+
+      table.insert (patterns[i].patterns, {
+        finish   = compile_rex (v["end"]),
+        captures = v.endCaptures and capturestoattr (v.endCaptureas) or v.captures,
+      })
+    end
+  end
+
+  return patterns
+end
+
+
 -- Load the grammar description for modename.
 function load_grammar (modename)
   local g = load_bundle (PATH_GRAMMARDIR .. "/" .. modename .. ".syntax")
 
-  if g and g.patterns then
-    for _,v in ipairs (g.patterns) do
-      if v.name then
-        v.attrs = scopetoattr (v.name)
-      end
-      if v.captures then
-        for _,t in ipairs (v.captures) do
-          t.attrs = scopetoattr (t.name)
-        end
-      end
-
-      local ok
-      ok, v.match = pcall (onig.new, v.match, 0)
-      if not ok then
-        v.match = nil
-      end
-    end
+  if g then
+    g.patterns = compile_patterns (g.patterns)
   end
 
   return g
