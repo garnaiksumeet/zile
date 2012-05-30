@@ -100,11 +100,17 @@ end
 
 
 -- precompile a valid expression
-local function compile_rex (match)
+function compile_rex (match)
   local ok, rex = pcall (onig.new, match, 0)
   if not ok then return nil end
 
   return rex
+end
+
+
+-- Does match have any \1 type back-references?
+local function has_backrefs (match)
+  return (nil ~= match:gsub ("\\[^%d]", ""):find ("\\%d"))
 end
 
 
@@ -125,8 +131,9 @@ local function compile_patterns (patterns)
       patterns[i].patterns = patterns[i].patterns or {}
 
       table.insert (patterns[i].patterns, {
-        finish   = compile_rex (v["end"]),
+        finish   = has_backrefs (v["end"]) or compile_rex (v["end"]),
         captures = v.endCaptures and capturestoattr (v.endCaptureas) or v.captures,
+        match    = has_backrefs (v["end"]) and v["end"]
       })
     end
   end

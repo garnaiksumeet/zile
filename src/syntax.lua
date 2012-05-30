@@ -45,13 +45,21 @@ local metatable = {
     st[o]:push { [op] = v }
   end,
 
+  -- Return the current capture offsets.
+  top_caps = function (self)
+    local top = self.syntax.caps:top ()
+    if top then return top.caps, top.begin end
+  end,
+
   -- Accessor methods.
   get_attrs     = function (self) return self.syntax.attrs end,
+  get_caps      = function (self) return self.syntax.caps end,
   get_colors    = function (self) return self.syntax.colors end,
   get_highlight = function (self) return self.syntax.highlight end,
   get_ops       = function (self) return self.syntax.ops end,
   get_pats      = function (self) return self.syntax.pats end,
   get_s         = function (self) return self.s end,
+
 }
 
 
@@ -66,6 +74,7 @@ function state.new (bp, o)
     ops   = {},
 
     -- parser state for the current line
+    caps      = stack.new (),
     colors    = stack.new (),
     highlight = stack.new (),
     pats      = stack.new {bp.grammar.patterns},
@@ -98,6 +107,38 @@ local function rex_exec (rex, s, i)
 end
 
 
+-- Marshal 0-indexed offsets into 1-indexed string.sub API.
+local function string_sub (s, b, e)
+  return s:sub (b + 1, e + 1)
+end
+
+
+-- Expand back-references using captures from begin string.
+-- Used to replace unexpanded backrefs in pattern.end expressions
+-- with captures from pattern.begin execution.
+local function expand (lexer, match)
+  local begincaps, begin = lexer:top_caps ()
+
+  if not match or not begincaps then return nil end
+
+  local b, e = 0, 0
+  repeat
+    b, e = match:find ("\\.", 1+ e)
+    if e then
+      local n = match:sub (e, e):match ("%d")
+      if n then
+        -- begincaps was adjusted to 0-based indexing by rex_exec
+        local replace = string_sub (begin, begincaps[(n*2)-1], begincaps[n*2])
+        match = match:sub (1, b -1) .. replace .. match:sub (e+1)
+        e = b + #replace  -- skip over replace contents
+      end
+    end
+  until b == nil
+
+  return compile_rex (match)
+end
+
+
 -- Find the leftmost matching expression.
 local function leftmost_match (lexer, i, pats)
   local b, e, caps, p
@@ -105,8 +146,9 @@ local function leftmost_match (lexer, i, pats)
   local s = lexer:get_s ()
 
   for _,v in ipairs (pats) do
-    if v.rex or v.finish then
-      local _b, _e, _caps = rex_exec (v.rex or v.finish, s, i)
+    local rex = expand (lexer, v.match) or v.rex or v.finish
+    if rex then
+      local _b, _e, _caps = rex_exec (rex, s, i)
       if _b and (not b or _b < b) then
         b, e, caps, p = _b, _e, _caps, v
       end
@@ -122,8 +164,9 @@ end
 local function parse (lexer)
   local b, e, caps, p
 
-  local colors = lexer:get_colors ()
-  local pats   = lexer:get_pats ()
+  local begincaps = lexer:get_caps ()
+  local colors    = lexer:get_colors ()
+  local pats      = lexer:get_pats ()
 
   local i = 0
   repeat
@@ -144,12 +187,14 @@ local function parse (lexer)
       -- if there are subexpressions, push those on the pattern stack
       if p.patterns then
         lexer:push_op ("push", b, colors:push (p.colors))
+        begincaps:push {caps = caps, begin = lexer.s}
         pats:push (p.patterns)
       end
 
       -- pop completed subexpressions off the pattern stack
       if p.finish then
         pats:pop ()
+        begincaps:pop ()
         lexer:push_op ("pop", e, colors:pop ())
       end
     end
