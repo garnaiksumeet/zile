@@ -87,4 +87,54 @@
     scope = 'variable.other',
     settings = { fontStyle = 'bold', foreground = 'blue' },
   },
+
+  -- patch files
+  {
+    scope = 'meta.diff.header',
+    settings = { fontStyle = 'bold' },
+  },
+  {
+    scope = 'meta.diff.header.command.flags',
+    settings = { fontStyle = 'normal' },
+  },
+  {
+    scope = 'meta.diff.header.mode',
+    settings = { fontStyle = 'normal' },
+  },
+  {
+    scope = 'meta.toc-list.file-name',
+    settings = 'yellow',
+  },
+  {
+    scope = 'meta.separator.diff',
+    settings = 'cyan',
+  },
+  {
+    scope = 'meta.diff.range',
+    settings = 'cyan',
+  },
+  {
+    scope = 'meta.toc-list.line-number.diff',
+    settings = { fontStyle = 'bold', foreground = 'cyan' },
+  },
+  {
+    scope = 'markup.inserted',
+    settings = 'green',
+  },
+  {
+    scope = 'markup.changed',
+    settings = 'yellow',
+  },
+  {
+    scope = 'markup.deleted',
+    settings = 'red',
+  },
+  {
+    scope = 'punctuation.definition.from-file.sha1.diff',
+    settings = 'yellow',
+  },
+  {
+    scope = 'punctuation.definition.to-file.sha1.diff',
+    settings = 'yellow',
+  },
 }

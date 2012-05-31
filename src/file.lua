@@ -615,7 +615,14 @@ function find_file (filename)
         s = ""
       end
       bp.text = EStr (s)
-      bp.grammar = load_grammar ("lua")
+
+      local mode_map = load_file_associations ()
+
+      -- load grammar associated with file extension
+      local x = filename:match ("%.([^%.]+)$")
+      if x and mode_map[x] then
+        bp.grammar = load_grammar (mode_map[x])
+      end
 
       -- Reset undo history
       bp.next_undop = nil

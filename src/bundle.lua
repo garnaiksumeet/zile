@@ -99,3 +99,26 @@ function load_grammar (modename)
 
   return g
 end
+
+
+-- return a dictionary to map from filename extension to syntax name.
+function load_file_associations ()
+  local auto_mode_alist = {}
+  for _, filename in pairs (posix.dir (PATH_GRAMMARDIR)) do
+    local syntax = filename:match ("^(.*)%.syntax$")
+    if syntax then
+      local g = load_bundle (PATH_GRAMMARDIR .. "/" .. filename)
+      if g then
+        if type (g.fileTypes) == "string" then
+          auto_mode_alist[g.fileTypes] = syntax
+        elseif type (g.fileTypes) == "table" then
+          for _,v in pairs (g.fileTypes) do
+            auto_mode_alist[v] = syntax
+          end
+        end
+      end
+    end
+  end
+
+  return auto_mode_alist
+end
