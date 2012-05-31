@@ -19,4 +19,6 @@
 
 pkggrammar_DATA =					\
 	src/grammar/init.lua				\
-	src/grammar/lua.lua
+	src/grammar/c.lua				\
+	src/grammar/lua.lua				\
+	src/grammar/sh.lua

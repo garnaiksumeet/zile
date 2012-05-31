@@ -615,7 +615,15 @@ function find_file (filename)
         s = ""
       end
       bp.text = EStr (s)
-      bp.grammar = zi.set_grammar ("lua")
+
+      -- load grammar associated with filename
+      local mode_map = get_variable ("mode_map") or {}
+      for k,v in pairs (mode_map) do
+        if filename:match (k) then
+          bp.grammar = zi.set_grammar (v)
+          break
+        end
+      end
 
       -- Reset undo history
       bp.next_undop = nil

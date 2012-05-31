@@ -140,7 +140,9 @@ local function draw_status_line (line, wp)
 
   term_move (line, 0)
 
-  local as = string.format ("--%s%2s  %-15s   %s %-9s (Lua",
+  local mode = "Fundamental"
+  if wp.bp.grammar then mode = wp.bp.grammar.language or "Fundamental" end
+  local as = string.format ("--%s%2s  %-15s   %s %-9s (" .. mode,
                             eol_type, make_modeline_flags (wp), wp.bp.name, make_screen_pos (wp),
                             string.format ("(%d,%d)", n + 1, get_goalc_bp (wp.bp, window_o (wp))))
 
