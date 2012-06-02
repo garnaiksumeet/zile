@@ -114,28 +114,40 @@ local function has_backrefs (match)
 end
 
 
+-- Next two functions are mutually recursive
+local compile_pattern, compile_patterns
+
+-- Compile a single pattern into fast lookup table.
+compile_pattern = function (v)
+  local p = {
+    captures = capturestoattr (v.captures or v.beginCaptures),
+    colors   = scopetoattr (v.name),
+    include  = v.include and v.include:match ("^#([%w_]+)$"),
+    patterns = compile_patterns (v.patterns),
+    rex      = compile_rex (v.match or v.begin),
+  }
+
+  -- append optional finish subexpression to end of pattarns:
+  if v["end"] then
+    p.patterns = p.patterns or {}
+
+    table.insert (p.patterns, {
+      captures = v.endCaptures and capturestoattr (v.endCaptureas) or v.captures,
+      finish   = has_backrefs (v["end"]) or compile_rex (v["end"]),
+      match    = has_backrefs (v["end"]) and v["end"],
+    })
+  end
+
+  return p
+end
+
+
 -- Compile patterns values from grammar file format to fast lookup table.
-local function compile_patterns (patterns)
+compile_patterns = function (patterns)
   if not patterns then return nil end
 
-  for i,v in ipairs (patterns) do
-    patterns[i] = {
-      rex      = compile_rex (v.match or v.begin),
-      captures = capturestoattr (v.captures or v.beginCaptures),
-      colors   = scopetoattr (v.name),
-      patterns = compile_patterns (v.patterns),
-    }
-
-    -- append optional sentinel to end of pattarns:
-    if v["end"] then
-      patterns[i].patterns = patterns[i].patterns or {}
-
-      table.insert (patterns[i].patterns, {
-        finish   = has_backrefs (v["end"]) or compile_rex (v["end"]),
-        captures = v.endCaptures and capturestoattr (v.endCaptureas) or v.captures,
-        match    = has_backrefs (v["end"]) and v["end"]
-      })
-    end
+  for k,v in pairs (patterns) do
+    patterns[k] = compile_pattern (v)
   end
 
   return patterns
@@ -147,7 +159,8 @@ function load_grammar (modename)
   local g = load_bundle (PATH_GRAMMARDIR .. "/" .. modename .. ".syntax")
 
   if g then
-    g.patterns = compile_patterns (g.patterns)
+    g.repository = compile_patterns (g.repository)
+    g.patterns   = compile_patterns (g.patterns)
   end
 
   return g
