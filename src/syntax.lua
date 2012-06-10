@@ -83,42 +83,56 @@ end
 
 -- Marshal 0-indexed buffer API into and out-of 1-indexed onig API.
 local function rex_exec (rex, s, i)
-  local b, e = rex:exec (s, i + 1)
-  return b and (b - 1), e and (e - 1)
+  local b, e, caps = rex:exec (s, i + 1)
+
+  for k,v in pairs (caps or {}) do
+    -- onig stores unmatched captures as `false'
+    if v then caps[k] = v - 1 end
+  end
+
+  if caps and table.empty (caps) then caps = nil end
+
+  return b and (b - 1), e and (e - 1), caps
 end
 
 
 -- Find the leftmost matching expression.
 local function leftmost_match (lexer, i, pats)
-  local b, e, p
+  local b, e, caps, p
 
   local s = lexer:get_s ()
 
   for _,v in ipairs (pats) do
     if v.match then
-      local _b, _e = rex_exec (v.match, s, i)
+      local _b, _e, _caps = rex_exec (v.match, s, i)
       if _b and (not b or _b < b) then
-        b, e, p = _b, _e, v
+        b, e, caps, p = _b, _e, _caps, v
       end
     end
   end
 
-  return b, e, p
+  return b, e, caps, p
 end
 
 
 -- Parse a string from left-to-right for matches against pats,
 -- queueing color push and pop instructions as we go.
 local function parse (lexer)
-  local b, e, p
+  local b, e, caps, p
 
   local pats = lexer:get_pats ()
 
   local i = 0
   repeat
-    b, e, p = leftmost_match (lexer, i, pats)
+    b, e, caps, p = leftmost_match (lexer, i, pats)
     if b then
       lexer:push_op ("push", b, p.attrs)
+      if p.captures and caps then
+        for k,t in pairs (p.captures) do
+          lexer:push_op ("push", caps[(k*2)-1], t.attrs)
+          lexer:push_op ("pop",  caps[k*2],     t.attrs)
+        end
+      end
       lexer:push_op ("pop", e, p.attrs)
 
       i = e + 1

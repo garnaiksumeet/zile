@@ -67,6 +67,26 @@ function set_theme (themename)
 end
 
 
+-- Lookup the nearest match for name in current theme and return
+-- associated attributes.
+local function scopetoattr (name)
+  if not name then return nil end
+
+  local key = {}
+  for w in name:gmatch "[^.]+" do
+    table.insert (key, w)
+  end
+
+  repeat
+    local scope = table.concat (key, ".")
+    if theme[scope] then
+      return theme[scope]
+    end
+    table.remove (key)
+  until #key == 0
+end
+
+
 -- Load the grammar description for modename.
 function load_grammar (modename)
   local g = load_bundle (PATH_GRAMMARDIR .. "/" .. modename .. ".syntax")
@@ -74,19 +94,12 @@ function load_grammar (modename)
   if g and g.patterns then
     for _,v in ipairs (g.patterns) do
       if v.name then
-        local key = {}
-        for w in v.name:gmatch "[^.]+" do
-          table.insert (key, w)
+        v.attrs = scopetoattr (v.name)
+      end
+      if v.captures then
+        for _,t in ipairs (v.captures) do
+          t.attrs = scopetoattr (t.name)
         end
-
-        repeat
-          local scope = table.concat (key, ".")
-          if theme[scope] then
-            v.attrs = theme[scope]
-            break
-          end
-          table.remove (key)
-        until #key == 0
       end
 
       local ok
