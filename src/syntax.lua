@@ -56,6 +56,7 @@ local metatable = {
   get_caps      = function (self) return self.syntax.caps end,
   get_colors    = function (self) return self.syntax.colors end,
   get_highlight = function (self) return self.syntax.highlight end,
+  get_n         = function (self) return self.n end,
   get_ops       = function (self) return self.syntax.ops end,
   get_pats      = function (self) return self.syntax.pats end,
   get_repo      = function (self) return self.repo end,
@@ -67,6 +68,8 @@ local metatable = {
 -- Return a new parser state for the buffer line n.
 function state.new (bp, o)
   local n = offset_to_line (bp, o)
+
+  bp.syntax.dirty = n + 1
 
   bp.syntax[n] = {
     -- calculate the attributes for each cell of this line using a stack-
@@ -85,6 +88,8 @@ function state.new (bp, o)
   local eol    = bol + buffer_line_len (bp, o)
   local region = get_buffer_region (bp, {start = bol, finish = eol})
   local lexer  = {
+    bp      = bp,
+    n       = n,
     repo    = bp.grammar.repository,
     s       = tostring (region),
     syntax  = bp.syntax[n],
@@ -243,9 +248,28 @@ end
 
 -- Return attributes for the line in bp containing o.
 function syntax_attrs (bp, o)
+  -- Can't highlight without any grammar!
   if not bp.grammar then return nil end
 
-  local lexer = highlight (state.new (bp, o))
+  local dirty = bp.syntax.dirty or 0
+  local n     = offset_to_line (bp, o)
+
+  -- if last calculations are still clean, return them
+  if n < dirty then return bp.syntax[n].attrs end
+
+  -- otherwise, backtrack to the first dirty line...
+  local ostart, lstart = o, n
+  while lstart >= 0 and lstart > dirty do
+    ostart = buffer_prev_line (bp, ostart)
+    lstart = lstart - 1
+  end
+
+  -- ...and recalculate highlights right up to this line
+  local lexer
+  repeat
+    lexer = highlight (state.new (bp, ostart))
+    ostart = buffer_next_line (bp, ostart)
+  until lexer:get_n () >= n
 
   return lexer:get_attrs ()
 end
