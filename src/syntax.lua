@@ -24,6 +24,9 @@ local state = {}
 function state.new (bp, o)
   local n = offset_to_line (bp, o)
 
+  assert (n == bp.syntax.dirty or 0)
+  bp.syntax.dirty = n + 1
+
   bp.syntax[n] = { attrs = {} }
 
   local bol    = buffer_start_of_line (bp, o)
@@ -31,6 +34,7 @@ function state.new (bp, o)
   local region = get_buffer_region (bp, {start = bol, finish = eol})
   local parser = {
     grammar = bp.grammar,
+    n       = n,
     s       = tostring (region),
     syntax  = bp.syntax[n],
   }
@@ -75,7 +79,25 @@ end
 function syntax_attrs (bp, o)
   if not bp.grammar then return nil end
 
-  local parser = highlight (state.new (bp, o))
+  local dirty = bp.syntax.dirty or 0
+  local n     = offset_to_line (bp, o)
+
+  -- If last calculations are still clean, return them.
+  if n < dirty then return bp.syntax[n].attrs end
+
+  -- Otherwise, backtrack to the first dirty line...
+  local ostart, lstart = o, n
+  while lstart >= 0 and lstart > dirty do
+    ostart = buffer_prev_line (bp, ostart)
+    lstart = lstart - 1
+  end
+
+  -- ...and recalculate highlights right up to this line.
+  local parser
+  repeat
+    parser = highlight (state.new (bp, ostart))
+    ostart = buffer_next_line (bp, ostart)
+  until parser.n >= n
 
   return parser.syntax.attrs
 end
