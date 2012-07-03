@@ -51,6 +51,20 @@ local metatable = {
     if top then return top.caps, top.begin end
   end,
 
+  -- Store the current parser state in the buffer.
+  store = function (self)
+    -- write the highlight attributes for this line
+    self.bp.syntax[self.n].attrs = self.syntax.attrs
+
+    -- write the current parsr state for the start of the next line
+    self.bp.syntax[self.n + 1] = {
+      caps      = self.syntax.caps,
+      colors    = self.syntax.colors,
+      highlight = self.syntax.highlight,
+      pats      = self.syntax.pats,
+    }
+  end,
+
   -- Accessor methods.
   get_attrs     = function (self) return self.syntax.attrs end,
   get_caps      = function (self) return self.syntax.caps end,
@@ -65,24 +79,24 @@ local metatable = {
 }
 
 
+-- Initialise parser state for the first line of bp.
+function state.init (bp)
+  if not bp.syntax[0] then
+    bp.syntax[0] = {
+      caps      = stack.new (),
+      colors    = stack.new (),
+      highlight = stack.new (),
+      pats      = stack.new {bp.grammar.patterns},
+    }
+  end
+end
+
+
 -- Return a new parser state for the buffer line n.
 function state.new (bp, o)
   local n = offset_to_line (bp, o)
 
   bp.syntax.dirty = n + 1
-
-  bp.syntax[n] = {
-    -- calculate the attributes for each cell of this line using a stack-
-    -- machine with color push and pop operations
-    attrs = {},
-    ops   = {},
-
-    -- parser state for the current line
-    caps      = stack.new (),
-    colors    = stack.new (),
-    highlight = stack.new (),
-    pats      = stack.new {bp.grammar.patterns},
-  }
 
   local bol    = buffer_start_of_line (bp, o)
   local eol    = bol + buffer_line_len (bp, o)
@@ -92,7 +106,18 @@ function state.new (bp, o)
     n       = n,
     repo    = bp.grammar.repository,
     s       = tostring (region),
-    syntax  = bp.syntax[n],
+    syntax  = {
+      -- calculate the attributes for each cell of this line using a stack-
+      -- machine with color push and pop operations
+      attrs = {},
+      ops   = {},
+
+      -- take a copy of the parser state for the current line
+      caps      = table.clone (bp.syntax[n].caps),
+      colors    = table.clone (bp.syntax[n].colors),
+      highlight = table.clone (bp.syntax[n].highlight),
+      pats      = table.clone (bp.syntax[n].pats),
+    },
   }
 
   return setmetatable (lexer, {__index = metatable})
@@ -242,6 +267,9 @@ local function highlight (lexer)
     end
   end
 
+  -- store the current parser state, so we can restart from here later
+  lexer:store ()
+
   return lexer
 end
 
@@ -250,6 +278,8 @@ end
 function syntax_attrs (bp, o)
   -- Can't highlight without any grammar!
   if not bp.grammar then return nil end
+
+  state.init (bp)
 
   local dirty = bp.syntax.dirty or 0
   local n     = offset_to_line (bp, o)
