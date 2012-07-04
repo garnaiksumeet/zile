@@ -32,13 +32,27 @@
 -- Syntax parser state.
 local state = {}
 
--- Queue an operation for pushing or popping value v to the
--- stack at offset o.
-local function push_op (st, op, o, v)
-  if not v then return nil end
-  st[o] = st[o] or stack.new ()
-  st[o]:push { [op] = v }
-end
+
+-- Metamethods for syntax parser state.
+local metatable = {
+
+  -- Queue an operation for pushing or popping value v to the
+  -- stack at offset o.
+  push_op = function (self, op, o, v)
+    if not v then return nil end
+    local st = self.syntax.ops
+    st[o] = st[o] or stack.new ()
+    st[o]:push { [op] = v }
+  end,
+
+  -- Accessor methods.
+  get_attrs     = function (self) return self.syntax.attrs end,
+  get_highlight = function (self) return self.syntax.highlight end,
+  get_ops       = function (self) return self.syntax.ops end,
+  get_pats      = function (self) return self.grammar.patterns end,
+  get_s         = function (self) return self.s end,
+}
+
 
 -- Return a new parser state for the buffer line n.
 function state.new (bp, o)
@@ -49,6 +63,9 @@ function state.new (bp, o)
     -- machine with color push and pop operations
     attrs = {},
     ops   = {},
+
+    -- parser state for the current line
+    highlight = stack.new (),
   }
 
   local bol    = buffer_start_of_line (bp, o)
@@ -60,7 +77,7 @@ function state.new (bp, o)
     syntax  = bp.syntax[n],
   }
 
-  return lexer
+  return setmetatable (lexer, {__index = metatable})
 end
 
 
@@ -75,7 +92,7 @@ end
 local function leftmost_match (lexer, i, pats)
   local b, e, p
 
-  local s = lexer.s
+  local s = lexer:get_s ()
 
   for _,v in ipairs (pats) do
     if v.match then
@@ -95,15 +112,14 @@ end
 local function parse (lexer)
   local b, e, p
 
-  local ops  = lexer.syntax.ops
-  local pats = lexer.grammar.patterns
+  local pats = lexer:get_pats ()
 
   local i = 0
   repeat
     b, e, p = leftmost_match (lexer, i, pats)
     if b then
-      push_op (ops, "push", b, p.attrs)
-      push_op (ops, "pop",  e, p.attrs)
+      lexer:push_op ("push", b, p.attrs)
+      lexer:push_op ("pop", e, p.attrs)
 
       i = e + 1
     end
@@ -113,18 +129,20 @@ end
 
 -- Highlight s according to queued color operations.
 local function highlight (lexer)
-  local highlight = stack.new ()
-
   parse (lexer)
+
+  local attrs     = lexer:get_attrs ()
+  local highlight = lexer:get_highlight ()
+  local ops       = lexer:get_ops ()
 
   for i = 0, #lexer.s do
     -- set the color at this position before it can be popped.
-    lexer.syntax.attrs[i] = highlight:top ()
-    for _,v in ipairs (lexer.syntax.ops[i] or {}) do
+    attrs[i] = highlight:top ()
+    for _,v in ipairs (ops[i] or {}) do
       if v.push then
         highlight:push (v.push)
         -- but, override the initial color if a new one is pushed.
-        lexer.syntax.attrs[i] = highlight:top ()
+        attrs[i] = highlight:top ()
 
       elseif v.pop then
         assert (v.pop == highlight:top ())
@@ -143,5 +161,5 @@ function syntax_attrs (bp, o)
 
   local lexer = highlight (state.new (bp, o))
 
-  return lexer.syntax.attrs
+  return lexer:get_attrs ()
 end
