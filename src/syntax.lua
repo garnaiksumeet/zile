@@ -17,9 +17,35 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+-- Syntax parser state.
+local state = {}
+
+-- Return a new parser state for the buffer line n.
+function state.new (bp, o)
+  local n = offset_to_line (bp, o)
+
+  bp.syntax[n] = { attrs = {} }
+
+  local bol    = buffer_start_of_line (bp, o)
+  local eol    = bol + buffer_line_len (bp, o)
+  local region = get_buffer_region (bp, {start = bol, finish = eol})
+  local parser = {
+    grammar = bp.grammar,
+    s       = tostring (region),
+    syntax  = bp.syntax[n],
+  }
+
+  return parser
+end
+
+
 -- Highlight s according to queued color operations.
-local function highlight (syntax, s, grammar)
-  for k,b,e in grammar.gmatch (s) do
+local function highlight (parser)
+  local gmatch = parser.grammar.gmatch
+  local s      = parser.s
+  local attrs  = parser.syntax.attrs
+
+  for k,b,e in gmatch (s) do
     local key, attr = {}, nil
     for w in k:gmatch "[^.]+" do
       table.insert (key, w)
@@ -36,10 +62,12 @@ local function highlight (syntax, s, grammar)
 
     if attr then
       for i = b, e - 1 do
-       syntax.attrs[i] = syntax.attrs[i] or attr
+       attrs[i] = attrs[i] or attr
       end
     end
   end
+
+  return parser
 end
 
 
@@ -47,15 +75,7 @@ end
 function syntax_attrs (bp, o)
   if not bp.grammar then return nil end
 
-  local bol    = buffer_start_of_line (bp, o)
-  local eol    = bol + buffer_line_len (bp, o)
-  local region = get_buffer_region (bp, {start = bol, finish = eol})
-  local n      = offset_to_line (bp, o)
+  local parser = highlight (state.new (bp, o))
 
-  bp.syntax[n] = { attrs = {} }
-  local syntax = bp.syntax[n]
-
-  highlight (syntax, tostring (region), bp.grammar)
-
-  return syntax.attrs
+  return parser.syntax.attrs
 end
