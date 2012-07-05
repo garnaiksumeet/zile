@@ -86,6 +86,7 @@ function state.init (bp)
       caps      = stack.new (),
       colors    = stack.new (),
       highlight = stack.new (),
+      o         = 0,
       pats      = stack.new {bp.grammar.patterns},
     }
   end
@@ -274,32 +275,39 @@ local function highlight (lexer)
 end
 
 
+-- Return attributes for the line n in bp.
+function syntax_next_line (bp, n)
+  -- Can't highlight without any grammar!
+  if not bp.grammar then return nil end
+
+  local syntax = bp.syntax
+  local dirty  = syntax.dirty or 0
+
+  -- if last calculations are still clean, return them
+  if n < dirty then return syntax[n].attrs end
+
+  if dirty > 0 then
+    syntax[dirty].o = buffer_next_line (bp, syntax[dirty - 1].o)
+  end
+
+  -- Highlighted the entire buffer already!
+  if not syntax[dirty].o then
+    term_redisplay ()
+    term_refresh ()
+    return nil
+  end
+
+  -- Recalculate the highlights.
+  local lexer = highlight (state.new (bp, syntax[dirty].o))
+  return lexer:get_n () == n and lexer:get_attrs () or {}
+end
+
+
 -- Return attributes for the line in bp containing o.
 function syntax_attrs (bp, o)
   -- Can't highlight without any grammar!
   if not bp.grammar then return nil end
 
   state.init (bp)
-
-  local dirty = bp.syntax.dirty or 0
-  local n     = offset_to_line (bp, o)
-
-  -- if last calculations are still clean, return them
-  if n < dirty then return bp.syntax[n].attrs end
-
-  -- otherwise, backtrack to the first dirty line...
-  local ostart, lstart = o, n
-  while lstart >= 0 and lstart > dirty do
-    ostart = buffer_prev_line (bp, ostart)
-    lstart = lstart - 1
-  end
-
-  -- ...and recalculate highlights right up to this line
-  local lexer
-  repeat
-    lexer = highlight (state.new (bp, ostart))
-    ostart = buffer_next_line (bp, ostart)
-  until lexer:get_n () >= n
-
-  return lexer:get_attrs ()
+  return syntax_next_line (bp, offset_to_line (bp, o))
 end

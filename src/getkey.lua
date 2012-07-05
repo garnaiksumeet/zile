@@ -59,6 +59,12 @@ function getkey (delay)
     next_refresh = posix.timeradd (now, refresh_wait)
   end
 
+  -- finish highlighting active window buffer while waiting for a key
+  local bp = cur_wp.bp
+  while not keycode and syntax_next_line (bp, bp.syntax.dirty or 0) do
+    keycode = getkeystroke (0)
+  end
+
   if not keycode then
     keycode = getkeystroke (delay)
   end

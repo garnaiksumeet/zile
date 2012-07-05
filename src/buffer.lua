@@ -103,8 +103,11 @@ function replace_estr (del, es)
     cur_bp.text:set (cur_bp.pt + math.max (oldgap, newlen) + added_gap, '\0', newlen + cur_bp.gap - math.max (oldgap, newlen) - added_gap)
   end
 
-  -- Syntax highlighting from line of insertion-point needs recalculating
-  cur_bp.syntax.dirty = offset_to_line (cur_bp, cur_bp.pt)
+  -- Syntax highlighting from line of insertion-point needs recalculating,
+  -- never increase dirty here to avoid skipping highlighting between two
+  -- far apart edits that happen before the highlighter has caught up.
+  local syntax = cur_bp.syntax
+  syntax.dirty = math.min (syntax.dirty or 0, offset_to_line (cur_bp, cur_bp.pt))
 
   -- Insert `newlen' chars.
   cur_bp.text:replace (cur_bp.pt, es)
