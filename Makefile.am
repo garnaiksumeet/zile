@@ -62,6 +62,7 @@ inplace_edit = sed					\
 
 include src/Makefile.am
 include zmacs/Makefile.am
+include zz/Makefile.am
 include tests/Makefile.am
 
 
