@@ -1,0 +1,80 @@
+require "std"
+yy = require "mklua"
+
+function test (s, ...)
+  local expect = {...}
+  local pos = 0
+  local i = 0
+  local err = false
+
+  -- expect an eof marker at the end
+  expect[#expect + 1] = { nil, "eof", #s + 1}
+
+  io.stderr:write ("\nTesting: "..s.." ?= "..tostring(expect).."\n")
+  repeat
+    i = i + 1
+    if i > #expect then
+      err = "too many tokens"
+    else
+      local tok, tokid
+      local x = expect[i]
+      tok, tokid, pos = yy.lex (s, pos)
+      if tok and tok ~= x[1] then
+	err = string.format ("tok %d: |%s| ~= %s", i, tostring(tok), tostring(x))
+      elseif tokid ~= x[2] then
+	err = string.format ("id %d: |%s| ~= %s", i, tostring(tokid), tostring(x))
+      elseif pos ~= x[3] then
+        err = string.format ("pos %d: |%d| ~= %s", i, pos, tostring(x))
+      else
+        io.stderr:write ("token "..tostring(i).." ok\n")
+      end
+    end
+  until i >= #expect or err
+  s = s:gsub ("\n", "\\n")
+  s = s:gsub ("\r", "\\r")
+  s = s:gsub ("\t", "\\t")
+  s = s:gsub ('"', '\\"')
+  print (string.format ('checking "%s"... %s', s, err or "ok"))
+end
+
+-- empty string
+test ('')
+
+-- whitespace
+for _, s in ipairs {'\n', '\r', '\t', ' ', '\n\n\r\r\t\t  '} do
+  test (s)
+end
+
+-- comment
+for _, s in ipairs {';', ';\n', ';x', ';x\n', '; "()', ';long\n', ';\n; ', ';x\n;long'} do
+  test (s)
+end
+
+-- single char tokens
+for _, s in ipairs {'(', ')', "'"} do
+  test (s, {s, "char", #s})
+end
+
+-- eof in string
+for _, s in ipairs {'"', '"x', '"long', '"\n', '"x\n', '"long\n', '"x\ny', '"long\nlong'} do
+  test (s, {string.sub (s, 2), "incomplete string", #s})
+end
+
+-- single line string
+for _, s in pairs {'""', '";"', '"("', '"x"', '"long"'} do
+  test (s, {string.sub (s, 2, -2), "string", #s})
+end
+
+-- multi-line string
+for _, s in ipairs {'"\n"', '";\n"', '"x\n"', ' "x\ny"', '\n"long\nlong long"'} do
+  test (s, {string.gsub (s, '.*"([^"]*)".*$', '%1'), "string", #s})
+end
+
+-- single words
+test ("x", {"x", "word", 1})
+test ("x ", {"x", "word", 1})
+test ("long", {"long", "word", 4})
+test ("long ", {"long", "word", 4})
+
+-- multiple words
+test (" x ; comment\ny", {"x", "word", 2}, {"y", "word", 14})

@@ -1,0 +1,20 @@
+require "std"
+yy = require "eval"
+
+function test (s, ...)
+  local expect = {...}
+  local pos = 0
+  local i = 0
+  local err = false
+
+  print (string.format ('checking "%s"... %s', s, prettytostring(yy.parse (s))))
+end
+
+-- empty string
+test ''
+
+test [[
+;; two key settings
+(global-set-key "\M-:" 'eval-expression)
+(global-unset-key "\M-:")
+]]
