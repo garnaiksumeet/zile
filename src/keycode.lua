@@ -17,11 +17,41 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+--[[ --------------------------- ]]--
+--[[ Sets that work with strict. ]]--
+--[[ --------------------------- ]]--
+
+local _mt, Set
+
+_mt = {
+  -- Return a new set containing the union of values from s and t.
+  __add = function (s, t)
+    local r = Set ()
+    for k in pairs (s) do rawset (r, k, true) end
+    for k in pairs (t) do rawset (r, k, true) end
+    return r
+ end,
+}
+
+
+Set = setmetatable ({}, {
+  -- Return a new set containing values from t.
+  __call = function (s, t)
+    local r = setmetatable ({}, _mt)
+    if t ~= nil then
+      for _, v in pairs (t) do rawset (r, v, true) end
+    end
+    return r
+  end,
+})
+
+
+
 -- Modifiers
 local modifier_names = { "A", "C" }
 
 -- Array of key names
-local is_key = set.new ({
+local is_key = Set {
   "backslash",
   "backspace",
   "cancel",
@@ -54,12 +84,12 @@ local is_key = set.new ({
   "tab",
   "up",
   "vtab",
-})
+}
 
 -- Insert printable characters in the ASCII range.
 for i=0x0,0x7f do
   if posix.isprint (string.char (i)) then
-    set.insert (is_key, string.char (i))
+    is_key[string.char (i)] = true
   end
 end
 
@@ -108,7 +138,7 @@ local keycode_mt = {
 }
 
 
-local is_modifier = set.new (modifier_names)
+local is_modifier = Set (modifier_names)
 
 -- Convert a single keychord string to its key code.
 keycode = memoize (function (chord)
