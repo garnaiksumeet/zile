@@ -1,8 +1,8 @@
 -- Buffer-oriented functions
 --
--- Copyright (c) 2010-2012 Free Software Foundation, Inc.
+-- Copyright (c) 2010-2013 Free Software Foundation, Inc.
 --
--- This file is part of GNU Zi.
+-- This file is part of GNU Zile.
 --
 -- This program is free software; you can redistribute it and/or modify it
 -- under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ function replace_estr (del, es)
   if oldgap + del < newlen then
     -- If gap would vanish, open it to min_gap.
     added_gap = min_gap
-    cur_bp.text:insert (cur_bp.pt, (es.s:len () + min_gap) - (cur_bp.gap + del))
+    cur_bp.text:insert (cur_bp.pt, (es:bytes () + min_gap) - (cur_bp.gap + del))
     cur_bp.gap = min_gap
   elseif oldgap + del > max_gap + newlen then
     -- If gap would be larger than max_gap, restrict it to max_gap.
@@ -336,7 +336,7 @@ function calculate_the_region ()
 end
 
 function delete_region (r)
-  if warn_if_readonly_buffer () then
+  if not r or warn_if_readonly_buffer () then
     return false
   end
 
@@ -345,6 +345,7 @@ function delete_region (r)
   replace_estr (get_region_size (r), EStr (""))
   goto_offset (m.o)
   unchain_marker (m)
+  deactivate_mark ()
 
   return true
 end

@@ -1,6 +1,6 @@
 -- Efficient string buffers
 --
--- Copyright (c) 2011-2012 Free Software Foundation, Inc.
+-- Copyright (c) 2011-2013 Free Software Foundation, Inc.
 --
 -- This file is part of GNU Zile.
 --
@@ -17,6 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local Object = require "std.object"
+
 local allocation_chunk_size = 16
 AStr = Object {
   _init = function (self, s)
@@ -26,10 +28,10 @@ AStr = Object {
   end,
 
   __tostring = function (self)
-    return self.buf.buffer:tostring (self:len ())
+    return self.buf.buffer:tostring (#self)
   end,
 
-  len = function (self) -- FIXME: In Lua 5.2 use __len metamethod (doesn't work for tables in 5.1)
+  __len = function (self)
     return self.length
   end,
 
@@ -45,30 +47,30 @@ AStr = Object {
   end,
 
   move = function (self, to, from, n)
-    assert (math.max (from, to) + n <= self:len () + 1)
+    assert (math.max (from, to) + n <= #self + 1)
     alien.memmove (self.buf.buffer:topointer (to), self.buf.buffer:topointer (from), n)
   end,
 
   set = function (self, from, c, n)
-    assert (from + n <= self:len () + 1)
+    assert (from + n <= #self + 1)
     alien.memset (self.buf.buffer:topointer (from), c:byte (), n)
   end,
 
   remove = function (self, from, n)
-    assert (from + n <= self:len () + 1)
+    assert (from + n <= #self + 1)
     self:move (from + n, from, n)
-    self:set_len (self:len () - n)
+    self:set_len (#self - n)
   end,
 
   insert = function (self, from, n)
-    assert (from <= self:len () + 1)
-    self:set_len (self:len () + n)
-    self:move (from + n, from, self:len () + 1 - (from + n))
+    assert (from <= #self + 1)
+    self:set_len (#self + n)
+    self:move (from + n, from, #self + 1 - (from + n))
     self:set (from, '\0', n)
   end,
 
   replace = function (self, from, rep)
-    assert (from + #rep <= self:len () + 1)
+    assert (from + #rep <= #self + 1)
     alien.memmove (self.buf.buffer:topointer (from), rep, #rep)
   end,
 
@@ -77,6 +79,6 @@ AStr = Object {
   end,
 
   rfind = function (self, s, from)
-    return find_substr (tostring (self), "", s, 1, from - 1, false, true, true, false, false) -- FIXME
+    return find_substr (tostring (self), s, 1, from - 1, false, true, true, false, false) -- FIXME
   end
 }

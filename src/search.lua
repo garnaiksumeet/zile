@@ -34,7 +34,7 @@ end
 local re_flags = rex_gnu.flags ()
 local re_find_err
 
-function find_substr (as, bs, s, from, to, forward, notbol, noteol, regex, icase)
+function find_substr (as, s, from, to, forward, notbol, noteol, regex, icase)
   local ret
   local cf = 0
 
@@ -57,7 +57,7 @@ function find_substr (as, bs, s, from, to, forward, notbol, noteol, regex, icase
     if not forward then
       ef = bit32.bor (ef, re_flags.backward)
     end
-    local match_from, match_to = r:find (string.sub (as .. bs, from, to), nil, ef)
+    local match_from, match_to = r:find (as:sub (from, to), nil, ef)
     if match_from then
       if forward then
         ret = match_to + from
@@ -83,7 +83,7 @@ local function search (o, s, forward, regexp)
   local from = forward and o or 1
   local to = forward and get_buffer_size (cur_bp) + 1 or o - 1
   local downcase = get_variable_bool ("case_fold_search") and no_upper (s, regexp)
-  local pos = find_substr (get_buffer_pre_point (cur_bp), get_buffer_post_point (cur_bp), s, from, to, forward, notbol, noteol, regexp, downcase)
+  local pos = find_substr (tostring (get_buffer_pre_point (cur_bp)) .. tostring (get_buffer_post_point (cur_bp)), s, from, to, forward, notbol, noteol, regexp, downcase)
   if not pos then
     return false
   end
