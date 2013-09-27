@@ -18,9 +18,15 @@ INDEX
 
 2 General questions
    2.1 What does `Zile' mean?
-   2.2 Why another clone of Emacs?  Why not just use Emacs?
-   2.3 I like the xyz function of Emacs but it's not in Zile!
-   2.4 Does Zile support Unicode/UTF-8?
+   2.2 What happend to the 'zile' lightweight emacs clone binary?
+   2.3 Does Zile support Unicode/UTF-8?
+
+3 Zmacs
+   3.1 Why another clone of Emacs?  Why not just use Emacs?
+   2.2 I like the xyz function of Emacs but it's not in Zile!
+
+4 Zi
+   4.1 Are you kidding me?  Emacs sucks, where is the lightweight vi clone?
 
 ------------------------------------------------------------------------------
 
@@ -57,8 +63,10 @@ INDEX
 
 1.4 Why are my settings in ~/.zile being ignored?
 
+    That file is called ~/.zmacs nowadays.
+
     Since Zile 2.2.16, booleans are, as in Emacs, `t' and `nil' rather
-    than `true' and `false'. If you haven't yet updated your .zile,
+    than `true' and `false'. If you haven't yet updated your settings,
     you should do so.
 
 ------------------------------------------------------------------------------
@@ -67,29 +75,51 @@ INDEX
 
 2.1 What does `Zile' mean?
 
-    It stands for `Zile Is Lossy Emacs'. It is just another recursive
-    acronym like `GNU'.  The reason that it's not written in all caps
-    is because Emacs (which is also an acronym) isn't either.
+    It stands for `Zile Implements Lua Editors'. It is just another
+    recursive acronym like `GNU'.  The reason that it's not written in
+    all caps is because Emacs (which is also an acronym) isn't either.
 
-2.2 Why another clone of Emacs?  Why not just use Emacs?
+2.2 What happend to the 'zile' lightweight emacs clone binary?
 
-    Zile is a small, portable Emacs for systems and situations in
+    When Zile was still written in C, it stood for 'Zile is lossy Emacs'
+    and you ran it using the 'zile' executable.  The Lua rewrite is
+    fabulously more flexible, allowing you to write whatever kind of
+    editor you like with it.  Don't believe me?  Then check out the
+    new 'zmacs' executable, which does everything C Zile used to, and
+    more.
+
+2.3 Does Zile support Unicode/UTF-8?
+
+    No.
+
+------------------------------------------------------------------------------
+
+3 Zmacs
+
+3.1 Why another clone of Emacs?  Why not just use Emacs?
+
+    Zmacs is a small, portable Emacs for systems and situations in
     which Emacs would be unsuitable, including small systems and quick
     editing sessions.
 
-2.3 I like the xyz function of Emacs but it's not in Zile!
+3.2 I like the xyz function of Emacs but it's not in Zmacs!
 
-    Zile was written to be small but fast and powerful enough.
+    Zmacs was written as an example of the kinds of editors you can
+    write with Zile.  If Zmacs is almost what you want, then just add
+    the feature(s) you need.  If you hate Zmacs, you can use Zile to
+    come up whatever sort of text editor you want!
 
-    In general, if you need something more powerful, use Emacs. You
-    could also try Jed, which emulates Emacs, is not much bigger than
-    Zile, and has syntax highlighting, a macro language and more
-    (http://www.jedsoft.org/jed/).
+------------------------------------------------------------------------------
 
-    If you still think that a certain function should be implemented
-    in Zile, please send a message to the developers (see question
-    1.7).
+4 Zi
 
-2.4 Does Zile support Unicode/UTF-8?
+4.1 Are you kidding me?  Emacs sucks, where is the lightweight vi clone?
 
-    No.
+    You haven't written it yet!  Remember, Zile Implements Lua Editors,
+    so you're more than half way there already, you just have to plumb
+    it together and write a bit of glue code.  And now that everything is
+    in Lua, you don't even need to wait for it to compile.
+
+    The repository is organized to enable distributing several different
+    editors already, and I'll be happy to add your Zi implementation to
+    the next release after you've sent me your patches.
