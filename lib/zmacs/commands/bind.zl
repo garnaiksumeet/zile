@@ -141,7 +141,7 @@ by 4 each time."
         ok = keyboard_quit ()
         break
       -- Digit pressed.
-      elseif string.match (string.char (key.key), '%d') then
+      elseif key.key < 256 and string.match (string.char (key.key), '%d') then
         local digit = key.key - string.byte ('0')
         thisflag.uniarg_empty = false
 
