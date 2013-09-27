@@ -47,6 +47,11 @@ GNU Zile NEWS                                    -*- outline -*-
   - Support for FAQ, COPYING and NEWS browsing in editor with \C-h\C-f,
     \C-h\C-c and \C-h\C-n (or F1 prefix equivalents).
 
+*** Zz
+
+  - A new editor, currently heavily based on Zmacs, but with the zlisp
+    evaluator removed in favour of direct Lua evaluation.
+
 ** Bug fixes
 
  - zmacs 'universal-argument' guards against non-ASCII keys, so you

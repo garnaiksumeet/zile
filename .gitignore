@@ -25,10 +25,6 @@
 /configure.lineno
 /doc/
 /lib/zile/version.lua
-/lib/zmacs/commands.lua
-/lib/zmacs/doc/
-/lib/zmacs/tests/package.m4
-/lib/zmacs/zmacs
 /m4/
 /maint.mk
 /zile*.tar.gz

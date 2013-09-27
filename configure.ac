@@ -58,4 +58,5 @@ AC_PROG_EGREP
 dnl Generate output
 AC_CONFIG_FILES([Makefile lib/zile/version.lua])
 AC_CONFIG_FILES([lib/zmacs/zmacs], [chmod +x lib/zmacs/zmacs])
+AC_CONFIG_FILES([lib/zz/zz], [chmod +x lib/zz/zz])
 AC_OUTPUT

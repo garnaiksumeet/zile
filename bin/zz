@@ -1,0 +1,117 @@
+#!/bin/sh
+SH=--[[                                             # -*- mode: lua; -*-
+##
+## Program initialisation
+##
+## Copyright (c) 2010-2013 Free Software Foundation, Inc.
+##
+## This file is part of GNU Zile.
+##
+## This program is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3, or (at your option)
+## any later version.
+##
+## This program is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# If LUA is not set, search PATH for something suitable.
+test -n "$LUA" || {
+  # Check that the supplied binary is executable and returns a compatible
+  # Lua version number.
+  func_vercheck ()
+  {
+    test -x "$1" && {
+      case `$1 -e 'print (_VERSION)' 2>/dev/null` in
+        "Lua 5.2") LUA=$1 ;;
+      esac
+    }
+  }
+
+  save_IFS="$IFS"
+  LUA=
+  for x in lua5.2 lua52 lua; do
+    IFS=:
+    for dir in $PATH; do
+      IFS="$save_IFS"
+      func_vercheck "$dir/$x"
+      test -n "$LUA" && break
+    done
+    IFS="$save_IFS"
+    test -n "$LUA" && break
+    e="${e+$e\n}zz: command not found on PATH: $x"
+  done
+}
+
+test -n "$LUA" || {
+  printf "${e+$e\n}zz: retry after 'export LUA=/path/to/lua52'\n" >&2
+  exit 1
+}
+
+# Reexecute using the interpreter suppiled in LUA, or found above.
+exec "$LUA" "$0" "$@"
+]]SH
+
+-- Remove current directory from package search path
+package.path = package.path:gsub (";%./%?.lua;", ";")
+package.path = package.path:gsub ("^%./%?.lua;", "")
+package.path = package.path:gsub (";%./%?.lua$", "")
+
+-- Load external modules:
+require "std" -- load std
+require_version ("std", "35") -- check version of std now we have require_version
+require "std.strict" -- optional stdlib module
+posix      = require_version ("posix", "29")
+curses     = require "curses" -- part of luaposix
+rex_gnu    = require_version ("rex_gnu", "2.7.1", nil, "[%S]+%s*([%S]+)")
+require_version ("alien", "0.7.0")
+
+-- Load Zile modules:
+require "zile.lib"
+require "zile.astr"
+require "zile.estr"
+require "zile.history"
+require "zile.bind"
+require "zile.buffer"
+require "zile.completion"
+require "zile.editfns"
+require "zile.funcs"
+require "zile.getkey"
+require "zile.file"
+require "zile.keycode"
+require "zile.killring"
+require "zile.line"
+require "zile.macro"
+require "zile.marker"
+require "zile.minibuf"
+require "zile.redisplay"
+require "zile.registers"
+require "zile.search"
+require "zile.undo"
+require "zile.window"
+
+-- Zile terminal handling
+require "zile.term_curses"
+require "zile.term_minibuf"
+require "zile.term_redisplay"
+
+-- Zz modules:
+require "zz.callbacks"
+require "zz.commands"
+require "zz.keymaps"
+require "zz.main"
+
+
+local function err (err)
+  term_close ()
+  print ("Internal error.  Please report this bug with steps to reproduce the problem")
+  print (debug.traceback(err, 2))
+  os.exit (2)
+end
+
+xpcall (main, err)

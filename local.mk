@@ -24,14 +24,22 @@
 
 ZILE_PATH = $(abs_builddir)/lib/?.lua;$(abs_srcdir)/lib/?.lua
 
+RM = rm
+
 
 ## ------------- ##
 ## Declarations. ##
 ## ------------- ##
 
+clean_local =
+
 include lib/zile/zile.mk
 include lib/zmacs/zmacs.mk
+include lib/zz/zz.mk
 include tests/tests.mk
+
+check-local: $(check_local)
+clean-local: $(clean_local)
 
 ## Use a builtin rockspec build with root at $(srcdir)/lib
 mkrockspecs_args = --module-dir $(srcdir)/lib

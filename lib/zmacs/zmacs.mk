@@ -89,8 +89,6 @@ lib/zmacs/commands.lua: $(dist_zmacscmds_DATA)
 	$(ZM_V_ZLC)LUA_PATH='$(ZILE_PATH);$(LUA_PATH)'		\
 	  $(LUA) $(srcdir)/lib/zmacs/zlc $(dist_zmacscmds_DATA) > $@
 
-RM = rm
-
 doc/dotzmacs.sample: lib/zmacs/mkdotzmacs.lua
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
 	test -d "$$d" || $(MKDIR_P) "$$d"
@@ -103,15 +101,15 @@ doc/zmacs.1: lib/zmacs/man-extras lib/zmacs/help2man-wrapper $(dist_zmacsdata_DA
 	test -d "$$d" || $(MKDIR_P) "$$d"
 ## Exit gracefully if zmacs.1.in is not writeable, such as during distcheck!
 	$(AM_V_GEN)if ( touch $@.w && rm -f $@.w; ) >/dev/null 2>&1; \
-	then						\
-	  builddir='$(builddir)'			\
-	  $(srcdir)/build-aux/missing --run		\
-	    $(HELP2MAN)					\
-	      '--output=$@'				\
-	      '--no-info'				\
-	      '--name=Zmacs'				\
+	then							\
+	  builddir='$(builddir)'				\
+	  $(srcdir)/build-aux/missing --run			\
+	    $(HELP2MAN)						\
+	      '--output=$@'					\
+	      '--no-info'					\
+	      '--name=Zmacs'					\
 	      --include '$(srcdir)/lib/zmacs/man-extras'	\
-	      '$(srcdir)/lib/zmacs/help2man-wrapper';	\
+	      '$(srcdir)/lib/zmacs/help2man-wrapper';		\
 	fi
 
 
@@ -153,27 +151,27 @@ $(dist_zmacsdocdata_DATA): $(srcdir)/lib/zmacs/doc
 ## ----------- ##
 
 
-CD_TESTDIR	= abs_srcdir=`$(am__cd) $(srcdir) && pwd`; cd $(tests_dir)
+CD_ZMACSTESTDIR	= abs_srcdir=`$(am__cd) $(srcdir) && pwd`; cd $(zmacstestsdir)
 
-tests_dir	= lib/zmacs/tests
-package_m4	= $(tests_dir)/package.m4
-testsuite	= $(tests_dir)/testsuite
+zmacstestsdir	= lib/zmacs/tests
+zmacspackage_m4	= $(zmacstestsdir)/package.m4
+zmacstestsuite	= $(zmacstestsdir)/testsuite
 
-TESTSUITE	= lib/zmacs/tests/testsuite
-TESTSUITE_AT	= $(tests_dir)/testsuite.at \
-		  $(tests_dir)/message.at \
-		  $(tests_dir)/write-file.at \
+ZMACSTESTSUITE	= lib/zmacs/tests/testsuite
+ZMACSTESTSUITE_AT	= $(zmacstestsdir)/testsuite.at \
+		  $(zmacstestsdir)/message.at \
+		  $(zmacstestsdir)/write-file.at \
 		  $(NOTHING_ELSE)
 
-EXTRA_DIST	+= $(testsuite) $(TESTSUITE_AT) $(package_m4)
+EXTRA_DIST	+= $(zmacstestsuite) $(ZMACSTESTSUITE_AT) $(zmacspackage_m4)
 
-TESTS_ENVIRONMENT = ZMACS="$(abs_builddir)/lib/zmacs/zmacs"
+ZMACSTESTS_ENVIRONMENT = ZMACS="$(abs_builddir)/lib/zmacs/zmacs"
 
-$(testsuite): $(package_m4) $(TESTSUITE_AT) Makefile.am
-	$(AM_V_GEN)$(AUTOTEST) -I '$(srcdir)' -I '$(tests_dir)' \
-	  $(TESTSUITE_AT) -o '$@'
+$(zmacstestsuite): $(zmacspackage_m4) $(ZMACSTESTSUITE_AT) Makefile.am
+	$(AM_V_GEN)$(AUTOTEST) -I '$(srcdir)' -I '$(zmacstestsdir)' \
+	  $(ZMACSTESTSUITE_AT) -o '$@'
 
-$(package_m4): $(dotversion) lib/zmacs/zmacs.mk
+$(zmacspackage_m4): $(dotversion) lib/zmacs/zmacs.mk
 	$(AM_V_GEN){ \
 	  echo '# Signature of the current package.'; \
 	  echo 'm4_define([AT_PACKAGE_NAME],      [$(PACKAGE_NAME)])'; \
@@ -184,23 +182,24 @@ $(package_m4): $(dotversion) lib/zmacs/zmacs.mk
 	  echo 'm4_define([AT_PACKAGE_URL],       [$(PACKAGE_URL)])'; \
 	} > '$@'
 
-$(tests_dir)/atconfig: config.status
+$(zmacstestsdir)/atconfig: config.status
 	$(AM_V_GEN)$(SHELL) config.status '$@'
 
-DISTCLEANFILES	+= $(tests_dir)/atconfig
+DISTCLEANFILES	+= $(zmacstestsdir)/atconfig
 
 # Hook the test suite into the check rule
 check_local += zmacs-check-local
-zmacs-check-local: $(tests_dir)/atconfig $(testsuite)
-	$(AM_V_at)$(CD_TESTDIR); \
-	CONFIG_SHELL='$(SHELL)' '$(SHELL)' "$$abs_srcdir/$(TESTSUITE)" \
-	  $(TESTS_ENVIRONMENT) $(BUILDCHECK_ENVIRONMENT) $(TESTSUITEFLAGS)
+zmacs-check-local: $(zmacstestsdir)/atconfig $(zmacstestsuite)
+	$(AM_V_at)$(CD_ZMACSTESTDIR); \
+	CONFIG_SHELL='$(SHELL)' '$(SHELL)' "$$abs_srcdir/$(ZMACSTESTSUITE)" \
+	  $(ZMACSTESTS_ENVIRONMENT) $(BUILDCHECK_ENVIRONMENT) $(ZMACSTESTSUITEFLAGS)
 
 # Remove any file droppings left behind by testsuite.
-clean-local:
-	$(CD_TESTDIR); \
-	test -f "$$abs_srcdir/$(TESTSUITE)" && \
-	  '$(SHELL)' "$$abs_srcdir/$(TESTSUITE)" --clean || :
+clean_local += zmacs-clean-local
+zmacs-clean-local:
+	$(CD_ZMACSTESTDIR); \
+	test -f "$$abs_srcdir/$(ZMACSTESTSUITE)" && \
+	  '$(SHELL)' "$$abs_srcdir/$(ZMACSTESTSUITE)" --clean || :
 
 
 ## ------------- ##

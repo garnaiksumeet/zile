@@ -1,0 +1,239 @@
+;; Disk file handling
+;;
+;; Copyright (c) 2009-2013 Free Software Foundation, Inc.
+;;
+;; This file is part of GNU Zile.
+;;
+;; This program is free software; you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+(defun find-file (string)
+  "Edit file @i{filename}.
+Switch to a buffer visiting file @i{filename},
+creating one if none already exists."
+  (interactive)
+  (lambda (filename)
+    "local ok = false
+
+    if not filename then
+      filename = minibuf_read_filename ('Find file: ', cur_bp.dir)
+    end
+
+    if not filename then
+      ok = keyboard_quit ()
+    elseif filename ~= '' then
+      ok = find_file (filename)
+    end
+
+    return ok"))
+
+
+(defun find-file-read-only (string)
+  "Edit file @i{filename} but don't allow changes.
+Like `find-file' but marks buffer as read-only.
+Use @kbd{M-x toggle-read-only} to permit editing."
+  (interactive)
+  (lambda (filename)
+    "local ok = lisp.execute_function ('find-file', filename)
+    if ok then
+      cur_bp.readonly = true
+    end"))
+
+
+(defun find-alternate-file ()
+  "Find the file specified by the user, select its buffer, kill previous buffer.
+If the current buffer now contains an empty file that you just visited
+(presumably by mistake), use this command to visit the file you really want."
+  (interactive)
+  (lambda ()
+    "local buf = cur_bp.filename
+    local base, ms, as
+
+    if not buf then
+      buf = cur_bp.dir
+    else
+      base = posix.basename (buf)
+    end
+    ms = minibuf_read_filename ('Find alternate: ', buf, base)
+
+    local ok = false
+    if not ms then
+      ok = keyboard_quit ()
+    elseif ms ~= '' and check_modified_buffer (cur_bp ()) then
+      kill_buffer (cur_bp)
+      ok = find_file (ms)
+    end
+
+    return ok"))
+
+
+(defun insert-file (string)
+  "Insert contents of file FILENAME into buffer after point.
+Set mark after the inserted text."
+  (interactive)
+  (lambda (file)
+    "local ok = true
+
+    if warn_if_readonly_buffer () then
+      return false
+    end
+
+    if not file then
+      file = minibuf_read_filename ('Insert file: ', cur_bp.dir)
+      if not file then
+        ok = keyboard_quit ()
+      end
+    end
+
+    if not file or file == '' then
+      ok = false
+    end
+
+    if ok then
+      local s = io.slurp (file)
+      if s then
+        insert_estr (EStr (s))
+        lisp.execute_function ('set-mark-command')
+      else
+        ok = minibuf_error ('%s: %s', file, posix.errno ())
+      end
+    end
+
+    return ok"))
+
+
+(defun save-buffer ()
+  "Save current buffer in visited file if modified.  By default, makes the
+previous version into a backup file if this is the first save."
+  (interactive)
+  (lambda ()
+    "return save_buffer (cur_bp)"))
+
+
+(defun write-file (string)
+  "Write current buffer into file @i{filename}.
+This makes the buffer visit that file, and marks it as not modified.
+
+Interactively, confirmation is required unless you supply a prefix argument."
+  (interactive)
+  (lambda (filename)
+    "return write_buffer (cur_bp, filename == nil,
+                         command.is_interactive () and not lastflag.set_uniarg,
+                         filename, 'Write file: ')"))
+
+
+(defun save-some-buffers ()
+  "Save some modified file-visiting buffers.  Asks user about each one."
+  (interactive)
+  (lambda ()
+    "return save_some_buffers ()"))
+
+
+(defun save-buffers-kill-emacs ()
+  "Offer to save each buffer, then kill this process."
+  (interactive)
+  (lambda ()
+    "if not save_some_buffers () then
+      return false
+    end
+
+    for _, bp in ipairs (buffers) do
+      if bp.modified and not bp.needname then
+        while true do
+          local ans = minibuf_read_yesno ('Modified buffers exist; exit anyway? (yes or no) ')
+          if ans == nil then
+            return keyboard_quit ()
+          elseif not ans then
+            return false
+          end
+          break -- We have found a modified buffer, so stop.
+        end
+      end
+    end
+
+    thisflag.quit = true"))
+
+
+(defun cd (string)
+  "Make DIR become the current buffer's default directory."
+  (interactive)
+  (lambda (dir)
+    "if not dir and command.is_interactive () then
+      dir = minibuf_read_filename ('Change default directory: ', cur_bp.dir)
+    end
+
+    if not dir then
+      return keyboard_quit ()
+    end
+
+    if dir ~= '' then
+      local st = posix.stat (dir)
+      if not st or not st.type == 'directory' then
+        minibuf_error (string.format ([[`%s' is not a directory]], dir))
+      elseif posix.chdir (dir) == -1 then
+        minibuf_write (string.format ('%s: %s', dir, posix.errno ()))
+      else
+        cur_bp.dir = dir
+        return true
+      end
+    end"))
+
+
+(defun insert-buffer (string)
+  "Insert after point the contents of BUFFER.
+Puts mark after the inserted text."
+  (interactive)
+  (lambda (buffer)
+    "local ok = true
+
+    local def_bp = buffers[#buffers]
+    for i = 2, #buffers do
+      if buffers[i] == cur_bp then
+        def_bp = buffers[i - 1]
+        break
+      end
+    end
+
+    if warn_if_readonly_buffer () then
+      return false
+    end
+
+    if not buffer then
+      local cp = make_buffer_completion ()
+      buffer = minibuf_read (string.format ('Insert buffer (default %s): ', def_bp.name),
+                             '', cp, buffer_name_history)
+      if not buffer then
+        ok = keyboard_quit ()
+      end
+    end
+
+    if ok then
+      local bp
+
+      if buffer and buffer ~= '' then
+        bp = find_buffer (buffer)
+        if not bp then
+          ok = minibuf_error (string.format ([[Buffer `%s' not found]], buffer))
+        end
+      else
+        bp = def_bp
+      end
+
+      if ok then
+        insert_buffer (bp)
+        lisp.execute_function ('set-mark-command')
+      end
+    end
+
+    return ok"))

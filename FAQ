@@ -28,6 +28,9 @@ INDEX
 4 Zi
    4.1 Are you kidding me?  Emacs sucks, where is the lightweight vi clone?
 
+5 Zz
+   5.1 How about some more editors, as examples, then?
+
 ------------------------------------------------------------------------------
 
 1 Functionality
@@ -107,7 +110,7 @@ INDEX
     Zmacs was written as an example of the kinds of editors you can
     write with Zile.  If Zmacs is almost what you want, then just add
     the feature(s) you need.  If you hate Zmacs, you can use Zile to
-    come up whatever sort of text editor you want!
+    code up whatever sort of text editor you want!
 
 ------------------------------------------------------------------------------
 
@@ -123,3 +126,13 @@ INDEX
     The repository is organized to enable distributing several different
     editors already, and I'll be happy to add your Zi implementation to
     the next release after you've sent me your patches.
+
+------------------------------------------------------------------------------
+
+5 Zz
+
+5.1 How about some more editors, as examples, then?
+
+    Sure!  Where Zmacs is a reimplementation of C Zile (and then some)
+    for the old timers... Zz is the editor I actually use for my
+    day-to-day editing.  I even use Zz to maintain Zmacs.
