@@ -32,12 +32,10 @@ M.version = M.program .. " " .. M.VERSION
 
 -- Copyright messages.
 M.COPYRIGHT_STRING  = "Copyright (C) 2013 Free Software Foundation, Inc."
-M.COPYRIGHT_NOTICE  = "GNU " .. M.Name .. " comes with ABSOLUTELY NO WARRANTY; " ..
-    " type C-h C-w for full details.\n" ..
-  "GNU " .. M.Name .. " is Free Software--Free as in Freedom--" ..
-    "so you can redistribute copies\n" ..
-  "of " .. M.Name .." and modify it; type C-h C-c to see the conditions.\n" ..
-  "\n" ..
+M.COPYRIGHT_NOTICE  = "GNU " .. M.Name .. " comes with ABSOLUTELY NO WARRANTY.\n" ..
+  "You may redistribute copies of " .. M.Name .. "\n" ..
+  "under the terms of the GNU General Public License.\n" ..
+  "For more information about these matters, see the file named COPYING.\n" ..
   "Report bugs to " .. M.PACKAGE_BUGREPORT .. "."
 
 return M

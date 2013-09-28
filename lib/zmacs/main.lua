@@ -37,7 +37,11 @@ Keys not working properly?   See the FAQ   C-h C-f
 ]] .. prog.COPYRIGHT_STRING .. [[
 
 
-]] .. prog.COPYRIGHT_NOTICE
+GNU ]] .. prog.Name .. [[ comes with ABSOLUTELY NO WARRANTY; type C-h C-w for full details.
+GNU ]] .. prog.Name .. [[ is Free Software--Free as in Freedom--so you can redistribute copies
+of ]] .. prog.Name .. [[ and modify it; type C-h C-c to see the conditions.
+
+Report bugs to ]] .. prog.PACKAGE_BUGREPORT .. "."
 
 
 -- Runtime constants
