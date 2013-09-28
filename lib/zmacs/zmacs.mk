@@ -66,7 +66,7 @@ dist_zmacsdata_DATA =					\
 	lib/zmacs/keymaps.lua				\
 	lib/zmacs/eval.lua				\
 	lib/zmacs/main.lua				\
-	lib/zmacs/tbl_vars.lua				\
+	lib/zmacs/variables.lua				\
 	lib/zmacs/zlisp.lua				\
 	$(dist_zmacscmds_DATA)				\
 	$(NOTHING_ELSE)
@@ -93,7 +93,7 @@ lib/zmacs/commands.lua: $(dist_zmacscmds_DATA)
 
 RM = rm
 
-doc/dotzmacs.sample: lib/zmacs/tbl_vars.lua lib/zmacs/mkdotzmacs.lua
+doc/dotzmacs.sample: lib/zmacs/variables.lua lib/zmacs/mkdotzmacs.lua
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
 	test -d "$$d" || $(MKDIR_P) "$$d"
 	$(AM_V_GEN)PACKAGE='$(PACKAGE)'				\

@@ -21,7 +21,7 @@ require "std"
 require "zile.lib"
 
 -- Load variables
-require "zmacs.tbl_vars"
+require "zmacs.variables"
 
 io.stdout:write (
   [[

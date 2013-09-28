@@ -231,7 +231,7 @@ end
 
 -- Initialise a buffer
 function init_buffer (bp)
-  if get_variable_bool ("auto-fill-mode") then
+  if get_variable_bool ("auto_fill_mode") then
     bp.autofill = true
   end
 end
@@ -378,7 +378,7 @@ end
 
 -- Return a safe tab width for the given buffer.
 function tab_width (bp)
-  return math.max (get_variable_number_bp (bp, "tab-width"), 1)
+  return math.max (get_variable_number_bp (bp, "tab_width"), 1)
 end
 
 function create_auto_buffer (name)

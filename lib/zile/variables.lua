@@ -25,7 +25,9 @@ function get_variable (var)
 end
 
 function get_variable_bp (bp, var)
-  return ((bp and bp.vars and bp.vars[var]) or main_vars[var] or {}).val
+  -- prefer Defvar'ed name for value lookup.
+  local key = varname_map[var] or var
+  return ((bp and bp.vars and bp.vars[key]) or main_vars[key] or {}).val
 end
 
 function get_variable_number_bp (bp, var)
@@ -47,14 +49,15 @@ function get_variable_bool (var)
 end
 
 function set_variable (var, val)
+  local key = varname_map[var] or var
   local vars
-  if (main_vars[var] or {}).islocal then
+  if (main_vars[key] or {}).islocal then
     cur_bp.vars = cur_bp.vars or {}
     vars = cur_bp.vars
   else
     vars = main_vars
   end
-  vars[var] = vars[var] or {}
+  vars[key] = vars[key] or {}
 
-  vars[var].val = val
+  vars[key].val = val
 end

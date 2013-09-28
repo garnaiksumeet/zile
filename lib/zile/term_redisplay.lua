@@ -77,7 +77,7 @@ local function draw_line (line, startcol, wp, o, rp, highlight, cur_tab_width)
 end
 
 local function calculate_highlight_region (wp)
-  if (wp ~= cur_wp and not get_variable_bool ("highlight-nonselected-windows"))
+  if (wp ~= cur_wp and not get_variable_bool ("highlight_nonselected_windows"))
     or wp.bp.mark == nil
     or not wp.bp.mark_active then
     return false

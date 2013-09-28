@@ -113,7 +113,8 @@
     if not name then
       ok = false
     else
-      local doc = main_vars[name].doc
+      local key = varname_map[name]
+      local doc = main_vars[key].doc
 
       if not doc then
         ok = false

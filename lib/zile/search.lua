@@ -78,7 +78,7 @@ function search (o, s, forward, regexp)
   local noteol = not forward and o <= get_buffer_size (cur_bp)
   local from = forward and o or 1
   local to = forward and get_buffer_size (cur_bp) + 1 or o - 1
-  local downcase = get_variable_bool ("case-fold-search") and no_upper (s, regexp)
+  local downcase = get_variable_bool ("case_fold_search") and no_upper (s, regexp)
   -- FIXME: The following is horribly inefficient, but re_search_2 also concatenates copies of the strings
   local pos = find_substr (tostring (get_buffer_pre_point (cur_bp)) .. tostring (get_buffer_post_point (cur_bp)), s, from, to, forward, notbol, noteol, regexp, downcase)
   if not pos then
