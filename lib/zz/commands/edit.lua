@@ -1,30 +1,36 @@
-;; Editing commands.
-;;
-;; Copyright (c) 2010-2013 Free Software Foundation, Inc.
-;;
-;; This file is part of GNU Zile.
-;;
-;; This program is free software; you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 3, or (at your option)
-;; any later version.
-;;
-;; This program is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- Editing commands.
+--
+-- Copyright (c) 2010-2013 Free Software Foundation, Inc.
+--
+-- This file is part of GNU Zile.
+--
+-- This program is free software; you can redistribute it and/or modify it
+-- under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 3, or (at your option)
+-- any later version.
+--
+-- This program is distributed in the hope that it will be useful, but
+-- WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-- General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
+
+local lisp = require "zz.eval"
+local Defun, Defvar = lisp.Defun, lisp.Defvar
 
 
-(defun set_fill_column (number)
-  "Set `fill_column' to specified argument.
+Defun ("set_fill_column",
+  {"number"},
+[[
+Set `fill_column' to specified argument.
 Use C-u followed by a number to specify a column.
-Just C-u as argument means to use the current column."
-  (interactive)
-  (lambda (n)
-    "if not n and command.is_interactive () then
+Just C-u as argument means to use the current column.
+]],
+  true,
+  function (n)
+    if not n and command.is_interactive () then
       local o = get_buffer_pt (cur_bp) - get_buffer_line_o (cur_bp)
       if lastflag.set_uniarg then
         n = current_prefix_arg
@@ -44,24 +50,34 @@ Just C-u as argument means to use the current column."
 
     minibuf_write (string.format ('Fill column set to %d (was %d)', n, get_variable_number ('fill_column')))
     set_variable ('fill_column', tostring (n))
-    return true"))
+    return true
+  end
+)
 
 
-(defun quoted_insert ()
-  "Read next input character and insert it.
-This is useful for inserting control characters."
-  (interactive)
-  (lambda ()
-    "minibuf_write ('C-q-')
+Defun ("quoted_insert",
+  {},
+[[
+Read next input character and insert it.
+This is useful for inserting control characters.
+]],
+  true,
+  function ()
+    minibuf_write ('C-q-')
     insert_char (string.char (bit32.band (getkey_unfiltered (GETKEY_DEFAULT), 0xff)))
-    minibuf_clear ()"))
+    minibuf_clear ()
+  end
+)
 
 
-(defun fill_paragraph ()
-  "Fill paragraph at or after point."
-  (interactive)
-  (lambda ()
-    "local m = point_marker ()
+Defun ("fill_paragraph",
+  {},
+[[
+Fill paragraph at or after point.
+]],
+  true,
+  function ()
+    local m = point_marker ()
 
     undo_start_sequence ()
 
@@ -89,11 +105,15 @@ This is useful for inserting control characters."
     goto_offset (m.o)
     unchain_marker (m)
 
-    undo_end_sequence ()"))
+    undo_end_sequence ()
+  end
+)
 
 
-(defun shell_command (string boolean)
-  "Execute string @i{command} in inferior shell; display output, if any.
+Defun ("shell_command",
+  {"string", "boolean"},
+[[
+Execute string @i{command} in inferior shell; display output, if any.
 With prefix argument, insert the command's output at point.
 
 Command is executed synchronously.  The output appears in the buffer
@@ -108,10 +128,11 @@ If @i{buffer} is a buffer or buffer name, put the output there,
 If @i{buffer} is not a buffer and not nil,
 insert output in current buffer.
 In either case, the buffer is first erased, and the output is
-inserted after point (leaving mark after it)."
-  (interactive)
-  (lambda (cmd output)
-    "if not output then
+inserted after point (leaving mark after it).
+]],
+  true,
+  function (cmd, output)
+    if not output then
       output = lastflag.set_uniarg
       -- Undo mangled interactive args when called from \C-u\M-!cmd\r.
       if output and cmd == tostring(current_prefix_arg) then cmd = nil end
@@ -123,13 +144,15 @@ inserted after point (leaving mark after it)."
     if cmd then
       return pipe_command (cmd, output, false)
     end
-    return true"))
+    return true
+  end
+)
 
 
--- The `start' and `finish' arguments are fake, hence their string type,
--- so they can be ignored.
-(defun shell_command_on_region (string string string boolean boolean)
-  "Execute string @i{command} in inferior shell with region as input.
+Defun ("shell_command_on_region",
+  {"string", "string", "string", "boolean", "boolean"},
+[[
+Execute string @i{command} in inferior shell with region as input.
 Normally display output (if any) in temp buffer `*Shell Command Output*'
 Prefix arg means replace the region with it.  Return the exit code of
 @i{command}.
@@ -149,10 +172,11 @@ the output is inserted after point (leaving mark after it).
 
 Option fifth arg @i{replace}, if non-nil, means to insert the
 output in place of text from @i{start} to @i{finish}, putting point and mark
-around it."
-  (interactive)
-  (lambda (start finish cmd output replace)
-    "cmd    = cmd or minibuf_read_shell_command ()
+around it.
+]],
+  true,
+  function (start, finish, cmd, output, replace)
+    cmd    = cmd or minibuf_read_shell_command ()
     replace = replace or lastflag.set_uniarg
     output  = output or lastflag.set_uniarg
 
@@ -164,23 +188,33 @@ around it."
       end
       return false
     end
-    return true"))
+    return true
+  end
+)
 
 
-(defun delete_region ()
-  "Delete the text between point and mark."
-  (interactive)
-  (lambda ()
-    "return delete_region (calculate_the_region ())"))
+Defun ("delete_region",
+  {},
+[[
+Delete the text between point and mark.
+]],
+  true,
+  function ()
+    return delete_region (calculate_the_region ())
+  end
+)
 
 
-(defun delete_blank_lines ()
-  "On blank line, delete all surrounding blank lines, leaving just one.
+Defun ("delete_blank_lines",
+  {},
+[[
+On blank line, delete all surrounding blank lines, leaving just one.
 On isolated blank line, delete that one.
-On nonblank line, delete any immediately following blank lines."
-  (interactive)
-  (lambda ()
-    "local m = point_marker ()
+On nonblank line, delete any immediately following blank lines.
+]],
+  true,
+  function ()
+    local m = point_marker ()
     local r = region_new (get_buffer_line_o (cur_bp), get_buffer_line_o (cur_bp))
 
     undo_start_sequence ()
@@ -232,78 +266,125 @@ On nonblank line, delete any immediately following blank lines."
     undo_end_sequence ()
 
     unchain_marker (m)
-    deactivate_mark ()"))
+    deactivate_mark ()
+  end
+)
 
 
-(defun downcase_word (number)
-  "Convert following word (or @i{arg} words) to lower case, moving over."
-  (interactive)
-  (lambda (arg)
-    "return execute_with_uniarg (true, arg, function () return setcase_word ('lower') end)"))
+Defun ("downcase_word",
+  {"number"},
+[[
+Convert following word (or @i{arg} words) to lower case, moving over.
+]],
+  true,
+  function (arg)
+    return execute_with_uniarg (true, arg, function () return setcase_word ('lower') end)
+  end
+)
 
 
-(defun upcase_word (number)
-  "Convert following word (or @i{arg} words) to upper case, moving over."
-  (interactive)
-  (lambda (arg)
-    "return execute_with_uniarg (true, arg, function () return setcase_word ('upper') end)"))
+Defun ("upcase_word",
+  {"number"},
+[[
+Convert following word (or @i{arg} words) to upper case, moving over.
+]],
+  true,
+  function (arg)
+    return execute_with_uniarg (true, arg, function () return setcase_word ('upper') end)
+  end
+)
 
 
-(defun capitalize_word (number)
-  "Capitalize the following word (or @i{arg} words), moving over.
+Defun ("capitalize_word",
+  {"number"},
+[[
+Capitalize the following word (or @i{arg} words), moving over.
 This gives the word(s) a first character in upper case
-and the rest lower case."
-  (interactive)
-  (lambda (arg)
-    "return execute_with_uniarg (true, arg, function () return setcase_word ('capitalized') end)"))
+and the rest lower case.
+]],
+  true,
+  function (arg)
+    return execute_with_uniarg (true, arg, function () return setcase_word ('capitalized') end)
+  end
+)
 
 
-(defun upcase_region ()
-  "Convert the region to upper case."
-  (interactive)
-  (lambda ()
-    "return setcase_region (string.upper)"))
+Defun ("upcase_region",
+  {},
+[[
+Convert the region to upper case.
+]],
+  true,
+  function ()
+    return setcase_region (string.upper)
+  end
+)
 
 
-(defun downcase_region ()
-  "Convert the region to lower case."
-  (interactive)
-  (lambda ()
-    "return setcase_region (string.lower)"))
+Defun ("downcase_region",
+  {},
+[[
+Convert the region to lower case.
+]],
+  true,
+  function ()
+    return setcase_region (string.lower)
+  end
+)
 
 
-(defun transpose_chars (number)
-  "Interchange characters around point, moving forward one character.
+Defun ("transpose_chars",
+  {"number"},
+[[
+Interchange characters around point, moving forward one character.
 With prefix arg ARG, effect is to take character before point
 and drag it forward past ARG other characters (backward if ARG negative).
-If no argument and at end of line, the previous two chars are exchanged."
-  (interactive)
-  (lambda (n)
-    "return transpose (n or 1, move_char)"))
+If no argument and at end of line, the previous two chars are exchanged.
+]],
+  true,
+  function (n)
+    return transpose (n or 1, move_char)
+  end
+)
 
 
-(defun transpose_words (number)
-  "Interchange words around point, leaving point at end of them.
+Defun ("transpose_words",
+  {"number"},
+[[
+Interchange words around point, leaving point at end of them.
 With prefix arg ARG, effect is to take word before or around point
 and drag it forward past ARG other words (backward if ARG negative).
 If ARG is zero, the words around or after point and around or after mark
-are interchanged."
-  (interactive)
-  (lambda (n)
-    "return transpose (n or 1, move_word)"))
+are interchanged.
+]],
+  true,
+  function (n)
+    return transpose (n or 1, move_word)
+  end
+)
 
 
-(defun transpose_sexps (number)
-  "Like @kbd{M-x transpose_words} but applies to sexps."
-  (interactive)
-  (lambda (n)
-    "return transpose (n or 1, move_sexp)"))
+Defun ("transpose_sexps",
+  {"number"},
+[[
+Like @kbd{M-x transpose_words} but applies to sexps.
+]],
+  true,
+  function (n)
+    return transpose (n or 1, move_sexp)
+  end
+)
 
 
-(defun transpose_lines (number)
-  "Exchange current line and previous line, leaving point after both.
+Defun ("transpose_lines",
+  {"number"},
+[[
+Exchange current line and previous line, leaving point after both.
 With argument ARG, takes previous line and moves it past ARG lines.
-With argument 0, interchanges line point is in with line mark is in."
-  (interactive)
-  (lambda (n)
-    "return transpose (n or 1, move_line)"))
+With argument 0, interchanges line point is in with line mark is in.
+]],
+  true,
+  function (n)
+    return transpose (n or 1, move_line)
+  end
+)

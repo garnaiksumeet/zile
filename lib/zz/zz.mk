@@ -36,27 +36,24 @@ dist_bin_SCRIPTS += bin/zz
 
 man_MANS += doc/zz.1
 
-## $(srcdir) prefixes are required when passing $(dist_zzcmds_DATA)
-## to zlc in the build tree with a VPATH build, otherwise it fails to
-## find them in $(builddir)/zz/commands/*.
 dist_zzcmds_DATA =					\
-	$(srcdir)/lib/zz/zlisp/bind.zl			\
-	$(srcdir)/lib/zz/zlisp/buffer.zl		\
-	$(srcdir)/lib/zz/zlisp/edit.zl			\
-	$(srcdir)/lib/zz/zlisp/file.zl			\
-	$(srcdir)/lib/zz/zlisp/killring.zl		\
-	$(srcdir)/lib/zz/zlisp/help.zl			\
-	$(srcdir)/lib/zz/zlisp/line.zl			\
-	$(srcdir)/lib/zz/zlisp/lisp.zl			\
-	$(srcdir)/lib/zz/zlisp/macro.zl			\
-	$(srcdir)/lib/zz/zlisp/marker.zl		\
-	$(srcdir)/lib/zz/zlisp/minibuf.zl		\
-	$(srcdir)/lib/zz/zlisp/move.zl			\
-	$(srcdir)/lib/zz/zlisp/registers.zl		\
-	$(srcdir)/lib/zz/zlisp/search.zl		\
-	$(srcdir)/lib/zz/zlisp/undo.zl			\
-	$(srcdir)/lib/zz/zlisp/variables.zl		\
-	$(srcdir)/lib/zz/zlisp/window.zl		\
+	lib/zz/commands/bind.lua			\
+	lib/zz/commands/buffer.lua			\
+	lib/zz/commands/edit.lua			\
+	lib/zz/commands/file.lua			\
+	lib/zz/commands/killring.lua			\
+	lib/zz/commands/help.lua			\
+	lib/zz/commands/line.lua			\
+	lib/zz/commands/lisp.lua			\
+	lib/zz/commands/macro.lua			\
+	lib/zz/commands/marker.lua			\
+	lib/zz/commands/minibuf.lua			\
+	lib/zz/commands/move.lua			\
+	lib/zz/commands/registers.lua			\
+	lib/zz/commands/search.lua			\
+	lib/zz/commands/undo.lua			\
+	lib/zz/commands/variables.lua			\
+	lib/zz/commands/window.lua			\
 	$(NOTHING_ELSE)
 
 dist_zzdata_DATA =					\
@@ -76,18 +73,6 @@ zz_zz_DEPS =						\
 	$(dist_zzdata_DATA)				\
 	$(NOTHING_ELSE)
 
-
-# AM_SILENT_RULES pretty printing.
-ZZ_V_ZLC    = $(zz__v_ZLC_@AM_V@)
-zz__v_ZLC_  = $(zz__v_ZLC_@AM_DEFAULT_V@)
-zz__v_ZLC_0 = @echo "  ZLC     " $@;
-zz__v_ZLC_1 =
-
-lib/zz/commands.lua: $(dist_zzcmds_DATA)
-	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
-	test -d "$$d" || $(MKDIR_P) "$$d"
-	$(ZZ_V_ZLC)LUA_PATH='$(ZILE_PATH);$(LUA_PATH)'		\
-	  $(LUA) $(srcdir)/lib/zz/zlc $(dist_zzcmds_DATA) > $@
 
 doc/dotzz.sample: lib/zz/mkdotzz.lua
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
@@ -210,9 +195,8 @@ EXTRA_DIST +=						\
 	doc/dotzz.sample				\
 	lib/zz/commands.lua				\
 	lib/zz/man-extras				\
-	lib/zz/mkdotzz.lua			\
-	lib/zz/zlc					\
-	lib/zz/zz.in				\
+	lib/zz/mkdotzz.lua				\
+	lib/zz/zz.in					\
 	$(NOTHING_ELSE)
 
 
@@ -225,7 +209,6 @@ CLEANFILES +=						\
 	$(NOTHING_ELSE)
 
 MAINTAINERCLEANFILES +=					\
-	$(srcdir)/lib/zz/commands.lua		\
 	$(srcdir)/lib/zz/zz.1.in			\
-	$(dist_zzdocdata_DATA)			\
+	$(dist_zzdocdata_DATA)				\
 	$(NOTHING_ELSE)

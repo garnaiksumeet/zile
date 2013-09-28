@@ -1,37 +1,48 @@
-;; Key bindings and extended commands
-;;
-;; Copyright (c) 2010-2013 Free Software Foundation, Inc.
-;;
-;; This file is part of GNU Zile.
-;;
-;; This program is free software; you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 3, or (at your option)
-;; any later version.
-;;
-;; This program is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- Key bindings and extended commands.
+--
+-- Copyright (c) 2010-2013 Free Software Foundation, Inc.
+--
+-- This file is part of GNU Zile.
+--
+-- This program is free software; you can redistribute it and/or modify it
+-- under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 3, or (at your option)
+-- any later version.
+--
+-- This program is distributed in the hope that it will be useful, but
+-- WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-- General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
+
+local lisp = require "zz.eval"
+local Defun, Defvar = lisp.Defun, lisp.Defvar
 
 
-(defun self_insert_command ()
-  "Insert the character you type.
-Whichever character you type to run this command is inserted."
-  (interactive)
-  (lambda ()
-    "return execute_with_uniarg (true, current_prefix_arg, self_insert_command)"))
+Defun ("self_insert_command",
+  {},
+[[
+Insert the character you type.
+Whichever character you type to run this command is inserted.
+]],
+  true,
+  function ()
+    return execute_with_uniarg (true, current_prefix_arg, self_insert_command)
+  end
+)
 
 
-(defun where_is ()
-  "Print message listing key sequences that invoke the command DEFINITION.
-Argument is a command name."
-  (interactive)
-  (lambda ()
-    "local name = minibuf_read_function_name ('Where is command: ')
+Defun ("where_is",
+  {},
+[[
+Print message listing key sequences that invoke the command DEFINITION.
+Argument is a command name.
+]],
+  true,
+  function ()
+    local name = minibuf_read_function_name ('Where is command: ')
 
     if name and lisp.function_exists (name) then
       local g = { f = name, bindings = '' }
@@ -44,36 +55,48 @@ Argument is a command name."
         minibuf_write (string.format ('%s is on %s', name, g.bindings))
       end
       return true
-    end"))
+    end
+  end
+)
 
 
-(localfun print_binding (key func)
-  "insert_string (string.format ('%-15s %s\n', key, tostring (func)))")
+local function print_binding (key, func)
+  insert_string (string.format ('%-15s %s\n', key, tostring (func)))
+end
 
 
-(localfun write_bindings_list (keyx binding)
-  "insert_string ('Key translations:\n')
+local function write_bindings_list (keyx, binding)
+  insert_string ('Key translations:\n')
   insert_string (string.format ('%-15s %s\n', 'key', 'binding'))
   insert_string (string.format ('%-15s %s\n', '---', '-------'))
 
-  walk_bindings (root_bindings, print_binding)")
+  walk_bindings (root_bindings, print_binding)
+end
 
 
-(defun describe_bindings ()
-  "Show a list of all defined keys, and their definitions."
-  (interactive)
-  (lambda ()
-    "write_temp_buffer ('*Help*', true, write_bindings_list)
-    return true"))
+Defun ("describe_bindings",
+  {},
+[[
+Show a list of all defined keys, and their definitions.
+]],
+  true,
+  function ()
+    write_temp_buffer ('*Help*', true, write_bindings_list)
+    return true
+  end
+)
 
 
-(defun global_set_key (string string)
-  "Bind a command to a key sequence.
+Defun ("global_set_key",
+  {"string", "string"},
+[[
+Bind a command to a key sequence.
 Read key sequence and function name, and bind the function to the key
-sequence."
-  (interactive)
-  (lambda (keystr name)
-    "local keys = prompt_key_sequence ('Set key globally', keystr)
+sequence.
+]],
+  true,
+  function (keystr, name)
+    local keys = prompt_key_sequence ('Set key globally', keystr)
 
     if keystr == nil then
       keystr = tostring (keys)
@@ -93,15 +116,20 @@ sequence."
 
     root_bindings[keys] = lisp.get_function_by_name (name)
 
-    return true"))
+    return true
+  end
+)
 
 
-(defun global_unset_key (string)
-  "Remove global binding of a key sequence.
-Read key sequence and unbind any function already bound to that sequence."
-  (interactive)
-  (lambda (keystr)
-    "local keys = prompt_key_sequence ('Unset key globally', keystr)
+Defun ("global_unset_key",
+  {"string"},
+[[
+Remove global binding of a key sequence.
+Read key sequence and unbind any function already bound to that sequence.
+]],
+  true,
+  function (keystr)
+    local keys = prompt_key_sequence ('Unset key globally', keystr)
 
     if keystr == nil then
       keystr = tostring (keys)
@@ -109,19 +137,24 @@ Read key sequence and unbind any function already bound to that sequence."
 
     root_bindings[keys] = nil
 
-    return true"))
+    return true
+  end
+)
 
 
-(defun universal_argument ()
-  "Begin a numeric argument for the following command.
+Defun ("universal_argument",
+  {},
+[[
+Begin a numeric argument for the following command.
 Digits or minus sign following @kbd{C-u} make up the numeric argument.
 @kbd{C-u} following the digits or minus sign ends the argument.
 @kbd{C-u} without digits or minus sign provides 4 as argument.
 Repeating @kbd{C-u} without digits or minus sign multiplies the argument
-by 4 each time."
-  (interactive)
-  (lambda ()
-    "local ok = true
+by 4 each time.
+]],
+  true,
+  function ()
+    local ok = true
 
     -- Need to process key used to invoke universal_argument.
     pushkey (lastkey ())
@@ -187,16 +220,26 @@ by 4 each time."
       minibuf_clear ()
     end
 
-    return ok"))
+    return ok
+  end
+)
 
 
-(defun keyboard_quit ()
-  "Cancel current command."
-  (interactive)
-  "keyboard_quit")
+Defun ("keyboard_quit",
+  {},
+[[
+Cancel current command.
+]],
+  true,
+  keyboard_quit
+)
 
 
-(defun suspend_zz ()
-  "Stop and return to superior process."
-  (interactive)
-  "suspend")
+Defun ("suspend_zz",
+  {},
+[[
+Stop and return to superior process.
+]],
+  true,
+  suspend
+)

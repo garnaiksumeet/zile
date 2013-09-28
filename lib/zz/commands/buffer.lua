@@ -1,29 +1,35 @@
-;; Buffer-oriented commands.
-;;
-;; Copyright (c) 2010-2013 Free Software Foundation, Inc.
-;;
-;; This file is part of GNU Zile.
-;;
-;; This program is free software; you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 3, or (at your option)
-;; any later version.
-;;
-;; This program is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- Buffer-oriented commands.
+--
+-- Copyright (c) 2010-2013 Free Software Foundation, Inc.
+--
+-- This file is part of GNU Zile.
+--
+-- This program is free software; you can redistribute it and/or modify it
+-- under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 3, or (at your option)
+-- any later version.
+--
+-- This program is distributed in the hope that it will be useful, but
+-- WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-- General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
+
+local lisp = require "zz.eval"
+local Defun, Defvar = lisp.Defun, lisp.Defvar
 
 
-(defun kill_buffer (string)
-  "Kill buffer BUFFER.
-With a nil argument, kill the current buffer."
-  (interactive)
-  (lambda (buffer)
-    "local ok = true
+Defun ("kill_buffer",
+  {"string"},
+[[
+Kill buffer BUFFER.
+With a nil argument, kill the current buffer.
+]],
+  true,
+  function (buffer)
+    local ok = true
 
     if not buffer then
       local cp = make_buffer_completion ()
@@ -53,14 +59,19 @@ With a nil argument, kill the current buffer."
       end
     end
 
-    return ok"))
+    return ok
+  end
+)
 
 
-(defun switch_to_buffer (string)
-  "Select buffer @i{buffer} in the current window."
-  (interactive)
-  (lambda (buffer)
-    "local ok = true
+Defun ("switch_to_buffer",
+  {"string"},
+[[
+Select buffer @i{buffer} in the current window.
+]],
+  true,
+  function (buffer)
+    local ok = true
     local bp = buffer_next (cur_bp)
 
     if not buffer then
@@ -87,28 +98,39 @@ With a nil argument, kill the current buffer."
       switch_to_buffer (bp)
     end
 
-    return ok"))
+    return ok
+  end
+)
 
 
-(defun toggle_read_only ()
-  "Change whether this buffer is visiting its file read-only."
-  (interactive)
-  (lambda ()
-    "cur_bp.readonly = not cur_bp.readonly"))
+Defun ("toggle_read_only",
+  {},
+[[
+Change whether this buffer is visiting its file read-only.
+]],
+  true,
+  function ()
+    cur_bp.readonly = not cur_bp.readonly
+  end
+)
 
 
-(defun auto_fill_mode ()
-  "Toggle Auto Fill mode.
+Defun ("auto_fill_mode",
+  {},
+[[
+Toggle Auto Fill mode.
 In Auto Fill mode, inserting a space at a column beyond `fill-column'
-automatically breaks the line at a previous space."
-  (interactive)
-  (lambda ()
-    "cur_bp.autofill = not cur_bp.autofill"))
+automatically breaks the line at a previous space.
+]],
+  true,
+  function ()
+    cur_bp.autofill = not cur_bp.autofill
+  end
+)
 
 
-(localfun write_buffers_list (old_wp)
-  ;; FIXME: Underline next line properly.
-  "insert_string ('CRM Buffer                Size  Mode             File\n')
+local function write_buffers_list (old_wp)
+  insert_string ('CRM Buffer                Size  Mode             File\n')
   insert_string ('--- ------                ----  ----             ----\n')
 
   -- Rotate buffer list to get current buffer at head.
@@ -135,18 +157,24 @@ automatically breaks the line at a previous space."
       end
       insert_newline ()
     end
-  end")
+  end
+end
 
 
-(defun list_buffers ()
-  "Display a list of names of existing buffers.
+Defun ("list_buffers",
+  {},
+[[
+Display a list of names of existing buffers.
 The list is displayed in a buffer named `*Buffer List*'.
 
 The C column has a `.' for the buffer from which you came.
 The R column has a `%' if the buffer is read-only.
 The M column has a `*' if it is modified.
 After this come the buffer name, its size in characters,
-its major mode, and the visited file name (if any)."
-  (interactive)
-  (lambda ()
-    "write_temp_buffer ('*Buffer List*', true, write_buffers_list, cur_wp)"))
+its major mode, and the visited file name (if any).
+]],
+  true,
+  function ()
+    write_temp_buffer ('*Buffer List*', true, write_buffers_list, cur_wp)
+  end
+)

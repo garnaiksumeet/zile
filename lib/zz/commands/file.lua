@@ -1,30 +1,36 @@
-;; Disk file handling
-;;
-;; Copyright (c) 2009-2013 Free Software Foundation, Inc.
-;;
-;; This file is part of GNU Zile.
-;;
-;; This program is free software; you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 3, or (at your option)
-;; any later version.
-;;
-;; This program is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- Disk file handling
+--
+-- Copyright (c) 2009-2013 Free Software Foundation, Inc.
+--
+-- This file is part of GNU Zile.
+--
+-- This program is free software; you can redistribute it and/or modify it
+-- under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 3, or (at your option)
+-- any later version.
+--
+-- This program is distributed in the hope that it will be useful, but
+-- WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-- General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
+
+local lisp = require "zz.eval"
+local Defun, Defvar = lisp.Defun, lisp.Defvar
 
 
-(defun find_file (string)
-  "Edit file @i{filename}.
+Defun ("find_file",
+  {"string"},
+[[
+Edit file @i{filename}.
 Switch to a buffer visiting file @i{filename},
-creating one if none already exists."
-  (interactive)
-  (lambda (filename)
-    "local ok = false
+creating one if none already exists.
+]],
+  true,
+  function (filename)
+    local ok = false
 
     if not filename then
       filename = minibuf_read_filename ('Find file: ', cur_bp.dir)
@@ -36,28 +42,38 @@ creating one if none already exists."
       ok = find_file (filename)
     end
 
-    return ok"))
+    return ok
+  end
+)
 
 
-(defun find_file_read_only (string)
-  "Edit file @i{filename} but don't allow changes.
+Defun ("find_file_read_only",
+  {"string"},
+[[
+Edit file @i{filename} but don't allow changes.
 Like `find_file' but marks buffer as read-only.
-Use @kbd{M-x toggle_read_only} to permit editing."
-  (interactive)
-  (lambda (filename)
-    "local ok = lisp.execute_function ('find_file', filename)
+Use @kbd{M-x toggle_read_only} to permit editing.
+]],
+  true,
+  function (filename)
+    local ok = lisp.execute_function ('find_file', filename)
     if ok then
       cur_bp.readonly = true
-    end"))
+    end
+  end
+)
 
 
-(defun find_alternate_file ()
-  "Find the file specified by the user, select its buffer, kill previous buffer.
+Defun ("find_alternate_file",
+  {},
+[[
+Find the file specified by the user, select its buffer, kill previous buffer.
 If the current buffer now contains an empty file that you just visited
-(presumably by mistake), use this command to visit the file you really want."
-  (interactive)
-  (lambda ()
-    "local buf = cur_bp.filename
+(presumably by mistake), use this command to visit the file you really want.
+]],
+  true,
+  function ()
+    local buf = cur_bp.filename
     local base, ms, as
 
     if not buf then
@@ -75,15 +91,20 @@ If the current buffer now contains an empty file that you just visited
       ok = find_file (ms)
     end
 
-    return ok"))
+    return ok
+  end
+)
 
 
-(defun insert_file (string)
-  "Insert contents of file FILENAME into buffer after point.
-Set mark after the inserted text."
-  (interactive)
-  (lambda (file)
-    "local ok = true
+Defun ("insert_file",
+  {"string"},
+[[
+Insert contents of file FILENAME into buffer after point.
+Set mark after the inserted text.
+]],
+  true,
+  function (file)
+    local ok = true
 
     if warn_if_readonly_buffer () then
       return false
@@ -110,41 +131,61 @@ Set mark after the inserted text."
       end
     end
 
-    return ok"))
+    return ok
+  end
+)
 
 
-(defun save_buffer ()
-  "Save current buffer in visited file if modified.  By default, makes the
-previous version into a backup file if this is the first save."
-  (interactive)
-  (lambda ()
-    "return save_buffer (cur_bp)"))
+Defun ("save_buffer",
+  {},
+[[
+Save current buffer in visited file if modified.  By default, makes the
+previous version into a backup file if this is the first save.
+]],
+  true,
+  function ()
+    return save_buffer (cur_bp)
+  end
+)
 
 
-(defun write_file (string)
-  "Write current buffer into file @i{filename}.
+Defun ("write_file",
+  {"string"},
+[[
+Write current buffer into file @i{filename}.
 This makes the buffer visit that file, and marks it as not modified.
 
-Interactively, confirmation is required unless you supply a prefix argument."
-  (interactive)
-  (lambda (filename)
-    "return write_buffer (cur_bp, filename == nil,
+Interactively, confirmation is required unless you supply a prefix argument.
+]],
+  true,
+  function (filename)
+    return write_buffer (cur_bp, filename == nil,
                          command.is_interactive () and not lastflag.set_uniarg,
-                         filename, 'Write file: ')"))
+                         filename, 'Write file: ')
+  end
+)
 
 
-(defun save_some_buffers ()
-  "Save some modified file-visiting buffers.  Asks user about each one."
-  (interactive)
-  (lambda ()
-    "return save_some_buffers ()"))
+Defun ("save_some_buffers",
+  {},
+[[
+Save some modified file-visiting buffers.  Asks user about each one.
+]],
+  true,
+  function ()
+    return save_some_buffers ()
+  end
+)
 
 
-(defun save_buffers_kill_zz ()
-  "Offer to save each buffer, then kill this process."
-  (interactive)
-  (lambda ()
-    "if not save_some_buffers () then
+Defun ("save_buffers_kill_zz",
+  {},
+[[
+Offer to save each buffer, then kill this process.
+]],
+  true,
+  function ()
+    if not save_some_buffers () then
       return false
     end
 
@@ -162,14 +203,19 @@ Interactively, confirmation is required unless you supply a prefix argument."
       end
     end
 
-    thisflag.quit = true"))
+    thisflag.quit = true
+  end
+)
 
 
-(defun cd (string)
-  "Make DIR become the current buffer's default directory."
-  (interactive)
-  (lambda (dir)
-    "if not dir and command.is_interactive () then
+Defun ("cd",
+  {"string"},
+[[
+Make DIR become the current buffer's default directory.
+]],
+  true,
+  function (dir)
+    if not dir and command.is_interactive () then
       dir = minibuf_read_filename ('Change default directory: ', cur_bp.dir)
     end
 
@@ -187,15 +233,20 @@ Interactively, confirmation is required unless you supply a prefix argument."
         cur_bp.dir = dir
         return true
       end
-    end"))
+    end
+  end
+)
 
 
-(defun insert_buffer (string)
-  "Insert after point the contents of BUFFER.
-Puts mark after the inserted text."
-  (interactive)
-  (lambda (buffer)
-    "local ok = true
+Defun ("insert_buffer",
+  {"string"},
+[[
+Insert after point the contents of BUFFER.
+Puts mark after the inserted text.
+]],
+  true,
+  function (buffer)
+    local ok = true
 
     local def_bp = buffers[#buffers]
     for i = 2, #buffers do
@@ -236,4 +287,6 @@ Puts mark after the inserted text."
       end
     end
 
-    return ok"))
+    return ok
+  end
+)
