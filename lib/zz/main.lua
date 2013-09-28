@@ -153,11 +153,11 @@ function process_args ()
         if v[1] == "doc" then
           io.write (v[2] .. "\n")
         elseif v[1] == "opt" then
-          local shortopt = string.format (", -%s", v[3])
-          local buf = string.format ("--%s%s %s", v[2], v[3] ~= '\0' and shortopt or "", v[5])
-          io.write (string.format ("%-24s%s\n", buf, v[6]))
+          local shortopt = string.format ("-%s, ", v[3])
+          local buf = string.format ("%s--%s %s", v[3] ~= '\0' and shortopt or "    ", v[2], v[5])
+          io.write (string.format ("  %-24s%s\n", buf, v[6]))
         elseif v[1] == "act" then
-          io.write (string.format ("%-24s%s\n", v[2], v[3]))
+          io.write (string.format ("  %-24s%s\n", v[2], v[3]))
         end
       end
 

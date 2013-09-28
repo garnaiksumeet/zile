@@ -96,7 +96,7 @@ doc/dotzz.sample: lib/zz/mkdotzz.lua
 	LUA_PATH='$(ZILE_PATH);$(LUA_PATH)'			\
 	  $(LUA) $(srcdir)/lib/zz/mkdotzz.lua > '$@'
 
-doc/zz.1: lib/zz/man-extras lib/zz/help2man-wrapper $(dist_zzdata_DATA)
+doc/zz.1: lib/zz/man-extras $(dist_zzdata_DATA)
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
 	test -d "$$d" || $(MKDIR_P) "$$d"
 ## Exit gracefully if zz.1.in is not writeable, such as during distcheck!
@@ -109,7 +109,7 @@ doc/zz.1: lib/zz/man-extras lib/zz/help2man-wrapper $(dist_zzdata_DATA)
 	      '--no-info'					\
 	      '--name=Zz'					\
 	      --include '$(srcdir)/lib/zz/man-extras'		\
-	      '$(srcdir)/lib/zz/help2man-wrapper';		\
+	      'lib/zz/zz';					\
 	fi
 
 
@@ -209,7 +209,6 @@ zz-clean-local:
 EXTRA_DIST +=						\
 	doc/dotzz.sample				\
 	lib/zz/commands.lua				\
-	lib/zz/help2man-wrapper			\
 	lib/zz/man-extras				\
 	lib/zz/mkdotzz.lua			\
 	lib/zz/zlc					\
