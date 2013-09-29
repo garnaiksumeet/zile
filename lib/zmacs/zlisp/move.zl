@@ -144,7 +144,7 @@ Precisely, if point is on line I, move to the start of line I + N."
     return false"))
 
 
-(local move_paragraph (uniarg forward backward line_extremum)
+(localfun move_paragraph (uniarg forward backward line_extremum)
   "if uniarg < 0 then
     uniarg = -uniarg
     forward = backward

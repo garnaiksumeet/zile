@@ -61,3 +61,8 @@ function set_variable (var, val)
 
   vars[key].val = val
 end
+
+function set_variable_buffer_local (var, val)
+  local key = varname_map[var] or var
+  main_vars[key].islocal = val
+end

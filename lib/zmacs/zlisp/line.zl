@@ -186,7 +186,7 @@ buffer."
     "return execute_with_uniarg (true, n, insert_tab)"))
 
 
-(local newline ()
+(localfun newline ()
   "if cur_bp.autofill and get_goalc () > get_variable_number ('fill-column') then
     fill_break_line ()
   end

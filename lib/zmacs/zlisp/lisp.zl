@@ -76,7 +76,7 @@ means use current buffer)."
     return lisp.loadstring (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))"))
 
 
-(var exprs_history
+(localvar exprs_history
   "history_new ()")
 
 (defun eval-expression (string)

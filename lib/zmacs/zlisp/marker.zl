@@ -48,7 +48,7 @@
     minibuf_write ('Mark set')"))
 
 
-(local mark (uniarg func)
+(localfun mark (uniarg func)
   "lisp.execute_function ('set-mark')
   local ret = lisp.execute_function (func, uniarg)
   if ret then

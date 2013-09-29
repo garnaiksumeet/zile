@@ -20,8 +20,12 @@
 require "std"
 require "zile.lib"
 
+-- required to load zmacs.commands
+require "zile.history"
+require "zile.variables"
+
 -- Load variables
-require "zmacs.variables"
+require "zmacs.commands"
 
 io.stdout:write (
   [[

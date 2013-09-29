@@ -20,7 +20,7 @@
 
 ;; FIXME: Add apropos
 
-(local write_function_description (name doc)
+(localfun write_function_description (name doc)
   "insert_string (string.format (
      '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n%s',
      name,
@@ -49,7 +49,7 @@
     return true"))
 
 
-(local write_key_description (name doc binding)
+(localfun write_key_description (name doc binding)
   "local _interactive = lisp.get_function_interactive (name)
   assert (_interactive ~= nil)
 
@@ -93,7 +93,7 @@
     return true"))
 
 
-(local write_variable_description (name curval doc)
+(localfun write_variable_description (name curval doc)
   "insert_string (string.format (
     '%s is a variable defined in ' .. [[`Lua source code']] .. '.\n\n' ..
     'Its value is %s\n\n%s',
@@ -126,7 +126,7 @@
     end
     return ok"))
 
-(local find_or_create_buffer_from_module (name)
+(localfun find_or_create_buffer_from_module (name)
   "local bp = find_buffer (name)
    if bp then
      switch_to_buffer (bp)

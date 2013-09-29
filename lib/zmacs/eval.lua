@@ -32,6 +32,34 @@ local cons = M.cons
 
 
 
+--[[ ==================== ]]--
+--[[ Variable Management. ]]--
+--[[ ==================== ]]--
+
+
+-- Some of the code in lib.zile behaves differently depending on the
+-- values of variables Defvar'd below, but the variable names exposed
+-- to the user may not be appropriate in some editor implementations,
+-- so we maintain 'varname_map' as a way of translating from the
+-- lookups with editor sepecific names into the canonical keys used
+-- to actually store the variable metadata.
+varname_map = {}
+
+main_vars = {}
+
+function M.Defvar (name, value, doc, local_when_set)
+  -- Zmacs variables use '-' in place of '_' for user visible names.
+  local key = name:gsub ("-", "_")
+
+  varname_map [name] = key
+  main_vars[key] = {
+    val = value,
+    doc = texi (doc:chomp ()),
+    islocal = local_when_set,
+  }
+end
+
+
 --[[ ======================== ]]--
 --[[ Symbol Table Management. ]]--
 --[[ ======================== ]]--

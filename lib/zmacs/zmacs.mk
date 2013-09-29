@@ -23,7 +23,7 @@
 ## ------------- ##
 
 zmacsdatadir = $(datadir)/zmacs
-zmacscmdsdir = $(zmacsdatadir)/commands
+zmacscmdsdir = $(zmacsdatadir)/zlisp
 
 
 ## ------ ##
@@ -40,23 +40,23 @@ man_MANS += doc/zmacs.1
 ## to zlc in the build tree with a VPATH build, otherwise it fails to
 ## find them in $(builddir)/zmacs/commands/*.
 dist_zmacscmds_DATA =					\
-	$(srcdir)/lib/zmacs/commands/bind.zl		\
-	$(srcdir)/lib/zmacs/commands/buffer.zl		\
-	$(srcdir)/lib/zmacs/commands/edit.zl		\
-	$(srcdir)/lib/zmacs/commands/file.zl		\
-	$(srcdir)/lib/zmacs/commands/killring.zl	\
-	$(srcdir)/lib/zmacs/commands/help.zl		\
-	$(srcdir)/lib/zmacs/commands/line.zl		\
-	$(srcdir)/lib/zmacs/commands/lisp.zl		\
-	$(srcdir)/lib/zmacs/commands/macro.zl		\
-	$(srcdir)/lib/zmacs/commands/marker.zl		\
-	$(srcdir)/lib/zmacs/commands/minibuf.zl		\
-	$(srcdir)/lib/zmacs/commands/move.zl		\
-	$(srcdir)/lib/zmacs/commands/registers.zl	\
-	$(srcdir)/lib/zmacs/commands/search.zl		\
-	$(srcdir)/lib/zmacs/commands/undo.zl		\
-	$(srcdir)/lib/zmacs/commands/variables.zl	\
-	$(srcdir)/lib/zmacs/commands/window.zl		\
+	$(srcdir)/lib/zmacs/zlisp/bind.zl		\
+	$(srcdir)/lib/zmacs/zlisp/buffer.zl		\
+	$(srcdir)/lib/zmacs/zlisp/edit.zl		\
+	$(srcdir)/lib/zmacs/zlisp/file.zl		\
+	$(srcdir)/lib/zmacs/zlisp/killring.zl		\
+	$(srcdir)/lib/zmacs/zlisp/help.zl		\
+	$(srcdir)/lib/zmacs/zlisp/line.zl		\
+	$(srcdir)/lib/zmacs/zlisp/lisp.zl		\
+	$(srcdir)/lib/zmacs/zlisp/macro.zl		\
+	$(srcdir)/lib/zmacs/zlisp/marker.zl		\
+	$(srcdir)/lib/zmacs/zlisp/minibuf.zl		\
+	$(srcdir)/lib/zmacs/zlisp/move.zl		\
+	$(srcdir)/lib/zmacs/zlisp/registers.zl		\
+	$(srcdir)/lib/zmacs/zlisp/search.zl		\
+	$(srcdir)/lib/zmacs/zlisp/undo.zl		\
+	$(srcdir)/lib/zmacs/zlisp/variables.zl		\
+	$(srcdir)/lib/zmacs/zlisp/window.zl		\
 	$(NOTHING_ELSE)
 
 dist_zmacsdata_DATA =					\
@@ -66,7 +66,6 @@ dist_zmacsdata_DATA =					\
 	lib/zmacs/keymaps.lua				\
 	lib/zmacs/eval.lua				\
 	lib/zmacs/main.lua				\
-	lib/zmacs/variables.lua				\
 	lib/zmacs/zlisp.lua				\
 	$(dist_zmacscmds_DATA)				\
 	$(NOTHING_ELSE)
@@ -93,7 +92,7 @@ lib/zmacs/commands.lua: $(dist_zmacscmds_DATA)
 
 RM = rm
 
-doc/dotzmacs.sample: lib/zmacs/variables.lua lib/zmacs/mkdotzmacs.lua
+doc/dotzmacs.sample: lib/zmacs/mkdotzmacs.lua
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
 	test -d "$$d" || $(MKDIR_P) "$$d"
 	$(AM_V_GEN)PACKAGE='$(PACKAGE)'				\
@@ -225,7 +224,6 @@ EXTRA_DIST +=						\
 ## ------------ ##
 
 CLEANFILES +=						\
-	bin/zmacs					\
 	doc/zmacs.1					\
 	$(NOTHING_ELSE)
 

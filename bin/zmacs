@@ -100,7 +100,6 @@ require "zmacs.callbacks"
 require "zmacs.commands"
 require "zmacs.keymaps"
 require "zmacs.main"
-require "zmacs.variables"
 
 
 local function err (err)

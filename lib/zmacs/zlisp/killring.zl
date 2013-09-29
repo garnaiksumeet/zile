@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(local kill_text (uniarg mark_func)
+(localfun kill_text (uniarg mark_func)
   "maybe_free_kill_ring ()
 
   if warn_if_readonly_buffer () then

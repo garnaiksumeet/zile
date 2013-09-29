@@ -90,7 +90,7 @@ is treated as a regexp.  See @kbd{M-x isearch-backward} for more info."
     "return isearch (false, not lastflag.set_uniarg)"))
 
 
-(local check_case (s)
+(localfun check_case (s)
   "Check the case of a string.
 Returns 'uppercase' if it is all upper case, 'capitalized' if just
 the first letter is, and nil otherwise."

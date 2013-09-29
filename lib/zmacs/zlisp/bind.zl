@@ -47,11 +47,11 @@ Argument is a command name."
     end"))
 
 
-(local print_binding (key func)
+(localfun print_binding (key func)
   "insert_string (string.format ('%-15s %s\n', key, func))")
 
 
-(local write_bindings_list (keyx binding)
+(localfun write_bindings_list (keyx binding)
   "insert_string ('Key translations:\n')
   insert_string (string.format ('%-15s %s\n', 'key', 'binding'))
   insert_string (string.format ('%-15s %s\n', '---', '-------'))

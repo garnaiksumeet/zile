@@ -106,7 +106,7 @@ automatically breaks the line at a previous space."
     "cur_bp.autofill = not cur_bp.autofill"))
 
 
-(local write_buffers_list (old_wp)
+(localfun write_buffers_list (old_wp)
   ;; FIXME: Underline next line properly.
   "insert_string ('CRM Buffer                Size  Mode             File\n')
   insert_string ('--- ------                ----  ----             ----\n')
