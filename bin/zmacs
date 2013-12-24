@@ -44,7 +44,13 @@ test -n "$LUA" || {
     done
     IFS="$save_IFS"
     test -n "$LUA" && break
+    e="${e+$e\n}zmacs: command not found on PATH: $x"
   done
+}
+
+test -n "$LUA" || {
+  printf "${e+$e\n}zmacs: retry after 'export LUA=/path/to/lua52'\n" >&2
+  exit 1
 }
 
 # Reexecute using the interpreter suppiled in LUA, or found above.
