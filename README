@@ -53,7 +53,7 @@ requires a Lua 5.2 runtime and a few additional Lua modules:
  * alien <http://mascarenhas.github.com/alien/>
 
 For exact version dependencies, see require_version statments in
-`src/zile`. These are most easily installed using [LuaRocks][].
+`bin/zmacs`. These are most easily installed using [LuaRocks][].
 
   [Emacs]:   http://www.gnu.org/s/emacs
   [gnulib]:  http://www.gnu.org/s/gnulib
