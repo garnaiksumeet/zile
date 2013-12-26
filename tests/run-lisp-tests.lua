@@ -34,7 +34,7 @@ local zile_fail = 0
 local emacs_pass = 0
 local emacs_fail = 0
 
-local zile_cmd = io.catfile (builddir, "bin", "zmacs")
+local zile_cmd = io.catfile (builddir, "lib", "zmacs", "zmacs")
 local srcdir_pat = string.escapePattern (srcdir)
 
 function run_test (test, name, editor_name, edit_file, cmd, args)
