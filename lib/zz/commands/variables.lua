@@ -21,7 +21,7 @@ local eval = require "zz.eval"
 local Defun, Defvar = eval.Defun, eval.Defvar
 
 
-Defvar ("inhibit-splash-screen", "nil",
+Defvar ("inhibit_splash_screen", "nil",
 [[
 Non-nil inhibits the startup screen.
 It also inhibits display of the initial message in the `*scratch*'
@@ -29,20 +29,20 @@ buffer.
 ]])
 
 
-Defvar ("standard-indent", "4",
+Defvar ("standard_indent", "4",
 [[
 Default number of columns for margin-changing functions to indent.
 ]])
 
 
-Defvar ("tab-width", "8",
+Defvar ("tab_width", "8",
 [[
 Distance between tab stops (for display of tab characters), in columns.
 ]])
-set_variable_buffer_local ("tab-width", true)
+set_variable_buffer_local ("tab_width", true)
 
 
-Defvar ("tab-always-indent", "t",
+Defvar ("tab_always_indent", "t",
 [[
 Controls the operation of the @kbd{TAB} key.
 If @samp{t}, hitting @kbd{TAB} always just indents the current line.
@@ -52,75 +52,75 @@ left margin or in the line's indentation, otherwise it inserts a
 ]])
 
 
-Defvar ("indent-tabs-mode", "t",
+Defvar ("indent_tabs_mode", "t",
 [[
 If non-nil, insert-tab inserts "real" @kbd{TAB}s; otherwise, it always inserts
 spaces.
 ]])
-set_variable_buffer_local ("indent-tabs-mode", true)
+set_variable_buffer_local ("indent_tabs_mode", true)
 
 
-Defvar ("fill-column", "70",
+Defvar ("fill_column", "70",
 [[
 Column beyond which automatic line-wrapping should happen.
 Automatically becomes buffer-local when set in any fashion.
 ]])
-set_variable_buffer_local ("fill-column", true)
+set_variable_buffer_local ("fill_column", true)
 
 
-Defvar ("auto-fill-mode", "nil",
+Defvar ("auto_fill_mode", "nil",
 [[
 If non-nil, Auto Fill Mode is automatically enabled.
 ]])
 
 
-Defvar ("kill-whole-line", "nil",
+Defvar ("kill_whole_line", "nil",
 [[
-If non-nil, `kill-line' with no arg at beg of line kills the whole line.
+If non-nil, `kill_line' with no arg at beg of line kills the whole line.
 ]])
 
 
-Defvar ("case-fold-search", "t",
+Defvar ("case_fold_search", "t",
 [[
 Non-nil means searches ignore case.
 ]])
-set_variable_buffer_local ("case-fold-search", true)
+set_variable_buffer_local ("case_fold_search", true)
 
 
-Defvar ("case-replace", "t",
+Defvar ("case_replace", "t",
 [[
-Non-nil means `query-replace' should preserve case in replacements.
+Non-nil means `query_replace' should preserve case in replacements.
 ]])
 
 
-Defvar ("ring-bell", "t",
+Defvar ("ring_bell", "t",
 [[
 Non-nil means ring the terminal bell on any error.
 ]])
 
 
-Defvar ("highlight-nonselected-windows", "nil",
+Defvar ("highlight_nonselected_windows", "nil",
 [[
 If non-nil, highlight region even in nonselected windows.
 ]])
 
 
-Defvar ("make-backup-files", "t",
+Defvar ("make_backup_files", "t",
 [[
 Non-nil means make a backup of a file the first time it is saved.
 This is done by appending `@samp{~}' to the file name.
 ]])
 
 
-Defvar ("backup-directory", "nil",
+Defvar ("backup_directory", "nil",
 [[
 The directory for backup files, which must exist.
 If this variable is @samp{nil}, the backup is made in the original file's
-directory.\nThis value is used only when `make-backup-files' is @samp{t}.
+directory.\nThis value is used only when `make_backup_files' is @samp{t}.
 ]])
 
 
-Defun ("set-variable",
+Defun ("set_variable",
   {"string", "string"},
 [[
 Set a variable value to the user-specified value.

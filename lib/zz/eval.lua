@@ -28,47 +28,27 @@
 
 local metadata = {}  -- variable docs and other metadata
 
-local name_to_key = memoize (function (name)
-  return string.gsub (name, "-", "_")
-end)
-
 
 -- Make a proxy table for main variables stored according to canonical
 -- "_" delimited format, along with metamethods that access the proxy
 -- while transparently converting to and from zlisp "-" delimited
 -- format.
-main_vars = setmetatable ({values = {}}, {
-  __index = function (self, name)
-    return rawget (self.values, name_to_key (name))
-  end,
-
-  __newindex = function (self, name, value)
-    return rawset (self.values, name_to_key (name), value)
-  end,
-
-  __pairs = function (self)
-    return function (t, k)
-	     local v, j = next (t, k and name_to_key (k) or nil)
-	     return v and v:gsub ("_", "-") or nil, j
-	   end, self.values, nil
-  end,
-})
+main_vars = {}
 
 
 function Defvar (name, value, doc)
-  local key = name_to_key (name)
-  main_vars[key] = value
-  metadata[key] = { doc = texi (doc:chomp ()) }
+  main_vars[name] = value
+  metadata[name] = { doc = texi (doc:chomp ()) }
 end
 
 
 function set_variable_buffer_local (name, bool)
-  return rawset (metadata[name_to_key (name)], "islocal", not not bool)
+  return rawset (metadata[name], "islocal", not not bool)
 end
 
 
 function get_variable (name, bp)
-  return ((bp or cur_bp or {}).vars or main_vars)[name_to_key (name)]
+  return ((bp or cur_bp or {}).vars or main_vars)[name]
 end
 
 
@@ -83,7 +63,7 @@ end
 
 
 function get_variable_doc (name)
-  local t = metadata[name_to_key (name)]
+  local t = metadata[name]
   return t and t.doc or ""
 end
 
@@ -94,14 +74,13 @@ end
 
 
 function set_variable (name, value, bp)
-  local key = name_to_key (name)
-  local t = metadata[key]
+  local t = metadata[name]
   if t and t.islocal then
     bp = bp or cur_bp
     bp.vars = bp.vars or {}
-    bp.vars[key] = value
+    bp.vars[name] = value
   else
-    main_vars[key]= value
+    main_vars[name]= value
   end
 
   return value
@@ -110,15 +89,14 @@ end
 -- Initialise buffer local variables.
 function init_buffer (bp)
   bp.vars = setmetatable ({}, {
-    __index    = main_vars.values,
+    __index    = main_vars,
 
     __newindex = function (self, name, value)
-	           local key = name_to_key (name)
-		   local t = metadata[key]
+		   local t = metadata[name]
 		   if t and t.islocal then
-		     return rawset (self, key, value)
+		     return rawset (self, name, value)
 		   else
-		     return rawset (main_vars, key, value)
+		     return rawset (main_vars, name, value)
 		   end
                  end,
   })
