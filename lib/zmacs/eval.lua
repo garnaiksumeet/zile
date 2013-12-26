@@ -178,6 +178,8 @@ end
 function M.evalexpr (node)
   if M.function_exists (node.value) then
     return node.quoted and node or evalcommand (node)
+  elseif node.value == "t" or node.value == "nil" then
+    return node
   end
   return cons (get_variable (node.value) or node)
 end
