@@ -42,7 +42,6 @@ dist_pkgdata_DATA =				\
 	lib/zile/term_minibuf.lua		\
 	lib/zile/term_redisplay.lua		\
 	lib/zile/undo.lua			\
-	lib/zile/variables.lua			\
 	lib/zile/version.lua			\
 	lib/zile/window.lua			\
 	$(NOTHING_ELSE)

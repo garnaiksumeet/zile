@@ -184,7 +184,7 @@ end
 
 function minibuf_read_variable_name (fmt)
   local cp = completion_new ()
-  for v in pairs (varname_map) do
+  for v in pairs (main_vars) do
     table.insert (cp.completions, v)
   end
 

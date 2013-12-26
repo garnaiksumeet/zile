@@ -37,27 +37,103 @@ local cons = M.cons
 --[[ ==================== ]]--
 
 
--- Some of the code in lib.zile behaves differently depending on the
--- values of variables Defvar'd below, but the variable names exposed
--- to the user may not be appropriate in some editor implementations,
--- so we maintain 'varname_map' as a way of translating from the
--- lookups with editor sepecific names into the canonical keys used
--- to actually store the variable metadata.
-varname_map = {}
+local metadata = {}  -- variable docs and other metadata
 
-main_vars = {}
+local name_to_key = memoize (function (name)
+  return string.gsub (name, "-", "_")
+end)
 
-function M.Defvar (name, value, doc, local_when_set)
-  -- Zmacs variables use '-' in place of '_' for user visible names.
-  local key = name:gsub ("-", "_")
 
-  varname_map [name] = key
-  main_vars[key] = {
-    val = value,
-    doc = texi (doc:chomp ()),
-    islocal = local_when_set,
-  }
+-- Make a proxy table for main variables stored according to canonical
+-- "_" delimited format, along with metamethods that access the proxy
+-- while transparently converting to and from zlisp "-" delimited
+-- format.
+main_vars = setmetatable ({values = {}}, {
+  __index = function (self, name)
+    return rawget (self.values, name_to_key (name))
+  end,
+
+  __newindex = function (self, name, value)
+    return rawset (self.values, name_to_key (name), value)
+  end,
+
+  __pairs = function (self)
+    return function (t, k)
+	     local v, j = next (t, k and name_to_key (k) or nil)
+	     return v and v:gsub ("_", "-") or nil, j
+	   end, self.values, nil
+  end,
+})
+
+
+function M.Defvar (name, value, doc)
+  local key = name_to_key (name)
+  main_vars[key] = value
+  metadata[key] = { doc = texi (doc:chomp ()) }
 end
+
+
+function set_variable_buffer_local (name, bool)
+  return rawset (metadata[name_to_key (name)], "islocal", not not bool)
+end
+
+
+function get_variable (name, bp)
+  return ((bp or cur_bp or {}).vars or main_vars)[name_to_key (name)]
+end
+
+
+function get_variable_number (name, bp)
+  return tonumber (get_variable (name, bp), 10)
+end
+
+
+function get_variable_bool (name, bp)
+  return get_variable (name, bp) ~= "nil"
+end
+
+
+function get_variable_doc (name)
+  local t = metadata[name_to_key (name)]
+  return t and t.doc or ""
+end
+
+
+function set_variable (name, value, bp)
+  local key = name_to_key (name)
+  local t = metadata[key]
+  if t and t.islocal then
+    bp = bp or cur_bp
+    bp.vars = bp.vars or {}
+    bp.vars[key] = value
+  else
+    main_vars[key]= value
+  end
+
+  return value
+end
+
+-- Initialise buffer local variables.
+function init_buffer (bp)
+  bp.vars = setmetatable ({}, {
+    __index    = main_vars.values,
+
+    __newindex = function (self, name, value)
+	           local key = name_to_key (name)
+		   local t = metadata[key]
+		   if t and t.islocal then
+		     return rawset (self, key, value)
+		   else
+		     return rawset (main_vars, key, value)
+		   end
+                 end,
+  })
+
+  if get_variable_bool ("auto_fill_mode", bp) then
+    bp.autofill = true
+  end
+end
+
 
 
 --[[ ======================== ]]--
