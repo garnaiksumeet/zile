@@ -1,5 +1,5 @@
 (set-mark (point))
 (forward-line 4)
-(shell-command-on-region (mark) (point) "sort" t t)
+(shell-command-on-region (point) (mark) "sort" t)
 (save-buffer)
 (save-buffers-kill-emacs)

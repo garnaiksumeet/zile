@@ -71,39 +71,73 @@ function write_temp_buffer (name, show, func, ...)
   end
 end
 
-function pipe_command (cmd, tempfile, insert, do_replace)
-  local cmdline = string.format ("%s 2>&1 <%s", cmd, tempfile)
-  local pipe = io.popen (cmdline, "r")
-  if not pipe then
-    return minibuf_error ("Cannot open pipe to process")
+--- Run a shell command in a unix pipe.
+-- @param cmd a shell command
+-- @param output buffer for output, or t for current buffer
+-- @param replace whether to replace original region
+-- @param input optional input to CMD
+-- @return true if CMD worked
+function pipe_command (cmd, output, replace, input)
+  local ok = true
+  local tempfile = "/dev/null"
+
+  if input then
+    tempfile = os.tmpname ()
+
+    local fd = io.open (tempfile, 'w')
+    if not fd then
+      return  minibuf_error ('Cannot open temporary file')
+    end
+
+    local written, err = fd:write (input)
+    if not written then
+      ok = minibuf_error ('Error writing to temporary file: ' .. err)
+    end
+
+    fd:close ()
   end
 
-  local out = pipe:read ("*a")
-  pipe:close ()
-  local eol = string.find (out, "\n")
-
-  if #out == 0 then
-    minibuf_write ("(Shell command succeeded with no output)")
-  else
-    if insert then
-      local del = 0
-      if do_replace and not warn_if_no_mark () then
-        local r = calculate_the_region ()
-        goto_offset (r.start)
-        del = get_region_size (r)
-      end
-      replace_estr (del, EStr (out, coding_eol_lf))
+  local out
+  if ok then
+    local cmdline = string.format ("%s 2>&1 <%s", cmd, tempfile)
+    local pipe = io.popen (cmdline, "r")
+    if not pipe then
+      ok = minibuf_error ("Cannot open pipe to process")
     else
-      local more_than_one_line = eol and eol ~= #out
-      write_temp_buffer ("*Shell Command Output*", more_than_one_line, insert_string, out)
-      if not more_than_one_line then
-        minibuf_write (out)
+      out = pipe:read ("*a")
+      pipe:close ()
+    end
+  end
+
+  if ok then
+    local eol = string.find (out, "\n")
+
+    if #out == 0 then
+      minibuf_write ("(Shell command succeeded with no output)")
+    else
+      if output == nil then
+        local more_than_one_line = eol and eol ~= #out
+        write_temp_buffer ("*Shell Command Output*", more_than_one_line, insert_string, out)
+        if not more_than_one_line then
+          minibuf_write (out)
+        end
+      else
+        local bp = find_buffer (output) or cur_bp
+        local del = 0
+        if replace and not warn_if_no_mark (bp) then
+          local r = calculate_the_region (bp)
+          goto_offset (r.start, bp)
+          del = get_region_size (r)
+        end
+        replace_estr (del, EStr (out, coding_eol_lf), bp)
       end
     end
   end
 
-  return true
+  if tempfile ~= "/dev/null" then os.remove (tempfile) end
+  return ok
 end
+
 
 function minibuf_read_shell_command ()
   local ms = minibuf_read ("Shell command: ", "")

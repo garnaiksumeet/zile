@@ -69,52 +69,53 @@ end
 -- Replace `del' chars after point with `es'.
 local min_gap = 1024 -- Minimum gap size after resize
 local max_gap = 4096 -- Maximum permitted gap size
-function replace_estr (del, es)
-  if warn_if_readonly_buffer () then
+function replace_estr (del, es, bp)
+  bp = bp or cur_bp
+  if warn_if_readonly_buffer (bp) then
     return false
   end
 
-  if es.eol ~= get_buffer_eol (cur_bp) then
-    es = EStr ("", get_buffer_eol (cur_bp)):cat (es)
+  if es.eol ~= get_buffer_eol (bp) then
+    es = EStr ("", get_buffer_eol (bp)):cat (es)
   end
 
-  local newlen = es:len (cur_bp.text.eol)
+  local newlen = es:len (bp.text.eol)
 
-  undo_save_block (cur_bp.pt, del, newlen)
+  undo_save_block (bp.pt, del, newlen)
 
   -- Adjust gap.
-  local oldgap = cur_bp.gap
+  local oldgap = bp.gap
   local added_gap = 0
   if oldgap + del < newlen then
     -- If gap would vanish, open it to min_gap.
     added_gap = min_gap
-    cur_bp.text:insert (cur_bp.pt, (es:bytes () + min_gap) - (cur_bp.gap + del))
-    cur_bp.gap = min_gap
+    bp.text:insert (bp.pt, (es:bytes () + min_gap) - (bp.gap + del))
+    bp.gap = min_gap
   elseif oldgap + del > max_gap + newlen then
     -- If gap would be larger than max_gap, restrict it to max_gap.
-    cur_bp.text:remove (cur_bp.pt + newlen + max_gap, (oldgap + del) - (max_gap + newlen))
-    cur_bp.gap = max_gap
+    bp.text:remove (bp.pt + newlen + max_gap, (oldgap + del) - (max_gap + newlen))
+    bp.gap = max_gap
   else
-    cur_bp.gap = oldgap + del - newlen
+    bp.gap = oldgap + del - newlen
   end
 
   -- Zero any new bit of gap not produced by insertion.
-  if math.max (oldgap, newlen) + added_gap < cur_bp.gap + newlen then
-    cur_bp.text:set (cur_bp.pt + math.max (oldgap, newlen) + added_gap, '\0', newlen + cur_bp.gap - math.max (oldgap, newlen) - added_gap)
+  if math.max (oldgap, newlen) + added_gap < bp.gap + newlen then
+    bp.text:set (bp.pt + math.max (oldgap, newlen) + added_gap, '\0', newlen + bp.gap - math.max (oldgap, newlen) - added_gap)
   end
 
   -- Insert `newlen' chars.
-  cur_bp.text:replace (cur_bp.pt, es)
-  cur_bp.pt = cur_bp.pt + newlen
+  bp.text:replace (bp.pt, es)
+  bp.pt = bp.pt + newlen
 
   -- Adjust markers.
-  for m in pairs (cur_bp.markers) do
+  for m in pairs (bp.markers) do
     if m.o > cur_bp.pt - newlen then
-      m.o = math.max (cur_bp.pt - newlen, m.o + newlen - del)
+      m.o = math.max (bp.pt - newlen, m.o + newlen - del)
     end
   end
 
-  cur_bp.modified = true
+  bp.modified = true
   if es:next_line (1) then
     thisflag.need_resync = true
   end
@@ -290,20 +291,22 @@ end
 
 -- Print an error message into the echo area and return true
 -- if the current buffer is readonly; otherwise return false.
-function warn_if_readonly_buffer ()
-  if cur_bp.readonly then
-    minibuf_error (string.format ("Buffer is readonly: %s", cur_bp.name))
+function warn_if_readonly_buffer (bp)
+  bp = bp or cur_bp
+  if bp.readonly then
+    minibuf_error (string.format ("Buffer is readonly: %s", bp.name))
     return true
   end
 
   return false
 end
 
-function warn_if_no_mark ()
-  if not cur_bp.mark then
+function warn_if_no_mark (bp)
+  bp = bp or cur_bp
+  if not bp.mark then
     minibuf_error ("The mark is not set now")
     return true
-  elseif not cur_bp.mark_active then
+  elseif not bp.mark_active then
     minibuf_error ("The mark is not active now")
     return true
   end
@@ -320,12 +323,13 @@ function get_region_size (rp)
 end
 
 -- Return the region between point and mark.
-function calculate_the_region ()
-  if warn_if_no_mark () then
+function calculate_the_region (bp)
+  bp = bp or cur_bp
+  if warn_if_no_mark (bp) then
     return nil
   end
 
-  return region_new (cur_bp.pt, cur_bp.mark.o)
+  return region_new (bp.pt, bp.mark.o)
 end
 
 function delete_region (r)
@@ -575,10 +579,11 @@ function offset_to_line (bp, offset)
   return n
 end
 
-function goto_offset (o)
-  local old_lineo = get_buffer_line_o (cur_bp)
-  set_buffer_pt (cur_bp, o)
-  if get_buffer_line_o (cur_bp) ~= old_lineo then
+function goto_offset (o, bp)
+  bp = bp or cur_bp
+  local old_lineo = get_buffer_line_o (bp)
+  set_buffer_pt (bp, o)
+  if get_buffer_line_o (bp) ~= old_lineo then
     cur_bp.goalc = get_goalc ()
     thisflag.need_resync = true
   end

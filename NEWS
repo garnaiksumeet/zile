@@ -26,6 +26,12 @@ GNU Zile NEWS                                    -*- outline -*-
     implementation.  There is no 'zile' executable any more, it has
     been superseded by 'zmacs'.
 
+  - Zlisp now uses a more Emacs-24-like 'shell-command-on-region'
+    implementation, where the replace parameter is now the fifth
+    argument (rather than the fourth), and adds a new fourth parameter
+    which can specify an output buffer other than only current buffer
+    or temporary '*Shell Command Output*' buffer.
+
 ** New features
 
 *** Build-related
