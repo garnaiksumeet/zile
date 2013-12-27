@@ -39,7 +39,17 @@ local symdef = setmetatable ({}, {__mode = "k"})
 
 --- Sandboxed evaluation environment.
 -- A mapping of symbol-names to symbol-values.
-local sandbox = setmetatable ({}, {
+local sandbox = setmetatable ({
+  ipairs   = ipairs,
+  math     = math,
+  next     = next,
+  pairs    = pairs,
+  string   = string,
+  table    = table,
+  tonumber = tonumber,
+  tostring = tostring,
+  type     = type,
+}, {
   __index = function (self, name)
     if symdef[name] then return symdef[name].value end
   end,
