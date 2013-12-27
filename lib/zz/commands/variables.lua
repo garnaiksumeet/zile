@@ -22,46 +22,46 @@ local Defun, Defvar = eval.Defun, eval.Defvar
 local set_variable_buffer_local = eval.set_variable_buffer_local
 
 
-Defvar ("inhibit_splash_screen", "nil",
+Defvar ("inhibit_splash_screen", false,
 [[
-Non-nil inhibits the startup screen.
+Non-@samp{false}y inhibits the startup screen.
 It also inhibits display of the initial message in the `*scratch*'
 buffer.
 ]])
 
 
-Defvar ("standard_indent", "4",
+Defvar ("standard_indent", 4,
 [[
 Default number of columns for margin-changing functions to indent.
 ]])
 
 
-Defvar ("tab_width", "8",
+Defvar ("tab_width", 8,
 [[
 Distance between tab stops (for display of tab characters), in columns.
 ]])
 set_variable_buffer_local ("tab_width", true)
 
 
-Defvar ("tab_always_indent", "t",
+Defvar ("tab_always_indent", true,
 [[
 Controls the operation of the @kbd{TAB} key.
-If @samp{t}, hitting @kbd{TAB} always just indents the current line.
-If @samp{nil}, hitting @kbd{TAB} indents the current line if point is at the
-left margin or in the line's indentation, otherwise it inserts a
-"real" TAB character.
+If @samp{true}, hitting @kbd{TAB} always just indents the current line.
+If @samp{false}, hitting @kbd{TAB} indents the current line if point is
+at the left margin or in the line's indentation, otherwise it inserts a
+"real" @kbd{TAB} character.
 ]])
 
 
-Defvar ("indent_tabs_mode", "t",
+Defvar ("indent_tabs_mode", true,
 [[
-If non-nil, insert-tab inserts "real" @kbd{TAB}s; otherwise, it always inserts
-spaces.
+If non-@samp{false}y, insert-tab inserts "real" @kbd{TAB}s; otherwise, it
+always inserts spaces.
 ]])
 set_variable_buffer_local ("indent_tabs_mode", true)
 
 
-Defvar ("fill_column", "70",
+Defvar ("fill_column", 70,
 [[
 Column beyond which automatic line-wrapping should happen.
 Automatically becomes buffer-local when set in any fashion.
@@ -69,55 +69,58 @@ Automatically becomes buffer-local when set in any fashion.
 set_variable_buffer_local ("fill_column", true)
 
 
-Defvar ("auto_fill_mode", "nil",
+Defvar ("auto_fill_mode", false,
 [[
-If non-nil, Auto Fill Mode is automatically enabled.
+If non-@samp{false}y, Auto Fill Mode is automatically enabled.
 ]])
 
 
-Defvar ("kill_whole_line", "nil",
+Defvar ("kill_whole_line", false,
 [[
-If non-nil, `kill_line' with no arg at beg of line kills the whole line.
+If non-@samp{false}y, `kill_line' with no arg at beg of line kills the
+whole line.
 ]])
 
 
-Defvar ("case_fold_search", "t",
+Defvar ("case_fold_search", true,
 [[
-Non-nil means searches ignore case.
+Non-@samp{false}y means searches ignore case.
 ]])
 set_variable_buffer_local ("case_fold_search", true)
 
 
-Defvar ("case_replace", "t",
+Defvar ("case_replace", true,
 [[
-Non-nil means `query_replace' should preserve case in replacements.
+Non-@samp{false}y means `query_replace' should preserve case in
+replacements.
 ]])
 
 
-Defvar ("ring_bell", "t",
+Defvar ("ring_bell", true,
 [[
-Non-nil means ring the terminal bell on any error.
+Non-@samp{false}y means ring the terminal bell on any error.
 ]])
 
 
-Defvar ("highlight_nonselected_windows", "nil",
+Defvar ("highlight_nonselected_windows", false,
 [[
-If non-nil, highlight region even in nonselected windows.
+If non-@samp{false}y, highlight region even in nonselected windows.
 ]])
 
 
-Defvar ("make_backup_files", "t",
+Defvar ("make_backup_files", true,
 [[
-Non-nil means make a backup of a file the first time it is saved.
-This is done by appending `@samp{~}' to the file name.
+Non-@samp{false}y means make a backup of a file the first time it is
+saved. This is done by appending `@samp{~}' to the file name.
 ]])
 
 
-Defvar ("backup_directory", "nil",
+Defvar ("backup_directory", false,
 [[
 The directory for backup files, which must exist.
-If this variable is @samp{nil}, the backup is made in the original file's
-directory.\nThis value is used only when `make_backup_files' is @samp{t}.
+If this variable is @samp{false}, the backup is made in the original
+file's directory.
+This value is used only when `make_backup_files' is @samp{true}.
 ]])
 
 

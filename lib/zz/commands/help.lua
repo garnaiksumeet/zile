@@ -26,7 +26,7 @@ local function write_function_description (command)
      '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n%s',
      tostring (command),
      command['interactive-form'] and 'an interactive' or 'a',
-     command['function-documentation']))
+     command['documentation']))
 end
 
 
@@ -38,8 +38,8 @@ Display the full documentation of a function.
   true,
   function (name)
     name = name or minibuf_read_function_name ('Describe function: ')
-    local func = zz[name]
-    if not func or not func['function-documentation'] then return false end
+    local func = eval.fetch (name)
+    if not func or not func['documentation'] then return false end
 
     write_temp_buffer ('*Help*', true, write_function_description, func)
     return true
@@ -54,7 +54,7 @@ local function write_key_description (command, binding)
     binding,
     tostring (command),
     command['interactive-form'] and 'an interactive' or 'a',
-    command['function-documentation']))
+    command['documentation']))
 end
 
 
@@ -93,11 +93,11 @@ Display documentation of the command invoked by a key sequence.
 )
 
 
-local function write_variable_description (name, curval, doc)
+local function write_variable_description (symbol)
   insert_string (string.format (
     '%s is a variable defined in ' .. [[`Lua source code']] .. '.\n\n' ..
     'Its value is %s\n\n%s',
-    name, curval, doc))
+    tostring (symbol), symbol.value, symbol['documentation']))
 end
 
 
@@ -108,26 +108,11 @@ Display the full documentation of a variable.
 ]],
   true,
   function (name)
-    local ok = true
-
-    if not name then
-      name = minibuf_read_variable_name ('Describe variable: ')
-    end
-
-    if not name then
-      ok = false
-    else
-      local doc = get_variable_doc (name)
-
-      if not doc then
-        ok = false
-      else
-        write_temp_buffer ('*Help*', true,
-                           write_variable_description,
-                           name, get_variable (name), doc)
-      end
-    end
-    return ok
+    name = name or minibuf_read_variable_name ('Describe variable: ')
+    local symbol = eval.fetch (name)
+    if not symbol or not symbol['documentation'] then return false end
+    write_temp_buffer ('*Help*', true, write_variable_description, symbol)
+    return true
   end
 )
 

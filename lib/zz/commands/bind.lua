@@ -110,7 +110,7 @@ sequence.
       if not func then return false end
     end
 
-    if func == nil then -- Possible if called non-interactively
+    if not func then -- Possible if called non-interactively
       return minibuf_error (string.format ([[No such function `%s']], tostring (func)))
     end
 

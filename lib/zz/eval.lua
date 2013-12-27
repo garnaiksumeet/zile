@@ -18,6 +18,12 @@
 --[[--
  Sandboxed Lua Evaluator.
 
+ A standard Lua execution environment as a table, with a small twist: In
+ addition to regular `name = value` pairs, symbols with attached metadata
+ are created by @{Defun} and @{Defvar}. But, the `__index` and `__newindex`
+ metamethods of @{sandbox} let you dereference and change the values of
+ even those symbols using regular Lua syntax.
+
  @module zz.eval
 ]]
 
@@ -28,21 +34,37 @@
 --[[ ======================== ]]--
 
 
+--- Defun and Defvar defined symbols.
+local symdef = setmetatable ({}, {__mode = "k"})
+
 --- Sandboxed evaluation environment.
 -- A mapping of symbol-names to symbol-values.
-local sandbox = {}
+local sandbox = setmetatable ({}, {
+  __index = function (self, name)
+    if symdef[name] then return symdef[name].value end
+  end,
+
+  __newindex = function (self, name, value)
+    if symdef[name] then
+      symdef[name].value = value
+    else
+      rawset (self, name, value)
+    end
+  end,
+})
+
 
 local Defun, marshaller, namer, setter -- forward declarations
 
 
 ------
 -- A named symbol and associated data.
--- @table command
+-- @table symbol
 -- @string name command name
 -- @tfield table a list of type strings that arguments must match
 -- @string doc docstring
 -- @bool interactive `true` if this command can be called interactively
--- @func func function to call after marshalling arguments
+-- @param value symbol value
 
 
 --- Define a command in the execution environment for the evaluator.
@@ -54,20 +76,22 @@ local Defun, marshaller, namer, setter -- forward declarations
 function Defun (name, argtypes, doc, interactive, func)
   local symbol = {
     name  = name,
-    func  = func,
+    value = func,
     plist = {
-      ["marshall-argtypes"]      = argtypes,
-      ["function-documentation"] = texi (doc:chomp ()),
-      ["interactive-form"]       = interactive,
+      ["documentation"]     = texi (doc:chomp ()),
+      ["interactive-form"]  = interactive,
+      ["marshall-argtypes"] = argtypes,
     },
   }
 
-  sandbox[name] = setmetatable (symbol, {
+  symdef[name] = setmetatable (symbol, {
     __call     = marshaller,
     __index    = symbol.plist,
     __newindex = setter,
     __tostring = namer,
   })
+
+  return symbol
 end
 
 
@@ -102,7 +126,7 @@ function marshaller (symbol, ...)
 
   current_prefix_arg, prefix_arg = prefix_arg, false
 
-  return symbol.func (...) or true
+  return symbol.value (...) or true
 end
 
 
@@ -128,22 +152,22 @@ function setter (symbol, propname, value)
 end
 
 
---- Fetch the value of a defined symbol name.
+--- Fetch a defined symbol by name.
 -- @string name the symbol name
 -- @return the associated symbol value if any, else `nil`
 local function fetch (name)
-  return sandbox[name]
+  return symdef[name]
 end
 
 
---- Call a function on every symbol in sandbox.
+--- Call a function on every @{Defun}ed and @{Defvar}ed symbol.
 -- If `func` returns `true`, mapatoms returns immediately.
 -- @func func a function that takes a symbol as its argument
 -- @tparam[opt=sandbox] table symtab a table with symbol values
 -- @return `true` if `func` signaled early exit by returning `true`,
 --   otherwise `nil`.
 local function mapatoms (func, symtab)
-  for _, symbol in pairs (symtab or sandbox) do
+  for _, symbol in pairs (symtab or symdef) do
     if func (symbol) then return true end
   end
 end
@@ -156,22 +180,27 @@ end
 --[[ ==================== ]]--
 
 
---- Variable docs and other metadata.
-local metadata = {}
-
-
---- Mapping between variable names and values.
-local main_vars = {}
-
-
 --- Define a new variable.
 -- Store the value and docstring for a variable for later retrieval.
 -- @string name variable name
 -- @param value value to store in variable `name`
 -- @string doc variable's docstring
 local function Defvar (name, value, doc)
-  main_vars[name] = value
-  metadata[name] = { doc = texi (doc:chomp ()) }
+  local symbol = {
+    name  = name,
+    value = value,
+    plist = {
+      ["documentation"] = texi (doc:chomp ()),
+    },
+  }
+
+  symdef[name] = setmetatable (symbol, {
+    __index    = symbol.plist,
+    __newindex = setter,
+    __tostring = namer,
+  })
+
+  return symbol
 end
 
 
@@ -182,7 +211,17 @@ end
 -- @tparam bool bool `true` to mark buffer-local, `false` to unmark.
 -- @treturn bool the new buffer-local status
 local function set_variable_buffer_local (name, bool)
-  return rawset (metadata[name], "islocal", not not bool)
+  return rawset (symdef[name], "buffer-local", bool or nil)
+end
+
+
+--- Return the variable symbol associated with name in buffer.
+-- @string name variable name
+-- @tparam[opt=current buffer] buffer bp buffer to select
+-- @return the value of `name` from buffer `bp`
+local function fetch_variable (name, bp)
+  local obarray = (bp or cur_bp or {}).obarray
+  return obarray and obarray[name] or symdef[name]
 end
 
 
@@ -191,7 +230,7 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the value of `name` from buffer `bp`
 local function get_variable (name, bp)
-  return ((bp or cur_bp or {}).vars or main_vars)[name]
+  return (fetch_variable (name, bp) or {}).value
 end
 
 
@@ -209,14 +248,7 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @treturn bool the bool value of `name` from buffer `bp`
 local function get_variable_bool (name, bp)
-  return get_variable (name, bp) ~= "nil"
-end
-
-
---- Return a table of all variables.
--- @treturn table all variables and their values in a table
-function get_variable_table ()
-  return main_vars
+  return not not get_variable (name, bp)
 end
 
 
@@ -226,37 +258,30 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the new value of `name` from buffer `bp`
 local function set_variable (name, value, bp)
-  local t = metadata[name]
-  if t and t.islocal then
+  local found = symdef[name]
+  if found and found["buffer-local"] then
+    local symbol = {
+      name  = name,
+      value = value,
+      plist = found.plist,
+    }
+    setmetatable (symbol, {
+      __index    = symbol.plist,
+      __newindex = setter,
+      __tostring = namer,
+    })
+
     bp = bp or cur_bp
-    bp.vars = bp.vars or {}
-    bp.vars[name] = value
+    bp.obarray = bp.obarray or {}
+    rawset (bp.obarray, name, value)
+
+  elseif found then
+    found.value = value
   else
-    main_vars[name]= value
+    Defvar (name, value, "")
   end
 
   return value
-end
-
---- Initialise buffer local variables.
--- @tparam buffer bp a buffer
-function init_buffer (bp)
-  bp.vars = setmetatable ({}, {
-    __index    = main_vars,
-
-    __newindex = function (self, name, value)
-		   local t = metadata[name]
-		   if t and t.islocal then
-		     return rawset (self, name, value)
-		   else
-		     return rawset (main_vars, name, value)
-		   end
-                 end,
-  })
-
-  if get_variable_bool ("auto_fill_mode", bp) then
-    bp.autofill = true
-  end
 end
 
 

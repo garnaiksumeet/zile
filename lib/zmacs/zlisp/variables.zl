@@ -38,11 +38,11 @@ buffer.")
 If @samp{t}, hitting @kbd{TAB} always just indents the current line.
 If @samp{nil}, hitting @kbd{TAB} indents the current line if point is at the
 left margin or in the line's indentation, otherwise it inserts a
-\"real\" TAB character.")
+'real' @kbd{TAB} character.")
 
 
 (defvar indent-tabs-mode t
-  "If non-nil, insert-tab inserts \"real\" @kbd{TAB}s; otherwise, it always inserts
+  "If non-nil, insert-tab inserts 'real' @kbd{TAB}s; otherwise, it always inserts
 spaces.")
 (make-variable-buffer-local 'indent-tabs-mode)
 
@@ -86,7 +86,8 @@ This is done by appending `@samp{~}' to the file name.")
 (defvar backup-directory nil
   "The directory for backup files, which must exist.
 If this variable is @samp{nil}, the backup is made in the original file's
-directory.\nThis value is used only when `make-backup-files' is @samp{t}.")
+directory.
+This value is used only when `make-backup-files' is @samp{t}.")
 
 
 (defun set-variable (string string)

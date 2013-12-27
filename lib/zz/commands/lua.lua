@@ -35,27 +35,6 @@ Execute a file of Lua code named FILE.
 )
 
 
-Defun ("setq",
-  {},
-[[
-(setq [sym val]...)
-
-Set each sym to the value of its val.
-The symbols sym are variables; they are literal (not evaluated).
-The values val are expressions; they are evaluated.
-]],
-  false,
-  function (...)
-    local ret
-    local l = {...}
-    for i = 1, #l/2 do
-      eval.set_variable (l[2*i -1], l[2*i])
-    end
-    return l[#l]
-  end
-)
-
-
 Defun ("execute_extended_command",
   {"number"},
 [[
