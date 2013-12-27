@@ -22,7 +22,6 @@ require "zile.lib"
 
 -- required to load zmacs.commands
 require "zile.history"
-require "zile.variables"
 
 -- Load variables
 require "zmacs.commands"
@@ -40,8 +39,8 @@ io.stdout:write (
 -- auto-generated, because it's ugly in a user configuration file.
 
 for k, v in pairs (main_vars) do
-  io.stdout:writelines ("; " .. v.doc:gsub ("\n", "\n; "),
-                        "; Default value is " .. v.val .. ".",
-                        "(setq " .. k .. " " .. v.val .. ")",
+  io.stdout:writelines ("; " .. (get_variable_doc (k)):gsub ("\n", "\n; "),
+                        "; Default value is " .. v .. ".",
+                        "(setq " .. k .. " " .. v .. ")",
                         "")
 end
