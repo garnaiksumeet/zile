@@ -42,7 +42,7 @@ left margin or in the line's indentation, otherwise it inserts a
 
 
 (defvar indent-tabs-mode t
-  "If non-nil, insert-tab inserts "real" tabs; otherwise, it always inserts
+  "If non-nil, insert-tab inserts \"real\" @kbd{TAB}s; otherwise, it always inserts
 spaces.")
 (make-variable-buffer-local 'indent-tabs-mode)
 
