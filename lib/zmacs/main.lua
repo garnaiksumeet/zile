@@ -21,6 +21,7 @@
 local lisp = require "zmacs.eval"
 
 prog = require "zile.version"
+prog.name = "zmacs" -- make sure we don't go crazy with links and aliases!
 
 splash_str = "Welcome to " .. prog.program .. [[.
 
