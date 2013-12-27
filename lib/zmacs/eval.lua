@@ -100,6 +100,11 @@ function get_variable_doc (name)
 end
 
 
+function get_variable_table ()
+  return main_vars
+end
+
+
 function set_variable (name, value, bp)
   local key = name_to_key (name)
   local t = metadata[key]
