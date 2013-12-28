@@ -48,7 +48,7 @@ Argument is a command name."
 
 
 (localfun print_binding (key func)
-  "insert_string (string.format ('%-15s %s\n', key, get_function_name (func)))")
+  "insert_string (string.format ('%-15s %s\n', key, tostring (func)))")
 
 
 (localfun write_bindings_list (keyx binding)

@@ -18,6 +18,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+-- Return true if x is a function, or has a __cal metamethod.
+function iscallable (x)
+  local mt = getmetatable (x)
+  return type (x) == "function" or (mt and mt.__call)
+end
+
 -- Recase str according to newcase.
 function recase (s, newcase)
   local bs = ""

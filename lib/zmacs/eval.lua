@@ -142,43 +142,52 @@ end
 --[[ ======================== ]]--
 
 
+-- The symbol table is a symbol-name:symbol-func-table mapping.
 local symbol   = zz.symbol
-local name_map = {}
+
+-- Shared metatable for symbol-func-tables.
+local symbol_mt = {
+  __call        = function (self, arglist)
+                    local args = {}
+                    local i = 1
+                    while arglist and arglist.car do
+                      local val = arglist.car
+                      local ty = self.argtypes[i]
+                      if ty == "number" then
+                        val = tonumber (val.value, 10)
+                      elseif ty == "boolean" then
+                        val = val.value ~= "nil"
+                      elseif ty == "string" then
+                        val = tostring (val.value)
+                      end
+                      table.insert (args, val)
+                      arglist = arglist.cdr
+                      i = i + 1
+                    end
+                    current_prefix_arg = prefix_arg
+                    prefix_arg = false
+                    local ret = self.func (unpack (args))
+                    if ret == nil then
+                      ret = true
+                    end
+                    return ret
+                  end,
+
+  __tostring    = function (self)
+	            return self.name
+	          end,
+}
 
 -- Define symbols for the evaluator.
 function M.Defun (name, argtypes, doc, interactive, func)
-  zz.define (name, {
-    doc = texi (doc:chomp ()),
+  local introspect = {
+    argtypes    = argtypes,
+    doc         = texi (doc:chomp ()),
+    func        = func,
     interactive = interactive,
-    func = function (arglist)
-             local args = {}
-	     local i = 1
-             while arglist and arglist.car do
-               local val = arglist.car
-               local ty = argtypes[i]
-               if ty == "number" then
-                 val = tonumber (val.value, 10)
-               elseif ty == "boolean" then
-                 val = val.value ~= "nil"
-               elseif ty == "string" then
-                 val = tostring (val.value)
-               end
-               table.insert (args, val)
-               arglist = arglist.cdr
-               i = i + 1
-             end
-             current_prefix_arg = prefix_arg
-             prefix_arg = false
-             local ret = func (unpack (args))
-             if ret == nil then
-               ret = true
-             end
-             return ret
-           end
-  })
-
-  -- Maintain a reverse map for looking up function names.
-  name_map[symbol[name].func] = name
+    name        = name,
+  }
+  zz.define (name, setmetatable (introspect, symbol_mt))
 end
 
 
@@ -188,9 +197,16 @@ function M.function_exists (name)
 end
 
 
--- Return the named function's handler.
+-- Return the named symbol-func-table.
 function M.get_function_by_name (name)
-  return symbol[name] and symbol[name].func
+  return symbol[name]
+end
+
+
+-- Return the docstring for symbol-name.
+function M.get_function_doc (name)
+  local value = symbol[name]
+  return value and value.doc or nil
 end
 
 
@@ -198,19 +214,6 @@ end
 function M.get_function_interactive (name)
   local value = symbol[name]
   return value and value.interactive or nil
-end
-
-
--- Return the docstring for symbol `name'.
-function M.get_function_doc (name)
-  local value = symbol[name]
-  return value and value.doc or nil
-end
-
-
--- Return the name of function 'func'.
-function get_function_name (func)
-  return name_map[func]
 end
 
 
@@ -224,8 +227,8 @@ end
 function M.execute_function (func_or_name, uniarg)
   local func, ok = func_or_name, false
 
-  if type (func_or_name) == "string" then
-    func = symbol[func_or_name] and symbol[func_or_name].func or nil
+  if type (func_or_name) ~= "table" then
+    func = symbol[func_or_name]
   end
 
   if uniarg ~= nil and type (uniarg) ~= "table" then

@@ -63,32 +63,33 @@
   "Display documentation of the command invoked by a key sequence."
   (interactive)
   (lambda (keystr)
-    "local name, binding, keys
+    "local func, binding
     if keystr then
-      keys = keystrtovec (keystr)
+      local keys = keystrtovec (keystr)
       if not keys then
         return false
       end
-      name = get_function_name_by_keys (keys, lisp.command)
+      func = get_function_by_keys (keys, lisp.command)
       binding = tostring (keys)
     else
       minibuf_write ('Describe key:')
-      keys = get_key_sequence ()
-      name = get_function_name_by_keys (keys, lisp.command)
+      local keys = get_key_sequence ()
+      func = get_function_by_keys (keys, lisp.command)
       binding = tostring (keys)
 
-      if not name then
+      if not func then
         return minibuf_error (binding .. ' is undefined')
       end
     end
 
+    local name = tostring (func)
     minibuf_write (string.format ([[%s runs the command `%s']], binding, name))
 
-    local doc = lisp.get_function_doc (name)
-    if not doc then
+    if not func.doc then
       return false
     end
-    write_temp_buffer ('*Help*', true, write_key_description, name, doc, binding)
+    write_temp_buffer ('*Help*', true, write_key_description, name,
+                       func.doc, binding)
 
     return true"))
 
