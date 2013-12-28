@@ -24,11 +24,12 @@ local lisp = require "zmacs.eval"
 -- for the main loop after initialization.
 function get_and_run_command ()
   local keys = get_key_sequence ()
-  local name = get_function_by_keys (keys)
+  local func = get_function_by_keys (keys, lisp.command)
+
   minibuf_clear ()
 
-  if lisp.function_exists (name) then
-    lisp.call_command (name, lastflag.set_uniarg and (prefix_arg or 1))
+  if func then
+    lisp.call_command (func, lastflag.set_uniarg and (prefix_arg or 1))
   else
     minibuf_error (tostring (keys) .. " is undefined")
   end

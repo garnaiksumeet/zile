@@ -24,6 +24,7 @@ zz = require "zmacs.zlisp"
 
 local M = {
   -- Copy some commands into our namespace directly.
+  command   = zz.symbol,
   commands  = zz.symbols,
   cons      = zz.cons,
 }
@@ -141,7 +142,8 @@ end
 --[[ ======================== ]]--
 
 
-local symbol = zz.symbol
+local symbol   = zz.symbol
+local name_map = {}
 
 -- Define symbols for the evaluator.
 function M.Defun (name, argtypes, doc, interactive, func)
@@ -150,7 +152,7 @@ function M.Defun (name, argtypes, doc, interactive, func)
     interactive = interactive,
     func = function (arglist)
              local args = {}
-             local i = 1
+	     local i = 1
              while arglist and arglist.car do
                local val = arglist.car
                local ty = argtypes[i]
@@ -174,12 +176,21 @@ function M.Defun (name, argtypes, doc, interactive, func)
              return ret
            end
   })
+
+  -- Maintain a reverse map for looking up function names.
+  name_map[symbol[name].func] = name
 end
 
 
 -- Return true if there is a symbol `name' in the symbol-table.
 function M.function_exists (name)
   return symbol[name] ~= nil
+end
+
+
+-- Return the named function's handler.
+function M.get_function_by_name (name)
+  return symbol[name] and symbol[name].func
 end
 
 
@@ -197,6 +208,12 @@ function M.get_function_doc (name)
 end
 
 
+-- Return the name of function 'func'.
+function get_function_name (func)
+  return name_map[func]
+end
+
+
 
 --[[ ================ ]]--
 --[[ ZLisp Evaluator. ]]--
@@ -204,28 +221,31 @@ end
 
 
 -- Execute a function non-interactively.
-function M.execute_function (name, uniarg)
-  local ok
+function M.execute_function (func_or_name, uniarg)
+  local func, ok = func_or_name, false
+
+  if type (func_or_name) == "string" then
+    func = symbol[func_or_name] and symbol[func_or_name].func or nil
+  end
 
   if uniarg ~= nil and type (uniarg) ~= "table" then
     uniarg = cons ({value = uniarg and tostring (uniarg) or nil})
   end
 
   command.attach_label (nil)
-  local value = symbol[name]
-  ok = value and value.func and value.func (uniarg)
+  ok = func and func (uniarg)
   command.next_label ()
 
   return ok
 end
 
 -- Call an interactive command.
-function M.call_command (name, list)
+function M.call_command (func, list)
   thisflag = {defining_macro = lastflag.defining_macro}
 
   -- Execute the command.
   command.interactive_enter ()
-  local ok = M.execute_function (name, list)
+  local ok = M.execute_function (func, list)
   command.interactive_exit ()
 
   -- Only add keystrokes if we were already in macro defining mode

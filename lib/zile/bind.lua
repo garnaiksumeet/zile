@@ -134,7 +134,7 @@ function walk_bindings (tree, process, st)
   local function walk_bindings_tree (tree, keys, process, st)
     for key, node in pairs (tree) do
       table.insert (keys, tostring (key))
-      if type (node) == "string" then
+      if type (node) == "function" then
         process (table.concat (keys, " "), node, st)
       else
         walk_bindings_tree (node, keys, process, st)
@@ -170,17 +170,21 @@ function get_key_sequence ()
   return keys
 end
 
-function get_function_by_keys (keys)
+function get_function_by_keys (keys, symtab)
   -- Detect Meta-digit
   if #keys == 1 then
     local key = keys[1]
     if key.META and key.key < 255 and string.match (string.char (key.key), "[%d%-]") then
-      return "universal-argument"
+      return symtab["universal-argument"].func
     end
   end
 
   local func = root_bindings[keys]
-  return type (func) == "string" and func or nil
+  return type (func) == "function" and func or nil
+end
+
+function get_function_name_by_keys (keys, symtab)
+  return get_function_name (get_function_by_keys (keys, symtab))
 end
 
 -- gather_bindings_state:

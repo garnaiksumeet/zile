@@ -48,7 +48,7 @@ Argument is a command name."
 
 
 (localfun print_binding (key func)
-  "insert_string (string.format ('%-15s %s\n', key, func))")
+  "insert_string (string.format ('%-15s %s\n', key, get_function_name (func)))")
 
 
 (localfun write_bindings_list (keyx binding)
@@ -91,7 +91,7 @@ sequence."
       return
     end
 
-    root_bindings[keys] = name
+    root_bindings[keys] = lisp.get_function_by_name (name)
 
     return true"))
 

@@ -69,12 +69,12 @@
       if not keys then
         return false
       end
-      name = get_function_by_keys (keys)
+      name = get_function_name_by_keys (keys, lisp.command)
       binding = tostring (keys)
     else
       minibuf_write ('Describe key:')
       keys = get_key_sequence ()
-      name = get_function_by_keys (keys)
+      name = get_function_name_by_keys (keys, lisp.command)
       binding = tostring (keys)
 
       if not name then
