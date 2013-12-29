@@ -1,5 +1,3 @@
--- Zile Lisp interpreter
---
 -- Copyright (c) 2009-2013 Free Software Foundation, Inc.
 --
 -- This file is part of GNU Zile.
@@ -15,18 +13,33 @@
 -- General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program; see the file COPYING.  If not, write to the
--- Free Software Foundation, Fifth Floor, 51 Franklin Street, Boston,
--- MA 02111-1301, USA.
+-- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
+--[[--
+ Zile Lisp interpreter.
+
+ A very basic lisp environment, with a source parser and an _S-Expression_
+ evaluator.  The execution environment is empty, so nothing useful can
+ be achieved until some commands to build the S-Expressions have been
+ defined.
+
+ There is no concept of 'nil', '#T' or the like.  Depending on the
+ particular dialect of Lisp you want to write, you'll need to define those
+ yourself too.
+
+ The parser returns error messages starting with source code line numbers
+ for mismatched quote marks and parentheses, at least for non-pathological
+ input.
+
+ The scanner is not terribly smart, and doesn't understand escaped
+ characters, so don't use nested escaped quotes!
+
+ @module zmacs.zlisp
+]]
 
 local Cons = require "zile.Cons"
 local Set  = require "zile.Set"
 local io   = require "std.io_ext"
-
-local M = {
-  cons = Cons,
-}
 
 
 
@@ -40,7 +53,11 @@ local isoperator  = Set { "(", ")", "'" }
 local isdelimiter = Set { '"' } + isskipped + isoperator
 
 
--- Return the 1-based line number at which offset `o' occurs in `s'.
+--- Return the 1-based line number at which index `i' occurs in `s'.
+-- @string s zlisp source
+-- @int    i 1-based index into `s`
+-- @treturn int number of `\n` characters in `s` upto and including
+--   the line containing the character at index `i`
 local function iton (s, i)
   local n = 1
   for _ in string.gmatch (s:sub (1, i), "\n") do n = n + 1 end
@@ -48,16 +65,24 @@ local function iton (s, i)
 end
 
 
--- Increment index into s and return that character.
+--- Increment index into s and return that character.
+-- @string s zlisp source
+-- @int    i index of last character scanned so far
+-- @treturn char|nil next unscanned character or nil when end is reached
+-- @treturn int      i + 1
 local function nextch (s, i)
   return i < #s and s[i + 1] or nil, i + 1
 end
 
 
--- Lexical scanner: Return three values: `token', `kind', `i', where
--- `token' is the content of the just scanned token, `kind' is the
--- type of token returned, and `i' is the index of the next unscanned
--- character in `s'.
+--- Lexical scanner for zlisp code.
+-- Comments and whitespace are silently skipped over.
+-- @string s zlisp source
+-- @int    i index of last character scanned so far
+-- @treturn string text of just scanned `token`, or "" for an operator
+-- @treturn string `kind` of token: one of `eof`, `string`, `word` or
+--   a character from the `isoperator` set above
+-- @treturn int    the index of the next unscanned character in `s`
 local function lex (s, i)
   -- Skip initial whitespace and comments.
   local c
@@ -112,9 +137,12 @@ local function lex (s, i)
 end
 
 
--- Call `lex' repeatedly to build and return an abstract syntax-tree
--- representation of the ZLisp code in `s'.
-function M.parse (s)
+--- Parse a string of zlisp code into an abstract syntax tree.
+-- @string s zlisp source
+-- @treturn zile.Cons the AST as a list of _S-Expressions_; in case of
+--   error it returns `nil` plus an error message that contains the line
+--   number of `s` where parsing failed.
+local function parse (s)
   local i = 0
 
   -- New nodes are pushed onto the front of the list for speed...
@@ -167,19 +195,25 @@ end
 --[[ ======================== ]]--
 
 
--- ZLisp symbols.
-M.symbol = {}
+--- ZLisp symbols.
+-- @table symbol
+local sandbox = {}
 
 
--- Define a new symbol.
-function M.define (name, value)
-  M.symbol[name] = value
+--- Define a new symbol.
+-- @string name the symbol name
+-- @param value the value to store in symbol `name`
+local function define (name, value)
+  sandbox[name] = value
 end
 
 
--- Iterator returning (name, entry) for each symbol.
-function M.symbols ()
-  return next, M.symbol, nil
+--- Symbol table iterator, for use with `for` loops.
+--     for name, value in zlisp.symbols() do
+-- @treturn function iterator
+-- @treturn table symbol table
+local function symbols ()
+  return next, sandbox, nil
 end
 
 
@@ -189,43 +223,64 @@ end
 --[[ ================ ]]--
 
 
--- Execute a function non-interactively.
-function M.call_command (name, arglist)
-  local value = M.symbol[name]
+--- Call a named zlisp command with arguments.
+-- @string name a function @{define}d in @{symbol}
+-- @tparam zile.Cons arglist arguments for `name`
+-- @return the result of calling `name` with `arglist`, or else `nil`
+local function call_command (name, arglist)
+  local value = sandbox[name]
   return value and type (value) == "function" and value (arglist) or nil
 end
 
 
--- Evaluate a list of command expressions.
-local function evalexpr (list)
-  return list and list.car and M.call_command (list.car.value, list.cdr) or nil
+--- Evaluate a list of command expressions.
+-- @tparam zile.Cons sexpr an _S-Expression_
+-- @return the result of evaluating `sexpr`, or else `nil`
+local function evaluate_expression (sexpr)
+  return sexpr and sexpr.car and call_command (sexpr.car.value, sexpr.cdr) or nil
 end
 
 
--- Evaluate a string of ZLisp.
-function M.evalstring (s)
-  -- convert error calls in M.parse to `nil, "errmsg"' return value.
-  local ok, list = pcall (M.parse, s)
+--- Evaluate a string of zlisp code.
+-- @function evalstring
+-- @string s zlisp source
+-- @return `true` for success, or else `nil` plus an error string
+local function evaluate_string (s)
+  -- convert error calls in parse to `nil, "errmsg"' return value.
+  local ok, list = pcall (parse, s)
   if not ok then return nil, list end
 
   while list do
-    evalexpr (list.car.value)
+    evaluate_expression (list.car.value)
     list = list.cdr
   end
   return true
 end
 
 
--- Evaluate a file of ZLisp.
-function M.evalfile (file)
+--- Evaluate a file of zlisp.
+-- @function evalfile
+-- @param file path to a file of zlisp code
+-- @return `true` for success, or else `nil` plus an error string
+local function evaluate_file (file)
   local s, errmsg = io.slurp (file)
 
   if s then
-    s, errmsg = M.evalstring (s)
+    s, errmsg = evaluate_string (s)
   end
 
   return s, errmsg
 end
 
 
-return M
+--- @export
+return {
+  call_command = call_command,
+  cons         = Cons,
+  define       = define,
+  evalfile     = evaluate_file,
+  evalstring   = evaluate_string,
+  parse        = parse,
+  symbol       = sandbox,
+  symbols      = symbols,
+}
