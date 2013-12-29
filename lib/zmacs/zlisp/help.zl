@@ -24,8 +24,8 @@
   "insert_string (string.format (
      '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n%s',
      tostring (command),
-     command.interactive and 'an interactive' or 'a',
-     command.doc))")
+     command['interactive-form'] and 'an interactive' or 'a',
+     command['function-documentation']))")
 
 
 (defun describe-function (string)
@@ -38,7 +38,7 @@
     end
 
     local func = lisp.fetch (name)
-    if func == nil or func.doc == nil then return false end
+    if not func or not func['function-documentation'] then return false end
 
     write_temp_buffer ('*Help*', true, write_function_description, func)
     return true"))
@@ -50,8 +50,8 @@
     'function in ' .. [[`Lua source code']] .. '.\n\n%s',
     binding,
     tostring (command),
-    command.interactive and 'an interactive' or 'a',
-    command.doc))")
+    command['interactive-form'] and 'an interactive' or 'a',
+    command['function-documentation']))")
 
 
 (defun describe-key (string)
@@ -78,7 +78,7 @@
     end
 
     minibuf_write (string.format ([[%s runs the command `%s']], binding, tostring (command)))
-    if not command.doc then return false end
+    if not command['function-documentation'] then return false end
 
     write_temp_buffer ('*Help*', true, write_key_description, command, binding)
     return true"))

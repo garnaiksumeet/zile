@@ -43,8 +43,8 @@ local functions_history = history_new ()
 function minibuf_read_function_name (fmt)
   local cp = completion_new ()
 
-  for name, func in lisp.commands () do
-    if func.interactive then
+  for name, symbol in lisp.commands () do
+    if symbol["interactive-form"] then
       table.insert (cp.completions, name)
     end
   end

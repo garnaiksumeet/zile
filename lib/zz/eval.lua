@@ -32,7 +32,17 @@
 -- A mapping of symbol-names to symbol-values.
 local sandbox = {}
 
-local Defun, marshaller, namer -- forward declarations
+local Defun, marshaller, namer, setter -- forward declarations
+
+
+------
+-- A named symbol and associated data.
+-- @table command
+-- @string name command name
+-- @tfield table a list of type strings that arguments must match
+-- @string doc docstring
+-- @bool interactive `true` if this command can be called interactively
+-- @func func function to call after marshalling arguments
 
 
 --- Define a command in the execution environment for the evaluator.
@@ -42,44 +52,40 @@ local Defun, marshaller, namer -- forward declarations
 -- @bool interactive `true` if this command can be called interactively
 -- @func func function to call after marshalling arguments
 function Defun (name, argtypes, doc, interactive, func)
-
-  --- Command table.
-  -- The data associated with a given command.
-  -- @table command
-  -- @string name command name
-  -- @tfield table a list of type strings that arguments must match
-  -- @string doc docstring
-  -- @bool interactive `true` if this command can be called interactively
-  -- @func func function to call after marshalling arguments
-  local command = {
-    name        = name,
-    argtypes    = argtypes,
-    doc         = texi (doc:chomp ()),
-    interactive = interactive,
-    func        = func,
+  local symbol = {
+    name  = name,
+    func  = func,
+    plist = {
+      ["marshall-argtypes"]      = argtypes,
+      ["function-documentation"] = texi (doc:chomp ()),
+      ["interactive-form"]       = interactive,
+    },
   }
 
-  sandbox[name] = setmetatable (command, {
+  sandbox[name] = setmetatable (symbol, {
     __call     = marshaller,
+    __index    = symbol.plist,
+    __newindex = setter,
     __tostring = namer,
   })
 end
 
 
---- Argument marshalling and type-checking for commands.
--- Used as the `__call` metamethod for commands.
+--- Argument marshalling and type-checking for function symbols.
+-- Used as the `__call` metamethod for function symbols.
 -- @local
--- @tparam command command data
--- @param ... arguments for this command
--- @return result of calling this command
-function marshaller (command, ...)
-  local args = {...}
+-- @tparam symbal symbol a symbol
+-- @param ... arguments for calling this function symbol
+-- @return result of calling this function symbol
+function marshaller (symbol, ...)
+  local args, argtypes = {...}, symbol["marshall-argtypes"]
+
   for i, v in ipairs (args) do
     -- When given, argtypes must match, though "function" can match
     -- anything callable.
-    if command.argtypes
-       and not (command.argtypes[i] == type (v)
-                or command.argtypes[i] == "function" and iscallable (v))
+    if argtypes
+       and not (argtypes[i] == type (v)
+                or argtypes[i] == "function" and iscallable (v))
     then
       -- Undo mangled prefix_arg when called from minibuf.
       if i == 1 and args[1] == prefix_arg then
@@ -88,7 +94,7 @@ function marshaller (command, ...)
         return minibuf_error (
           string.format (
             "bad argument #%d to '%s' (%s expected, got %s): %s",
-            i, command.name, command.argtypes[i], type (v), tostring (v))
+            i, symbol.name, argtypes[i], type (v), tostring (v))
         )
       end
     end
@@ -96,17 +102,29 @@ function marshaller (command, ...)
 
   current_prefix_arg, prefix_arg = prefix_arg, false
 
-  return command.func (...) or true
+  return symbol.func (...) or true
 end
 
 
---- Easy command name access with @{tostring}.
--- Used as the `__tostring` method of commands.
+--- Easy symbol name access with @{tostring}.
+-- Used as the `__tostring` method of symbols.
 -- @local
--- @tparam command command data
--- @treturn string name of this command
-function namer (command)
-  return command.name
+-- @tparam symbol symbol a symbol
+-- @treturn string name of this symbol
+function namer (symbol)
+  return symbol.name
+end
+
+
+--- Set a property on a symbol.
+-- Used as the `__newindex` metamethod of symbols.
+-- @local
+-- @tparam symbol symbol a symbol
+-- @string propname name of property to set
+-- @param value value to store in property `propname`
+-- @return the new `value`
+function setter (symbol, propname, value)
+  return rawset (symbol.plist, propname, value)
 end
 
 
@@ -254,15 +272,15 @@ end
 
 
 --- Call a command with arguments, interactively.
--- @tparam command cmd a value already passed to @{Defun}
+-- @tparam symbol symbol a value already passed to @{Defun}
 -- @param ... arguments for `cmd`
 -- @return the result of calling `cmd` with arguments, or else `nil`
-local function call_command (cmd, ...)
+local function call_command (symbol, ...)
   thisflag = {defining_macro = lastflag.defining_macro}
 
   -- Execute the command.
   command.interactive_enter ()
-  local ok = cmd (...)
+  local ok = symbol (...)
   command.interactive_exit ()
 
   -- Only add keystrokes if we were already in macro defining mode

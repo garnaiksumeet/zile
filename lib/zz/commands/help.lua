@@ -25,8 +25,8 @@ local function write_function_description (command)
   insert_string (string.format (
      '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n%s',
      tostring (command),
-     command.interactive and 'an interactive' or 'a',
-     command.doc))
+     command['interactive-form'] and 'an interactive' or 'a',
+     command['function-documentation']))
 end
 
 
@@ -38,10 +38,10 @@ Display the full documentation of a function.
   true,
   function (name)
     name = name or minibuf_read_function_name ('Describe function: ')
-    local command = zz[name]
-    if not command or not command.doc then return false end
+    local func = zz[name]
+    if not func or not func['function-documentation'] then return false end
 
-    write_temp_buffer ('*Help*', true, write_function_description, command)
+    write_temp_buffer ('*Help*', true, write_function_description, func)
     return true
   end
 )
@@ -53,8 +53,8 @@ local function write_key_description (command, binding)
     'function in ' .. [[`Lua source code']] .. '.\n\n%s',
     binding,
     tostring (command),
-    command.interactive and 'an interactive' or 'a',
-    command.doc))
+    command['interactive-form'] and 'an interactive' or 'a',
+    command['function-documentation']))
 end
 
 
@@ -85,7 +85,7 @@ Display documentation of the command invoked by a key sequence.
     end
 
     minibuf_write (string.format ([[%s runs the command `%s']], binding, tostring (command)))
-    if not command.doc then return false end
+    if not command['function-documentation'] then return false end
 
     write_temp_buffer ('*Help*', true, write_key_description, command, binding)
     return true

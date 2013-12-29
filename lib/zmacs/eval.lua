@@ -43,7 +43,17 @@ local Cons, fetch = lisp.Cons, lisp.fetch
 --[[ ======================== ]]--
 
 
-local Defun, marshaller, namer -- forward declarations
+local Defun, marshaller, namer, setter -- forward declarations
+
+
+------
+-- A named symbol and associated data.
+-- @string name symbol name
+-- @func func symbol's value as a function
+-- @field value symbol's value as a variable
+-- @tfield table plist property list associations for symbol
+-- @table symbol
+
 
 --- Define a command in the execution environment for the evaluator.
 -- @string name command name
@@ -52,43 +62,39 @@ local Defun, marshaller, namer -- forward declarations
 -- @bool interactive `true` if this command can be called interactively
 -- @func func function to call after marshalling arguments
 function Defun (name, argtypes, doc, interactive, func)
-
-  --- Command table.
-  -- The data associated with a given command.
-  -- @table command
-  -- @string name command name
-  -- @tfield table a list of type strings that arguments must match
-  -- @string doc docstring
-  -- @bool interactive `true` if this command can be called interactively
-  -- @func func function to call after marshalling arguments
-  local command = {
-    name        = name,
-    argtypes    = argtypes,
-    doc         = texi (doc:chomp ()),
-    interactive = interactive,
-    func        = func,
+  local symbol = {
+    name  = name,
+    func  = func,
+    plist = {
+      ["marshall-argtypes"]      = argtypes,
+      ["function-documentation"] = texi (doc:chomp ()),
+      ["interactive-form"]       = interactive,
+    },
   }
 
   lisp.define (name,
-    setmetatable (command, {
+    setmetatable (symbol, {
       __call     = marshaller,
+      __index    = symbol.plist,
+      __newindex = setter,
       __tostring = namer,
     })
   )
 end
 
 
---- Argument marshalling and type-checking for zlisp commands.
--- Used as the `__call` metamethod for commands.
+--- Argument marshalling and type-checking for zlisp function symbols.
+-- Used as the `__call` metamethod for function symbols.
 -- @local
--- @tparam command command data
--- @tparam zile.Cons arglist arguments for this command
--- @return result of calling this command
-function marshaller (command, arglist)
+-- @tparam symbol symbol a symbol
+-- @tparam zile.Cons arglist arguments for calling this function symbol
+-- @return result of calling this function symbol
+function marshaller (symbol, arglist)
+  local argtypes = symbol["marshall-argtypes"]
   local args, i = {}, 1
 
   while arglist and arglist.car do
-    local val, ty = arglist.car, command.argtypes[i]
+    local val, ty = arglist.car, argtypes[i]
     if ty == "number" then
       val = tonumber (val.value, 10)
     elseif ty == "boolean" then
@@ -103,17 +109,29 @@ function marshaller (command, arglist)
 
   current_prefix_arg, prefix_arg = prefix_arg, false
 
-  return command.func (unpack (args)) or true
+  return symbol.func (unpack (args)) or true
 end
 
 
---- Easy command name access with @{tostring}.
--- Used as the `__tostring` metamethod of commands.
+--- Easy symbol name access with @{tostring}.
+-- Used as the `__tostring` metamethod of symbols.
 -- @local
--- @tparam command command data
--- @treturn string name of this command
-function namer (command)
-  return command.name
+-- @tparam symbol symbol a symbol
+-- @treturn string name of this symbol
+function namer (symbol)
+  return symbol.name
+end
+
+
+--- Set a property on a symbol.
+-- Used as the `__newindex` metamethod of symbols.
+-- @local
+-- @tparam symbol symbol a symbol
+-- @string propname name of property to set
+-- @param value value to store in property `propname`
+-- @return the new `value`
+function setter (symbol, propname, value)
+  return rawset (symbol.plist, propname, value)
 end
 
 
@@ -275,13 +293,14 @@ end
 
 
 --- Execute a function non-interactively.
--- @tparam command|string cmd_or_name command or name of command to execute
--- @param[opt=nil] uniarg a single non-table argument for `cmd_or_name`
-local function execute_function (cmd_or_name, uniarg)
-  local cmd, ok = cmd_or_name, false
+-- @tparam symbol|string symbol_or_name symbol or name of function
+--   symbol to execute
+-- @param[opt=nil] uniarg a single non-table argument for `symbol_or_name`
+local function execute_function (symbol_or_name, uniarg)
+  local symbol, ok = symbol_or_name, false
 
-  if type (cmd_or_name) ~= "table" then
-    cmd = fetch (cmd_or_name)
+  if type (symbol_or_name) ~= "table" then
+    symbol = fetch (symbol_or_name)
   end
 
   if uniarg ~= nil and type (uniarg) ~= "table" then
@@ -289,22 +308,23 @@ local function execute_function (cmd_or_name, uniarg)
   end
 
   command.attach_label (nil)
-  ok = cmd and cmd (uniarg)
+  ok = symbol and symbol (uniarg)
   command.next_label ()
 
   return ok
 end
 
+
 --- Call a zlisp command with arguments, interactively.
--- @tparam command cmd a value already passed to @{Defun}
+-- @tparam symbol symbol a value already passed to @{Defun}
 -- @tparam zile.Cons arglist arguments for `name`
 -- @return the result of calling `name` with `arglist`, or else `nil`
-local function call_command (cmd, arglist)
+local function call_command (symbol, arglist)
   thisflag = {defining_macro = lastflag.defining_macro}
 
   -- Execute the command.
   command.interactive_enter ()
-  local ok = execute_function (cmd, arglist)
+  local ok = execute_function (symbol, arglist)
   command.interactive_exit ()
 
   -- Only add keystrokes if we were already in macro defining mode
