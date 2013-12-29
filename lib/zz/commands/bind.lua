@@ -88,34 +88,33 @@ Show a list of all defined keys, and their definitions.
 
 
 Defun ("global_set_key",
-  {"string", "string"},
+  {"string", "function"},
 [[
 Bind a command to a key sequence.
 Read key sequence and function name, and bind the function to the key
 sequence.
 ]],
   true,
-  function (keystr, name)
+  function (keystr, func)
     local keys = prompt_key_sequence ('Set key globally', keystr)
 
     if keystr == nil then
       keystr = tostring (keys)
     end
 
-    if not name then
-      name = minibuf_read_function_name (string.format ('Set key %s to command: ', keystr))
-      if not name then
-        return
+    if not func then
+      local name = minibuf_read_function_name (string.format ('Set key %s to command: ', keystr))
+      if name then
+        func = lisp.sandbox[name]
       end
+      if not func then return false end
     end
 
-    if not eval.function_exists (name) then -- Possible if called non-interactively
-      minibuf_error (string.format ([[No such function `%s']], name))
-      return
+    if func == nil then -- Possible if called non-interactively
+      return minibuf_error (string.format ([[No such function `%s']], tostring (func)))
     end
 
-    root_bindings[keys] = eval.get_function_by_name (name)
-
+    root_bindings[keys] = func
     return true
   end
 )

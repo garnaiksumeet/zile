@@ -194,25 +194,6 @@ local function Defun (name, argtypes, doc, interactive, func)
 end
 
 
--- Return true if there is a symbol `name' in the symbol-table.
-local function function_exists (name)
-  return sandbox[name] ~= nil
-end
-
-
--- Return the named symbol-func-table.
-local function get_function_by_name (name)
-  return sandbox[name]
-end
-
-
--- Return the docstring for symbol-name.
-local function get_function_doc (name)
-  local value = sandbox[name]
-  return value and value.doc or nil
-end
-
-
 -- Return function's interactive field, or nil if not found.
 local function get_function_interactive (name)
   local value = sandbox[name]
@@ -252,10 +233,7 @@ return {
   Defun   = Defun,
   Defvar  = Defvar,
 
-  function_exists            = function_exists,
-  get_function_by_name       = get_function_by_name,
   get_function_interactive   = get_function_interactive,
-  get_function_doc           = get_function_doc,
 
   call_command     = call_command,
   loadstring       = evaluate_string,

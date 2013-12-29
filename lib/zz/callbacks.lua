@@ -42,8 +42,8 @@ local functions_history = history_new ()
 function minibuf_read_function_name (fmt)
   local cp = completion_new ()
 
-  for name, func in eval.commands () do
-    if func.interactive then
+  for name, func in pairs (eval.sandbox) do
+    if iscallable (func) and func.interactive then
       table.insert (cp.completions, name)
     end
   end

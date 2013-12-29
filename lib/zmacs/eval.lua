@@ -208,13 +208,6 @@ function M.get_function_by_name (name)
 end
 
 
--- Return the docstring for symbol-name.
-function M.get_function_doc (name)
-  local value = symbol[name]
-  return value and value.doc or nil
-end
-
-
 -- Return function's interactive field, or nil if not found.
 function M.get_function_interactive (name)
   local value = symbol[name]

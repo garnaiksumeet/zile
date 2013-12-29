@@ -81,18 +81,14 @@ sequence."
 
     if not name then
       name = minibuf_read_function_name (string.format ('Set key %s to command: ', keystr))
-      if not name then
-        return
-      end
+      if not name then return false end
     end
 
     if not lisp.function_exists (name) then -- Possible if called non-interactively
-      minibuf_error (string.format ([[No such function `%s']], name))
-      return
+      return minibuf_error (string.format ([[No such function `%s']], name))
     end
 
     root_bindings[keys] = lisp.get_function_by_name (name)
-
     return true"))
 
 

@@ -21,12 +21,12 @@ local eval = require "zz.eval"
 local Defun, zz = eval.Defun, eval.sandbox
 
 
-local function write_function_description (name, doc)
+local function write_function_description (command)
   insert_string (string.format (
      '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n%s',
-     name,
-     eval.get_function_interactive (name) and 'an interactive' or 'a',
-     doc))
+     tostring (command),
+     command.interactive and 'an interactive' or 'a',
+     command.doc))
 end
 
 
@@ -36,21 +36,12 @@ Defun ("describe_function",
 Display the full documentation of a function.
 ]],
   true,
-  function (func)
-    if not func then
-      func = minibuf_read_function_name ('Describe function: ')
-      if not func then
-        return false
-      end
-    end
+  function (name)
+    name = name or minibuf_read_function_name ('Describe function: ')
+    local command = zz[name]
+    if not command or not command.doc then return false end
 
-    local doc = eval.get_function_doc (func)
-    if not doc then
-      return false
-    else
-      write_temp_buffer ('*Help*', true, write_function_description, func, doc)
-    end
-
+    write_temp_buffer ('*Help*', true, write_function_description, command)
     return true
   end
 )

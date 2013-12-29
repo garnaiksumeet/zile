@@ -20,32 +20,27 @@
 
 ;; FIXME: Add apropos
 
-(localfun write_function_description (name doc)
+(localfun write_function_description (command)
   "insert_string (string.format (
      '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n%s',
-     name,
-     lisp.get_function_interactive (name) and 'an interactive' or 'a',
-     doc))")
+     tostring (command),
+     command.interactive and 'an interactive' or 'a',
+     command.doc))")
 
 
 (defun describe-function (string)
   "Display the full documentation of a function."
   (interactive)
-  (lambda (func)
-    "if not func then
-      func = minibuf_read_function_name ('Describe function: ')
-      if not func then
-        return false
-      end
+  (lambda (name)
+    "if not name then
+      name = minibuf_read_function_name ('Describe function: ')
+      if not name then return false end
     end
 
-    local doc = lisp.get_function_doc (func)
-    if not doc then
-      return false
-    else
-      write_temp_buffer ('*Help*', true, write_function_description, func, doc)
-    end
+    local func = lisp.get_function_by_name (name)
+    if func == nil or func.doc == nil then return false end
 
+    write_temp_buffer ('*Help*', true, write_function_description, func)
     return true"))
 
 
