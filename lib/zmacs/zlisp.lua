@@ -197,15 +197,15 @@ end
 
 --- ZLisp symbols.
 -- A mapping of symbol-names to symbol-values.
--- @table symbol
-local sandbox = {}
+-- @table obarray
+local obarray = {}
 
 
 --- Define a new symbol.
 -- @string name the symbol name
 -- @param value the value to store in symbol `name`
 local function define (name, value)
-  sandbox[name] = value
+  obarray[name] = value
 end
 
 
@@ -213,7 +213,7 @@ end
 -- @string name the symbol name
 -- @return the associated symbol value if any, else `nil`
 local function fetch (name)
-  return sandbox[name]
+  return obarray[name]
 end
 
 
@@ -222,7 +222,7 @@ end
 -- @treturn function iterator
 -- @treturn table symbol table
 local function symbols ()
-  return next, sandbox, nil
+  return next, obarray, nil
 end
 
 
@@ -233,11 +233,11 @@ end
 
 
 --- Call a named zlisp command with arguments.
--- @string name a function @{define}d in @{symbol}
+-- @string name a function @{define}d in @{obarray}
 -- @tparam zile.Cons arglist arguments for `name`
 -- @return the result of calling `name` with `arglist`, or else `nil`
 local function call_command (name, arglist)
-  local value = sandbox[name]
+  local value = obarray[name]
   return value and type (value) == "function" and value (arglist) or nil
 end
 
@@ -298,6 +298,5 @@ return {
   evaluate_string = evaluate_string,
   fetch           = fetch,
   parse           = parse,
-  symbol          = sandbox,
   symbols         = symbols,
 }
