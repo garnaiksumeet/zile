@@ -34,7 +34,7 @@
 
 
 local lisp = require "zmacs.zlisp"
-local Cons, symbol_value = lisp.Cons, lisp.symbol_value
+local Cons, fetch = lisp.Cons, lisp.fetch
 
 
 
@@ -281,7 +281,7 @@ local function execute_function (cmd_or_name, uniarg)
   local cmd, ok = cmd_or_name, false
 
   if type (cmd_or_name) ~= "table" then
-    cmd = symbol_value (cmd_or_name)
+    cmd = fetch (cmd_or_name)
   end
 
   if uniarg ~= nil and type (uniarg) ~= "table" then
@@ -338,7 +338,7 @@ end
 -- @tparam zile.Cons node a node of the AST from @{zmacs.zlisp.parse}.
 -- @treturn zile.Cons the result of evaluating `node`
 local function evaluate_expression (node)
-  if symbol_value (node.value) ~= nil then
+  if fetch (node.value) ~= nil then
     return node.quoted and node or evaluate_command (node)
   elseif node.value == "t" or node.value == "nil" then
     return node
@@ -380,15 +380,9 @@ end
 
 ------
 -- Fetch the value of a defined symbol name.
--- @function get_function_by_name
+-- @function fetch
 -- @string name the symbol name
 -- @return the associated symbol value if any, else `nil`
-
-
-------
--- ZLisp symbols.
--- A mapping of symbol-names to symbol-values.
--- @table command
 
 
 ------
@@ -405,12 +399,11 @@ return {
   Defvar              = Defvar,
   call_command        = call_command,
   evaluate_expression = evaluate_expression,
+  fetch               = fetch,
   loadfile            = evaluate_file,
   loadstring          = evaluate_string,
   execute_function    = execute_function,
 
   -- Copy some commands into our namespace directly.
-  get_function_by_name = lisp.symbol_value,
-  command              = lisp.symbol,
   commands             = lisp.symbols,
 }

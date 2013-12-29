@@ -18,7 +18,7 @@
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
 local eval = require "zz.eval"
-local Defun, zz = eval.Defun, eval.sandbox
+local Defun, fetch, zz = eval.Defun, eval.fetch, eval.sandbox
 
 
 local function write_function_description (command)
@@ -71,12 +71,12 @@ Display documentation of the command invoked by a key sequence.
       if not keys then
         return false
       end
-      command = get_function_by_keys (keys, eval.command)
+      command = get_function_by_keys (keys, fetch)
       binding = tostring (keys)
     else
       minibuf_write ('Describe key:')
       local keys = get_key_sequence ()
-      command = get_function_by_keys (keys, eval.command)
+      command = get_function_by_keys (keys, fetch)
       binding = tostring (keys)
 
       if not command then

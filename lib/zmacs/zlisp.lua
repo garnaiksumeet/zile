@@ -212,7 +212,7 @@ end
 --- Fetch the value of a defined symbol name.
 -- @string name the symbol name
 -- @return the associated symbol value if any, else `nil`
-local function symbol_value (name)
+local function fetch (name)
   return sandbox[name]
 end
 
@@ -296,8 +296,8 @@ return {
   define          = define,
   evaluate_file   = evaluate_file,
   evaluate_string = evaluate_string,
+  fetch           = fetch,
   parse           = parse,
   symbol          = sandbox,
-  symbol_value    = symbol_value,
   symbols         = symbols,
 }

@@ -18,7 +18,7 @@
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
 local eval  = require "zz.eval"
-local Defun = eval.Defun
+local Defun, fetch = eval.Defun, eval.fetch
 
 
 Defun ("self_insert_command",
@@ -44,7 +44,7 @@ Argument is a command name.
   function ()
     local name = minibuf_read_function_name ('Where is command: ')
 
-    if name and eval.function_exists (name) then
+    if name and fetch (name) then
       local g = { f = name, bindings = '' }
 
       walk_bindings (root_bindings, gather_bindings, g)

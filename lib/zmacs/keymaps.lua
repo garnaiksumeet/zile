@@ -17,8 +17,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local lisp  = require "zmacs.eval"
 local posix = require "posix"
+
+local lisp  = require "zmacs.eval"
+local fetch = lisp.fetch
 
 root_bindings = tree.new ()
 
@@ -26,13 +28,13 @@ function init_default_bindings ()
   -- Bind all printing keys to self-insert-command
   for i = 0, 0xff do
     if posix.isprint (string.char (i)) then
-      root_bindings[{keycode (string.char (i))}] = lisp.command["self-insert-command"]
+      root_bindings[{keycode (string.char (i))}] = fetch "self-insert-command"
     end
   end
 
   -- Bind special key names to self-insert-command
   list.map (function (e)
-              root_bindings[{keycode (e)}] = lisp.command["self-insert-command"]
+              root_bindings[{keycode (e)}] = fetch "self-insert-command"
             end,
             {"\\SPC", "\\TAB", "\\RET", "\\\\"})
 

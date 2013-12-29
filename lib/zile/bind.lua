@@ -170,12 +170,12 @@ function get_key_sequence ()
   return keys
 end
 
-function get_function_by_keys (keys, symtab)
+function get_function_by_keys (keys, fetch)
   -- Detect Meta-digit
   if #keys == 1 then
     local key = keys[1]
     if key.META and key.key < 255 and string.match (string.char (key.key), "[%d%-]") then
-      return symtab["universal-argument"]
+      return fetch "universal-argument"
     end
   end
 

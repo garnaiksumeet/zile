@@ -37,7 +37,7 @@
       if not name then return false end
     end
 
-    local func = lisp.get_function_by_name (name)
+    local func = lisp.fetch (name)
     if func == nil or func.doc == nil then return false end
 
     write_temp_buffer ('*Help*', true, write_function_description, func)
@@ -64,12 +64,12 @@
       if not keys then
         return false
       end
-      command = get_function_by_keys (keys, lisp.command)
+      command = get_function_by_keys (keys, lisp.fetch)
       binding = tostring (keys)
     else
       minibuf_write ('Describe key:')
       local keys = get_key_sequence ()
-      command = get_function_by_keys (keys, lisp.command)
+      command = get_function_by_keys (keys, lisp.fetch)
       binding = tostring (keys)
 
       if not command then

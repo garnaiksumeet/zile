@@ -33,7 +33,7 @@ Argument is a command name."
   (lambda ()
     "local name = minibuf_read_function_name ('Where is command: ')
 
-    if name and lisp.get_function_by_name (name) then
+    if name and lisp.fetch (name) then
       local g = { f = name, bindings = '' }
 
       walk_bindings (root_bindings, gather_bindings, g)
@@ -83,7 +83,7 @@ sequence."
       name = minibuf_read_function_name (string.format ('Set key %s to command: ', keystr))
       if not name then return false end
     end
-    local func = lisp.get_function_by_name (name)
+    local func = lisp.fetch (name)
 
     if not func then -- Possible if called non-interactively
       return minibuf_error (string.format ([[No such function `%s']], name))

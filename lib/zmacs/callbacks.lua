@@ -17,14 +17,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local lisp = require "zmacs.eval"
+local lisp  = require "zmacs.eval"
+local fetch = lisp.fetch
 
 -- Used to process keyboard macros, and to maintain identical behaviour
 -- between the user typing and a keyboard macro sending keys, also used
 -- for the main loop after initialization.
 function get_and_run_command ()
   local keys = get_key_sequence ()
-  local func = get_function_by_keys (keys, lisp.command)
+  local func = get_function_by_keys (keys, fetch)
 
   minibuf_clear ()
 
