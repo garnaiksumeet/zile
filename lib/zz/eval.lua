@@ -1,5 +1,3 @@
--- Zz Evaluator
---
 -- Copyright (c) 2009-2013 Free Software Foundation, Inc.
 --
 -- This file is part of GNU Zile.
@@ -15,9 +13,119 @@
 -- General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program; see the file COPYING.  If not, write to the
--- Free Software Foundation, Fifth Floor, 51 Franklin Street, Boston,
--- MA 02111-1301, USA.
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+--[[--
+ Sandboxed Lua Evaluator.
+
+ @module zz.eval
+]]
+
+
+
+--[[ ======================== ]]--
+--[[ Symbol Table Management. ]]--
+--[[ ======================== ]]--
+
+
+--- Sandboxed evaluation environment.
+-- A mapping of symbol-names to symbol-values.
+local sandbox = {}
+
+local Defun, marshaller, namer -- forward declarations
+
+
+--- Define a command in the execution environment for the evaluator.
+-- @string name command name
+-- @tparam table argtypes a list of type strings that arguments must match
+-- @string doc docstring
+-- @bool interactive `true` if this command can be called interactively
+-- @func func function to call after marshalling arguments
+function Defun (name, argtypes, doc, interactive, func)
+
+  --- Command table.
+  -- The data associated with a given command.
+  -- @table command
+  -- @string name command name
+  -- @tfield table a list of type strings that arguments must match
+  -- @string doc docstring
+  -- @bool interactive `true` if this command can be called interactively
+  -- @func func function to call after marshalling arguments
+  local command = {
+    name        = name,
+    argtypes    = argtypes,
+    doc         = texi (doc:chomp ()),
+    interactive = interactive,
+    func        = func,
+  }
+
+  sandbox[name] = setmetatable (command, {
+    __call     = marshaller,
+    __tostring = namer,
+  })
+end
+
+
+--- Argument marshalling and type-checking for commands.
+-- Used as the `__call` metamethod for commands.
+-- @local
+-- @tparam command command data
+-- @param ... arguments for this command
+-- @return result of calling this command
+function marshaller (command, ...)
+  local args = {...}
+  for i, v in ipairs (args) do
+    -- When given, argtypes must match, though "function" can match
+    -- anything callable.
+    if command.argtypes
+       and not (command.argtypes[i] == type (v)
+                or command.argtypes[i] == "function" and iscallable (v))
+    then
+      -- Undo mangled prefix_arg when called from minibuf.
+      if i == 1 and args[1] == prefix_arg then
+        args[1] = nil
+      else
+        return minibuf_error (
+          string.format (
+            "bad argument #%d to '%s' (%s expected, got %s): %s",
+            i, command.name, command.argtypes[i], type (v), tostring (v))
+        )
+      end
+    end
+  end
+
+  current_prefix_arg, prefix_arg = prefix_arg, false
+
+  return command.func (...) or true
+end
+
+
+--- Easy command name access with @{tostring}.
+-- Used as the `__tostring` method of commands.
+-- @local
+-- @tparam command command data
+-- @treturn string name of this command
+function namer (command)
+  return command.name
+end
+
+
+--- Fetch the value of a defined symbol name.
+-- @string name the symbol name
+-- @return the associated symbol value if any, else `nil`
+local function fetch (name)
+  return sandbox[name]
+end
+
+
+--- Symbol table iterator, for use with `for` loops.
+--     for name, value in zlisp.symbols() do
+-- @treturn function iterator
+-- @treturn table symbol table
+local function commands ()
+  return next, sandbox, nil
+end
+
 
 
 
@@ -26,53 +134,84 @@
 --[[ ==================== ]]--
 
 
-local metadata = {}  -- variable docs and other metadata
+--- Variable docs and other metadata.
+local metadata = {}
 
 
--- Make a proxy table for main variables stored according to canonical
--- "_" delimited format, along with metamethods that access the proxy
--- while transparently converting to and from zlisp "-" delimited
--- format.
+--- Mapping between variable names and values.
 main_vars = {}
 
 
+--- Define a new variable.
+-- Store the value and docstring for a variable for later retrieval.
+-- @string name variable name
+-- @param value value to store in variable `name`
+-- @string doc variable's docstring
 function Defvar (name, value, doc)
   main_vars[name] = value
   metadata[name] = { doc = texi (doc:chomp ()) }
 end
 
 
+--- Set a variable's buffer-local behaviour.
+-- Any variable marked this way becomes a buffer-local version of the
+-- same when set in any way.
+-- @string name variable name
+-- @tparam bool bool `true` to mark buffer-local, `false` to unmark.
+-- @treturn bool the new buffer-local status
 function set_variable_buffer_local (name, bool)
   return rawset (metadata[name], "islocal", not not bool)
 end
 
 
+--- Return the value of a variable in a particular buffer.
+-- @string name variable name
+-- @tparam[opt=current buffer] buffer bp buffer to select
+-- @return the value of `name` from buffer `bp`
 function get_variable (name, bp)
   return ((bp or cur_bp or {}).vars or main_vars)[name]
 end
 
 
+--- Coerce a variable value to a number.
+-- @string name variable name
+-- @tparam[opt=current buffer] buffer bp buffer to select
+-- @treturn number the number value of `name` from buffer `bp`
 function get_variable_number (name, bp)
   return tonumber (get_variable (name, bp), 10)
 end
 
 
+--- Coerce a variable value to a boolean.
+-- @string name variable name
+-- @tparam[opt=current buffer] buffer bp buffer to select
+-- @treturn bool the bool value of `name` from buffer `bp`
 function get_variable_bool (name, bp)
   return get_variable (name, bp) ~= "nil"
 end
 
 
+--- Return the docstring for a variable.
+-- @string name variable name
+-- @treturn string the docstring for `name` if any, else ""
 function get_variable_doc (name)
   local t = metadata[name]
   return t and t.doc or ""
 end
 
 
+--- Return a table of all variables.
+-- @treturn table all variables and their values in a table
 function get_variable_table ()
   return main_vars
 end
 
 
+--- Assign a value to a variable in a given buffer.
+-- @string name variable name
+-- @param value value to assign to `name`
+-- @tparam[opt=current buffer] buffer bp buffer to select
+-- @return the new value of `name` from buffer `bp`
 function set_variable (name, value, bp)
   local t = metadata[name]
   if t and t.islocal then
@@ -86,7 +225,8 @@ function set_variable (name, value, bp)
   return value
 end
 
--- Initialise buffer local variables.
+--- Initialise buffer local variables.
+-- @tparam buffer bp a buffer
 function init_buffer (bp)
   bp.vars = setmetatable ({}, {
     __index    = main_vars,
@@ -113,17 +253,16 @@ end
 --[[ ================== ]]--
 
 
--- The symbol table is a symbol-name:symbol-func-table mapping.
-local sandbox = {}
-
-
--- Call an interactive command.
-local function call_command (f, ...)
+--- Call a command with arguments, interactively.
+-- @tparam command cmd a value already passed to @{Defun}
+-- @param ... arguments for `cmd`
+-- @return the result of calling `cmd` with arguments, or else `nil`
+local function call_command (cmd, ...)
   thisflag = {defining_macro = lastflag.defining_macro}
 
   -- Execute the command.
   command.interactive_enter ()
-  local ok = f (...)
+  local ok = cmd (...)
   command.interactive_exit ()
 
   -- Only add keystrokes if we were already in macro defining mode
@@ -142,59 +281,11 @@ local function call_command (f, ...)
 end
 
 
--- Shared metatable for symbol-func-tables.
-local symbol_mt = {
-  __call        = function (self, ...)
-                    local args = {...}
-                    for i, v in ipairs (args) do
-                      -- When given, argtypes must match, though "function"
-                      -- can match anything callable.
-                      if self.argtypes
-                         and not (self.argtypes[i] == type (v)
-                                  or self.argtypes[i] == "function" and iscallable (v))
-                      then
-                        -- Undo mangled prefix_arg when called from minibuf.
-                        if i == 1 and args[1] == prefix_arg then
-                          args[1] = nil
-                        else
-                          return minibuf_error (
-                            string.format (
-                              "bad argument #%d to '%s' (%s expected, got %s): %s",
-                              i, self.name, self.argtypes[i], type (v), tostring (v))
-                          )
-                        end
-                      end
-                    end
-                    current_prefix_arg = prefix_arg
-                    prefix_arg = false
-                    local ret = call_command (self.func, unpack (args))
-                    if ret == nil then
-                      ret = true
-                    end
-                    return ret
-                  end,
 
-  __tostring    = function (self)
-	            return self.name
-	          end,
-}
-
-
-
--- Define symbols for the evaluator.
-local function Defun (name, argtypes, doc, interactive, func)
-  local introspect = {
-    argtypes    = argtypes,
-    doc         = texi (doc:chomp ()),
-    func        = func,
-    interactive = interactive,
-    name        = name,
-  }
-  sandbox[name] = setmetatable (introspect, symbol_mt)
-end
-
-
--- Evaluate a string of Lua.
+--- Evaluate a string of Lua inside the evaluation environment sandbox.
+-- @function loadstring
+-- @string s Lua source
+-- @return `true` for success, or else `nil` pluss an error string
 local function evaluate_string (s)
   local f, errmsg = load (s, nil, 't', sandbox)
   if f == nil then
@@ -204,7 +295,10 @@ local function evaluate_string (s)
 end
 
 
--- Evaluate a file of Lua.
+--- Evaluate a file of Lua inside the evaluation environment sandbox.
+-- @function loadfile
+-- @string file path to a file of Lua code
+-- @return `true` for success, or else `nil` pluss an error string
 local function evaluate_file (file)
   local s, errmsg = io.slurp (file)
 
@@ -221,12 +315,14 @@ local function evaluate_file (file)
 end
 
 
+--- @export
 return {
-  sandbox = sandbox,
-  Defun   = Defun,
-  Defvar  = Defvar,
-
-  call_command     = call_command,
-  loadstring       = evaluate_string,
-  loadfile         = evaluate_file,
+  Defun        = Defun,
+  Defvar       = Defvar,
+  call_command = call_command,
+  commands     = commands,
+  fetch        = fetch,
+  loadstring   = evaluate_string,
+  loadfile     = evaluate_file,
+  sandbox      = sandbox,
 }

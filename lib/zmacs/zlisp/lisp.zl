@@ -39,7 +39,7 @@ The values val are expressions; they are evaluated."
     "local ret
     local l = {...}
     for i = 1, #l/2 do
-      ret = lisp.evalexpr (l[i + 1])
+      ret = lisp.evaluate_expression (l[i + 1])
       set_variable (l[i].value, ret.value)
     end
     return ret"))

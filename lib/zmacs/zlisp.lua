@@ -196,6 +196,7 @@ end
 
 
 --- ZLisp symbols.
+-- A mapping of symbol-names to symbol-values.
 -- @table symbol
 local sandbox = {}
 
@@ -205,6 +206,14 @@ local sandbox = {}
 -- @param value the value to store in symbol `name`
 local function define (name, value)
   sandbox[name] = value
+end
+
+
+--- Fetch the value of a defined symbol name.
+-- @string name the symbol name
+-- @return the associated symbol value if any, else `nil`
+local function symbol_value (name)
+  return sandbox[name]
 end
 
 
@@ -233,16 +242,16 @@ local function call_command (name, arglist)
 end
 
 
---- Evaluate a list of command expressions.
--- @tparam zile.Cons sexpr an _S-Expression_
--- @return the result of evaluating `sexpr`, or else `nil`
-local function evaluate_expression (sexpr)
-  return sexpr and sexpr.car and call_command (sexpr.car.value, sexpr.cdr) or nil
+--- Evaluate a single command expression.
+-- @tparam zile.Cons list a cons list, where the first element is a
+--   command name.
+-- @return the result of evaluating `list`, or else `nil`
+local function evaluate_command (list)
+  return list and list.car and call_command (list.car.value, list.cdr) or nil
 end
 
 
 --- Evaluate a string of zlisp code.
--- @function evalstring
 -- @string s zlisp source
 -- @return `true` for success, or else `nil` plus an error string
 local function evaluate_string (s)
@@ -251,7 +260,7 @@ local function evaluate_string (s)
   if not ok then return nil, list end
 
   while list do
-    evaluate_expression (list.car.value)
+    evaluate_command (list.car.value)
     list = list.cdr
   end
   return true
@@ -259,7 +268,6 @@ end
 
 
 --- Evaluate a file of zlisp.
--- @function evalfile
 -- @param file path to a file of zlisp code
 -- @return `true` for success, or else `nil` plus an error string
 local function evaluate_file (file)
@@ -273,14 +281,23 @@ local function evaluate_file (file)
 end
 
 
+------
+--- Return a new Cons cell with supplied car and cdr.
+-- @function Cons
+-- @param car first element
+-- @param cdr last element
+-- @treturn Cons a new cell containing those elements
+
+
 --- @export
 return {
-  call_command = call_command,
-  cons         = Cons,
-  define       = define,
-  evalfile     = evaluate_file,
-  evalstring   = evaluate_string,
-  parse        = parse,
-  symbol       = sandbox,
-  symbols      = symbols,
+  call_command    = call_command,
+  Cons            = Cons,
+  define          = define,
+  evaluate_file   = evaluate_file,
+  evaluate_string = evaluate_string,
+  parse           = parse,
+  symbol          = sandbox,
+  symbol_value    = symbol_value,
+  symbols         = symbols,
 }
