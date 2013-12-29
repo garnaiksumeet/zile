@@ -20,61 +20,13 @@
 -- MA 02111-1301, USA.
 
 
-local Set = require "zile.Set"
-local io  = require "std.io_ext"
+local Cons = require "zile.Cons"
+local Set  = require "zile.Set"
+local io   = require "std.io_ext"
 
-local M = {}
-
-
-
---[[ ----------- ]]--
---[[ Cons Cells. ]]--
---[[ ----------- ]]--
-
-
-local Cons = {}
-local metatable = { __index = Cons }
-
-
--- Construct and return a new cons cell:
---   new = M.cons (car, cdr)
-function M.cons (car, cdr)
-  return setmetatable ({car = car, cdr = cdr}, metatable)
-end
-
-
--- Return the nth element of a list of cons cells.
-function Cons:nth (n)
-  if type (n) ~= "number" or n < 1 or self == nil then
-    return nil
-  elseif n == 1 then
-    return self.car
-  end
-
-  -- Weird calling convention to enable tail call elimination.
-  return Cons.nth (self.cdr, n - 1)
-end
-
-
--- Equivalent to table.concat for lists of cons cells.  Concatenates
--- value field of each car if available, otherwise all of car itself.
-function Cons:concat (delim)
-  delim = delim or ""
-  local s = tostring (self.car.value or self.car)
-  if self.cdr == nil then return s end
-  return s .. delim .. Cons.concat (self.cdr, delim)
-end
-
-
--- Return a non-destructive reversed cons list.
-function Cons:reverse ()
-  local rev = nil
-  while self ~= nil do
-    rev = M.cons (self.car, rev)
-    self = self.cdr
-  end
-  return rev
-end
+local M = {
+  cons = Cons,
+}
 
 
 
@@ -167,7 +119,7 @@ function M.parse (s)
 
   -- New nodes are pushed onto the front of the list for speed...
   local function push (ast, value, kind, quoted)
-    return M.cons ({value = value, kind = kind, quoted = quoted}, ast)
+    return Cons ({value = value, kind = kind, quoted = quoted}, ast)
   end
 
   local function read (nested, openparen)

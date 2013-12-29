@@ -18,6 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 dist_pkgdata_DATA =				\
+	lib/zile/Cons.lua			\
 	lib/zile/Set.lua			\
 	lib/zile/astr.lua			\
 	lib/zile/bind.lua			\
