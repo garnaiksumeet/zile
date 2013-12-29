@@ -208,13 +208,6 @@ function M.get_function_by_name (name)
 end
 
 
--- Return function's interactive field, or nil if not found.
-function M.get_function_interactive (name)
-  local value = symbol[name]
-  return value and value.interactive or nil
-end
-
-
 
 --[[ ================ ]]--
 --[[ ZLisp Evaluator. ]]--

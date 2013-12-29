@@ -47,14 +47,14 @@ Display the full documentation of a function.
 )
 
 
-local function write_key_description (name, doc, binding)
-  local _interactive = eval.get_function_interactive (name)
-  assert (_interactive ~= nil)
-
+local function write_key_description (command, binding)
   insert_string (string.format (
-    '%s runs the command %s, which is %s built-in\nfunction in ' ..
-    [[`Lua source code']] .. '.\n\n%s',
-    binding, name, _interactive and 'an interactive' or 'a', doc))
+    '%s runs the command %s, which is %s built-in\n' ..
+    'function in ' .. [[`Lua source code']] .. '.\n\n%s',
+    binding,
+    tostring (command),
+    command.interactive and 'an interactive' or 'a',
+    command.doc))
 end
 
 
@@ -65,34 +65,29 @@ Display documentation of the command invoked by a key sequence.
 ]],
   true,
   function (keystr)
-    local func, binding
+    local command, binding
     if keystr then
       local keys = keystrtovec (keystr)
       if not keys then
         return false
       end
-      func = get_function_by_keys (keys, eval.command)
+      command = get_function_by_keys (keys, eval.command)
       binding = tostring (keys)
     else
       minibuf_write ('Describe key:')
       local keys = get_key_sequence ()
-      func = get_function_by_keys (keys, eval.command)
+      command = get_function_by_keys (keys, eval.command)
       binding = tostring (keys)
 
-      if not func then
+      if not command then
         return minibuf_error (binding .. ' is undefined')
       end
     end
 
-    local name = tostring (func)
-    minibuf_write (string.format ([[%s runs the command `%s']], binding, name))
+    minibuf_write (string.format ([[%s runs the command `%s']], binding, tostring (command)))
+    if not command.doc then return false end
 
-    if not func.doc then
-      return false
-    end
-    write_temp_buffer ('*Help*', true, write_key_description, name,
-                       func.doc, binding)
-
+    write_temp_buffer ('*Help*', true, write_key_description, command, binding)
     return true
   end
 )

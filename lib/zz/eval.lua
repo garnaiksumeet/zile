@@ -194,13 +194,6 @@ local function Defun (name, argtypes, doc, interactive, func)
 end
 
 
--- Return function's interactive field, or nil if not found.
-local function get_function_interactive (name)
-  local value = sandbox[name]
-  return value and value.interactive or nil
-end
-
-
 -- Evaluate a string of Lua.
 local function evaluate_string (s)
   local f, errmsg = load (s, nil, 't', sandbox)
@@ -232,8 +225,6 @@ return {
   sandbox = sandbox,
   Defun   = Defun,
   Defvar  = Defvar,
-
-  get_function_interactive   = get_function_interactive,
 
   call_command     = call_command,
   loadstring       = evaluate_string,
