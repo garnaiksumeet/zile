@@ -20,7 +20,8 @@
 -- MA 02111-1301, USA.
 
 
-local io = require "std.io_ext"
+local Set = require "zile.Set"
+local io  = require "std.io_ext"
 
 local M = {}
 
@@ -74,37 +75,6 @@ function Cons:reverse ()
   end
   return rev
 end
-
-
-
---[[ --------------------------- ]]--
---[[ Sets that work with strict. ]]--
---[[ --------------------------- ]]--
-
-
-local _mt, Set
-
-_mt = {
-  -- Return a new set containing the union of values from s and t.
-  __add = function (s, t)
-    local r = Set ()
-    for k in pairs (s) do rawset (r, k, true) end
-    for k in pairs (t) do rawset (r, k, true) end
-    return r
- end,
-}
-
-
-Set = setmetatable ({}, {
-  -- Return a new set containing values from t.
-  __call = function (s, t)
-    local r = setmetatable ({}, _mt)
-    if t ~= nil then
-      for _, v in pairs (t) do rawset (r, v, true) end
-    end
-    return r
-  end,
-})
 
 
 
