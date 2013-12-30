@@ -49,7 +49,7 @@ The values val are expressions; they are evaluated.
     local ret
     local l = {...}
     for i = 1, #l/2 do
-      set_variable (l[2*i -1], l[2*i])
+      eval.set_variable (l[2*i -1], l[2*i])
     end
     return l[#l]
   end

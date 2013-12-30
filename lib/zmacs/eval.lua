@@ -190,7 +190,7 @@ end
 -- @string name variable name
 -- @tparam bool bool `true` to mark buffer-local, `false` to unmark.
 -- @treturn bool the new buffer-local status
-function set_variable_buffer_local (name, bool)
+local function set_variable_buffer_local (name, bool)
   local symbol = fetch (name)
   symbol["buffer-local-variable"] = not not bool or nil
 end
@@ -200,7 +200,7 @@ end
 -- @string name variable name
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the value of `name` from buffer `bp`
-function fetch_variable (name, bp)
+local function fetch_variable (name, bp)
   name = mangle (name)
   local obarray = (bp or cur_bp or {}).obarray
   return obarray and obarray[name] or lisp.fetch (name)
@@ -211,7 +211,7 @@ end
 -- @string name variable name
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the value of `name` from buffer `bp`
-function get_variable (name, bp)
+local function get_variable (name, bp)
   return (fetch_variable (name, bp) or {}).value
 end
 
@@ -220,7 +220,7 @@ end
 -- @string name variable name
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @treturn number the number value of `name` from buffer `bp`
-function get_variable_number (name, bp)
+local function get_variable_number (name, bp)
   return tonumber (get_variable (name, bp), 10)
 end
 
@@ -229,17 +229,8 @@ end
 -- @string name variable name
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @treturn bool the bool value of `name` from buffer `bp`
-function get_variable_bool (name, bp)
+local function get_variable_bool (name, bp)
   return get_variable (name, bp) ~= "nil"
-end
-
-
---- Return the docstring for a variable.
--- @string name variable name
--- @treturn string the docstring for `name` if any, else ""
-function get_variable_doc (name)
-  local symbol = fetch (name)
-  return symbol and symbol["variable-documentation"] or ""
 end
 
 
@@ -248,7 +239,7 @@ end
 -- @param value value to assign to `name`
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the new value of `name` from buffer `bp`
-function set_variable (name, value, bp)
+local function set_variable (name, value, bp)
   local found = fetch (name)
   if found and found["buffer-local-variable"] then
     local symbol = {
@@ -273,17 +264,6 @@ function set_variable (name, value, bp)
   end
 
   return value
-end
-
-
---- Initialise buffer local variables.
--- @tparam buffer bp a buffer
-function init_buffer (bp)
-  bp.obarray = {}
-
-  if get_variable_bool ("auto_fill_mode", bp) then
-    bp.autofill = true
-  end
 end
 
 
@@ -418,7 +398,11 @@ return {
   execute_function    = execute_function,
   fetch               = fetch,
   fetch_variable      = fetch_variable,
+  get_variable_bool   = get_variable_bool,
+  get_variable_number = get_variable_number,
   loadfile            = evaluate_file,
   loadstring          = evaluate_string,
   mapatoms            = lisp.mapatoms,
+  set_variable        = set_variable,
+  set_variable_buffer_local = set_variable_buffer_local,
 }

@@ -42,8 +42,9 @@ Just C-u as argument means to use the current column."
       return minibuf_error ('set-fill-column requires an explicit argument')
     end
 
-    minibuf_write (string.format ('Fill column set to %d (was %d)', n, get_variable_number ('fill-column')))
-    set_variable ('fill-column', tostring (n))
+    minibuf_write (string.format ('Fill column set to %d (was %d)', n,
+                                  lisp.get_variable_number ('fill-column')))
+    lisp.set_variable ('fill-column', tostring (n))
     return true"))
 
 
@@ -84,7 +85,7 @@ This is useful for inserting control characters."
     unchain_marker (m_end)
 
     end_of_line ()
-    while get_goalc () > get_variable_number ('fill-column') + 1 and fill_break_line () do end
+    while get_goalc () > lisp.get_variable_number ('fill-column') + 1 and fill_break_line () do end
 
     goto_offset (m.o)
     unchain_marker (m)

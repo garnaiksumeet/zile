@@ -71,6 +71,9 @@ curses     = require "curses" -- part of luaposix
 rex_gnu    = require_version ("rex_gnu", "2.7.1", nil, "[%S]+%s*([%S]+)")
 require_version ("alien", "0.7.0")
 
+-- Load modules with Zile callbacks first:
+eval = require "zmacs.eval"
+
 -- Load Zile modules:
 require "zile.lib"
 require "zile.astr"

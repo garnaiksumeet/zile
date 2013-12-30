@@ -46,7 +46,7 @@ end
 function fill_break_line ()
   local i, old_col
   local break_col = 0
-  local fillcol = get_variable_number ("fill_column")
+  local fillcol = eval.get_variable_number ("fill_column")
   local break_made = false
 
   -- Only break if we're beyond fill-column.
@@ -114,7 +114,7 @@ function insert_tab ()
     return false
   end
 
-  if get_variable_bool ("indent_tabs_mode") then
+  if eval.get_variable_bool ("indent_tabs_mode") then
     insert_char ('\t')
   else
     insert_expanded_tab ()

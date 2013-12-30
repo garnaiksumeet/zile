@@ -56,7 +56,7 @@ zz.define ("defvar",
 -- which it is set.
 zz.define ("make-variable-buffer-local",
   function (arglist)
-    writef ('set_variable_buffer_local ("%s", true)\n', arglist:nth (1).value)
+    writef ('lisp.set_variable_buffer_local ("%s", true)\n', arglist:nth (1).value)
   end
 )
 

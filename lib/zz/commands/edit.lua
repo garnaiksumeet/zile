@@ -48,8 +48,9 @@ Just C-u as argument means to use the current column.
       return minibuf_error ('set_fill_column requires an explicit argument')
     end
 
-    minibuf_write (string.format ('Fill column set to %d (was %d)', n, get_variable_number ('fill_column')))
-    set_variable ('fill_column', tostring (n))
+    minibuf_write (string.format ('Fill column set to %d (was %d)', n,
+                                  eval.get_variable_number ('fill_column')))
+    eval.set_variable ('fill_column', tostring (n))
     return true
   end
 )
@@ -100,7 +101,7 @@ Fill paragraph at or after point.
     unchain_marker (m_end)
 
     end_of_line ()
-    while get_goalc () > get_variable_number ('fill_column') + 1 and fill_break_line () do end
+    while get_goalc () > eval.get_variable_number ('fill_column') + 1 and fill_break_line () do end
 
     goto_offset (m.o)
     unchain_marker (m)

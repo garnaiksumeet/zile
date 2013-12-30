@@ -99,5 +99,5 @@ directory.\nThis value is used only when `make-backup-files' is @samp{t}.")
     value = value or minibuf_read (string.format ('Set %s to value: ', name), '')
     if not value then return keyboard_quit () end
 
-    set_variable (name, value)
+    lisp.set_variable (name, value)
     return true"))

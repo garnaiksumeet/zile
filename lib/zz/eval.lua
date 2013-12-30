@@ -161,7 +161,7 @@ local metadata = {}
 
 
 --- Mapping between variable names and values.
-main_vars = {}
+local main_vars = {}
 
 
 --- Define a new variable.
@@ -169,7 +169,7 @@ main_vars = {}
 -- @string name variable name
 -- @param value value to store in variable `name`
 -- @string doc variable's docstring
-function Defvar (name, value, doc)
+local function Defvar (name, value, doc)
   main_vars[name] = value
   metadata[name] = { doc = texi (doc:chomp ()) }
 end
@@ -181,7 +181,7 @@ end
 -- @string name variable name
 -- @tparam bool bool `true` to mark buffer-local, `false` to unmark.
 -- @treturn bool the new buffer-local status
-function set_variable_buffer_local (name, bool)
+local function set_variable_buffer_local (name, bool)
   return rawset (metadata[name], "islocal", not not bool)
 end
 
@@ -190,7 +190,7 @@ end
 -- @string name variable name
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the value of `name` from buffer `bp`
-function get_variable (name, bp)
+local function get_variable (name, bp)
   return ((bp or cur_bp or {}).vars or main_vars)[name]
 end
 
@@ -199,7 +199,7 @@ end
 -- @string name variable name
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @treturn number the number value of `name` from buffer `bp`
-function get_variable_number (name, bp)
+local function get_variable_number (name, bp)
   return tonumber (get_variable (name, bp), 10)
 end
 
@@ -208,17 +208,8 @@ end
 -- @string name variable name
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @treturn bool the bool value of `name` from buffer `bp`
-function get_variable_bool (name, bp)
+local function get_variable_bool (name, bp)
   return get_variable (name, bp) ~= "nil"
-end
-
-
---- Return the docstring for a variable.
--- @string name variable name
--- @treturn string the docstring for `name` if any, else ""
-function get_variable_doc (name)
-  local t = metadata[name]
-  return t and t.doc or ""
 end
 
 
@@ -234,7 +225,7 @@ end
 -- @param value value to assign to `name`
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the new value of `name` from buffer `bp`
-function set_variable (name, value, bp)
+local function set_variable (name, value, bp)
   local t = metadata[name]
   if t and t.islocal then
     bp = bp or cur_bp
@@ -339,12 +330,17 @@ end
 
 --- @export
 return {
-  Defun        = Defun,
-  Defvar       = Defvar,
-  call_command = call_command,
-  fetch        = fetch,
-  loadstring   = evaluate_string,
-  loadfile     = evaluate_file,
-  mapatoms     = mapatoms,
-  sandbox      = sandbox,
+  Defun               = Defun,
+  Defvar              = Defvar,
+  call_command        = call_command,
+  fetch               = fetch,
+  get_variable        = get_variable,
+  get_variable_bool   = get_variable_bool,
+  get_variable_number = get_variable_number,
+  loadstring          = evaluate_string,
+  loadfile            = evaluate_file,
+  mapatoms            = mapatoms,
+  sandbox             = sandbox,
+  set_variable        = set_variable,
+  set_variable_buffer_local = set_variable_buffer_local,
 }

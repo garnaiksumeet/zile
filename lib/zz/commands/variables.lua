@@ -19,6 +19,7 @@
 
 local eval = require "zz.eval"
 local Defun, Defvar = eval.Defun, eval.Defvar
+local set_variable_buffer_local = eval.set_variable_buffer_local
 
 
 Defvar ("inhibit_splash_screen", "nil",
@@ -143,7 +144,7 @@ Set a variable value to the user-specified value.
     end
 
     if ok then
-      set_variable (var, val)
+      eval.set_variable (var, val)
     end
 
     return ok

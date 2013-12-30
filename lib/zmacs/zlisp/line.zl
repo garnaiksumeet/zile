@@ -27,7 +27,7 @@ If initial point was within line's indentation, position after
 the indentation.  Else stay at same point in text."
   (interactive)
   (lambda ()
-    "if get_variable_bool ('tab-always-indent') then
+    "if lisp.get_variable_bool ('tab-always-indent') then
       return insert_tab ()
     elseif (get_goalc () < previous_line_indent ()) then
       return lisp.execute_function ('indent-relative')
@@ -187,7 +187,9 @@ buffer."
 
 
 (localfun newline ()
-  "if cur_bp.autofill and get_goalc () > get_variable_number ('fill-column') then
+  "if cur_bp.autofill and
+     get_goalc () > lisp.get_variable_number ('fill-column')
+  then
     fill_break_line ()
   end
   return insert_newline ()")
