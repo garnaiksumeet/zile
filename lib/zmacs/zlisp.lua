@@ -217,12 +217,16 @@ local function fetch (name)
 end
 
 
---- Symbol table iterator, for use with `for` loops.
---     for name, value in zlisp.symbols() do
--- @treturn function iterator
--- @treturn table symbol table
-local function symbols ()
-  return next, obarray, nil
+--- Call a function on every symbol in obarray.
+-- If `func` returns `true`, mapatoms returns immediately.
+-- @func func a function that takes a symbol as its argument
+-- @tparam[opt=obarray] table symtab a table with symbol values
+-- @return `true` if `func` signalled early exit by returning `true`,
+--   otherwise `nil`
+local function mapatoms (func, symtab)
+  for _, symbol in pairs (symtab or obarray) do
+    if func (symbol) then return true end
+  end
 end
 
 
@@ -291,12 +295,12 @@ end
 
 --- @export
 return {
-  call_command    = call_command,
   Cons            = Cons,
+  call_command    = call_command,
   define          = define,
   evaluate_file   = evaluate_file,
   evaluate_string = evaluate_string,
   fetch           = fetch,
+  mapatoms        = mapatoms,
   parse           = parse,
-  symbols         = symbols,
 }

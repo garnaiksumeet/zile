@@ -406,11 +406,12 @@ end
 
 
 ------
--- Symbol table iterator, for use with `for` loops.
---     for name, value in zlisp.symbols() do
--- @function commands
--- @treturn function iterator
--- @treturn table symbol table
+-- Call a function on every symbol in obarray.
+-- If `func` returns `true`, mapatoms returns immediately.
+-- @func func a function that takes a symbol as its argument
+-- @tparam[opt=obarray] table symtab a table with symbol values
+-- @return `true` if `func` signalled early exit by returning `true`,
+--   otherwise `nil`
 
 
 --- @export
@@ -419,11 +420,9 @@ return {
   Defvar              = Defvar,
   call_command        = call_command,
   evaluate_expression = evaluate_expression,
-  fetch               = fetch,
+  execute_function    = execute_function,
+  fetch               = lisp.fetch,
   loadfile            = evaluate_file,
   loadstring          = evaluate_string,
-  execute_function    = execute_function,
-
-  -- Copy some commands into our namespace directly.
-  commands             = lisp.symbols,
+  mapatoms            = lisp.mapatoms,
 }

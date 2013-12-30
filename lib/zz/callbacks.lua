@@ -18,7 +18,8 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local eval = require "zz.eval"
-local fetch = eval.fetch
+local call_command, fetch, mapatoms =
+      eval.call_command, eval.fetch, eval.mapatoms
 
 -- Used to process keyboard macros, and to maintain identical behaviour
 -- between the user typing and a keyboard macro sending keys, also used
@@ -30,7 +31,7 @@ function get_and_run_command ()
   minibuf_clear ()
 
   if func then
-    eval.call_command (func, lastflag.set_uniarg and (prefix_arg or 1))
+    call_command (func, lastflag.set_uniarg and (prefix_arg or 1))
   else
     minibuf_error (tostring (keys) .. " is undefined")
   end
@@ -43,11 +44,12 @@ local functions_history = history_new ()
 function minibuf_read_function_name (fmt)
   local cp = completion_new ()
 
-  for name, symbol in pairs (eval.sandbox) do
+  local function gather_interactive (symbol)
     if iscallable (symbol) and symbol["interactive-form"] then
-      table.insert (cp.completions, name)
+      table.insert (cp.completions, symbol.name)
     end
   end
+  mapatoms (gather_interactive)
 
   return minibuf_vread_completion (fmt, "", cp, functions_history,
                                    "No function name given",
