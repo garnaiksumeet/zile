@@ -201,15 +201,36 @@ end
 local obarray = {}
 
 
---- Define a new symbol.
--- @string name the symbol name
--- @param value the value to store in symbol `name`
-local function define (name, value)
-  obarray[name] = value
+--- Deep merge one table into another.
+-- Metatable is preserved, but ignored during merge operations.
+-- @tparam table t destination table
+-- @tparam table u additional fields to merge
+local function deepmerge (t, u)
+  for k, v in pairs (u) do
+    if type (v) == "table" then
+      rawset (t, k, rawget (t, k) or {})
+      deepmerge (rawget (t, k), v)
+    else
+      rawset (t, k, v)
+    end
+  end
 end
 
 
---- Fetch the value of a defined symbol name.
+--- Define a new symbol, or update slots in an existing symbol.
+-- @string name the symbol name
+-- @param value the value to store in symbol `name`
+local function define (name, value)
+  if not obarray[name] then
+    obarray[name] = value
+  else
+    deepmerge (obarray[name], value)
+  end
+  return obarray[name]
+end
+
+
+--- Fetch the value of a previously defined symbol name.
 -- @string name the symbol name
 -- @return the associated symbol value if any, else `nil`
 local function fetch (name)
