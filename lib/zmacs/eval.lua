@@ -141,41 +141,14 @@ end
 --[[ ==================== ]]--
 
 
---- Variable docs and other metadata.
-local metadata = {}
-
 
 --- Convert a '-' delimited symbol-name to be '_' delimited.
 -- @function name_to_key
 -- @string name a '-' delimited symbol-name
 -- @treturn string `name` with all '-' transformed into '_'.
 local name_to_key = memoize (function (name)
-  return string.gsub (name, "-", "_")
+  return name:gsub ("%-", "_")
 end)
-
-
---- Mapping between variable names and values.
--- Make a proxy table for main variables stored according to canonical
--- "_" delimited format, along with metamethods that access the proxy
--- while transparently converting to and from zlisp "-" delimited
--- format.
--- @table main_vars
-main_vars = setmetatable ({values = {}}, {
-  __index = function (self, name)
-    return rawget (self.values, name_to_key (name))
-  end,
-
-  __newindex = function (self, name, value)
-    return rawset (self.values, name_to_key (name), value)
-  end,
-
-  __pairs = function (self)
-    return function (t, k)
-	     local v, j = next (t, k and name_to_key (k) or nil)
-	     return v and v:gsub ("_", "-") or nil, j
-	   end, self.values, nil
-  end,
-})
 
 
 --- Define a new variable.
@@ -184,9 +157,22 @@ main_vars = setmetatable ({values = {}}, {
 -- @param value value to store in variable `name`
 -- @string doc variable's docstring
 local function Defvar (name, value, doc)
-  local key = name_to_key (name)
-  main_vars[key] = value
-  metadata[key] = { doc = texi (doc:chomp ()) }
+  doc = doc or ""
+  local symbol = {
+    name  = name,
+    value = value,
+    plist = {
+      ["variable-documentation"] = texi (doc:chomp ()),
+    }
+  }
+
+  lisp.define (name_to_key (name),
+    setmetatable (symbol, {
+      __index    = symbol.plist,
+      __newindex = setter,
+      __tostring = namer,
+    })
+  )
 end
 
 
@@ -197,7 +183,19 @@ end
 -- @tparam bool bool `true` to mark buffer-local, `false` to unmark.
 -- @treturn bool the new buffer-local status
 function set_variable_buffer_local (name, bool)
-  return rawset (metadata[name_to_key (name)], "islocal", not not bool)
+  local symbol = fetch (name_to_key (name))
+  symbol["buffer-local-variable"] = not not bool or nil
+end
+
+
+--- Return the variable symbol associated with name in buffer.
+-- @string name variable name
+-- @tparam[opt=current buffer] buffer bp buffer to select
+-- @return the value of `name` from buffer `bp`
+function fetch_variable (name, bp)
+  local obarray = (bp or cur_bp or {}).obarray
+  local key     = name_to_key (name)
+  return obarray and obarray[key] or fetch (key)
 end
 
 
@@ -206,7 +204,7 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the value of `name` from buffer `bp`
 function get_variable (name, bp)
-  return ((bp or cur_bp or {}).vars or main_vars)[name_to_key (name)]
+  return (fetch_variable (name, bp) or {}).value
 end
 
 
@@ -232,15 +230,8 @@ end
 -- @string name variable name
 -- @treturn string the docstring for `name` if any, else ""
 function get_variable_doc (name)
-  local t = metadata[name_to_key (name)]
-  return t and t.doc or ""
-end
-
-
---- Return a table of all variables
--- @treturn table all variables and their values in a table
-function get_variable_table ()
-  return main_vars
+  local symbol = fetch (name_to_key (name))
+  return symbol and symbol["variable-documentation"] or ""
 end
 
 
@@ -250,35 +241,38 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the new value of `name` from buffer `bp`
 function set_variable (name, value, bp)
-  local key = name_to_key (name)
-  local t = metadata[key]
-  if t and t.islocal then
+  local key   = name_to_key (name)
+  local found = fetch (key)
+  if found and found["buffer-local-variable"] then
+    local symbol = {
+      name  = name,
+      value = value,
+      plist = found.plist,
+    }
+    setmetatable (symbol, {
+      __index    = symbol.plist,
+      __newindex = setter,
+      __tostring = namer,
+    })
+
     bp = bp or cur_bp
-    bp.vars = bp.vars or {}
-    bp.vars[key] = value
+    bp.obarray = bp.obarray or {}
+    rawset (bp.obarray, key, symbol)
+
+  elseif found then
+    found.value = value
   else
-    main_vars[key]= value
+    Defvar (name, value, "")
   end
 
   return value
 end
 
+
 --- Initialise buffer local variables.
 -- @tparam buffer bp a buffer
 function init_buffer (bp)
-  bp.vars = setmetatable ({}, {
-    __index    = main_vars.values,
-
-    __newindex = function (self, name, value)
-	           local key = name_to_key (name)
-		   local t = metadata[key]
-		   if t and t.islocal then
-		     return rawset (self, key, value)
-		   else
-		     return rawset (main_vars, key, value)
-		   end
-                 end,
-  })
+  bp.obarray = {}
 
   if get_variable_bool ("auto_fill_mode", bp) then
     bp.autofill = true
@@ -423,6 +417,7 @@ return {
   evaluate_expression = evaluate_expression,
   execute_function    = execute_function,
   fetch               = lisp.fetch,
+  fetch_variable      = fetch_variable,
   loadfile            = evaluate_file,
   loadstring          = evaluate_string,
   mapatoms            = lisp.mapatoms,

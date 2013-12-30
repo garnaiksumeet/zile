@@ -92,24 +92,12 @@ directory.\nThis value is used only when `make-backup-files' is @samp{t}.")
 (defun set-variable (string string)
   "Set a variable value to the user-specified value."
   (interactive)
-  (lambda (var val)
-    "local ok = true
+  (lambda (name value)
+    "name = name or minibuf_read_variable_name ('Set variable: ')
+    if not name then return false end
 
-    if not var then
-      var = minibuf_read_variable_name ('Set variable: ')
-    end
-    if not var then
-      return false
-    end
-    if not val then
-      val = minibuf_read (string.format ('Set %s to value: ', var), '')
-    end
-    if not val then
-      ok = keyboard_quit ()
-    end
+    value = value or minibuf_read (string.format ('Set %s to value: ', name), '')
+    if not value then return keyboard_quit () end
 
-    if ok then
-      set_variable (var, val)
-    end
-
-    return ok"))
+    set_variable (name, value)
+    return true"))

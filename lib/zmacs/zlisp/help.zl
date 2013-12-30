@@ -84,37 +84,23 @@
     return true"))
 
 
-(localfun write_variable_description (name curval doc)
+(localfun write_variable_description (symbol)
   "insert_string (string.format (
     '%s is a variable defined in ' .. [[`Lua source code']] .. '.\n\n' ..
     'Its value is %s\n\n%s',
-    name, curval, doc))")
+    tostring (symbol), symbol.value, symbol['variable-documentation']))")
 
 
 (defun describe-variable (string)
   "Display the full documentation of a variable."
   (interactive)
   (lambda (name)
-    "local ok = true
+    "name = name or minibuf_read_variable_name ('Describe variable: ')
+    local symbol = lisp.fetch_variable (name)
+    if not symbol or not symbol['variable-documentation'] then return false end
+    write_temp_buffer ('*Help*', true, write_variable_description, symbol)
+    return true"))
 
-    if not name then
-      name = minibuf_read_variable_name ('Describe variable: ')
-    end
-
-    if not name then
-      ok = false
-    else
-      local doc = get_variable_doc (name)
-
-      if not doc then
-        ok = false
-      else
-        write_temp_buffer ('*Help*', true,
-                           write_variable_description,
-                           name, get_variable (name), doc)
-      end
-    end
-    return ok"))
 
 (localfun find_or_create_buffer_from_module (name)
   "local bp = find_buffer (name)

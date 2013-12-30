@@ -55,3 +55,20 @@ function minibuf_read_function_name (fmt)
                                    "No function name given",
                                    "Undefined function name `%s'")
 end
+
+
+-- Read a variable name from the minibuffer.
+function minibuf_read_variable_name (fmt)
+  local cp = completion_new ()
+
+  local function gather_value (symbol)
+    if symbol.value ~= nil then
+      table.insert (cp.completions, symbol.name)
+    end
+  end
+  mapatoms (gather_value)
+
+  return minibuf_vread_completion (fmt, "", cp, nil,
+                                   "No variable name given",
+                                   "Undefined variable name `%s'")
+end

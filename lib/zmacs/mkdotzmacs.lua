@@ -38,9 +38,14 @@ io.stdout:write (
 -- Don't note where the contents of this file comes from or that it's
 -- auto-generated, because it's ugly in a user configuration file.
 
-for k, v in pairs (main_vars) do
-  io.stdout:writelines ("; " .. (get_variable_doc (k)):gsub ("\n", "\n; "),
-                        "; Default value is " .. v .. ".",
-                        "(setq " .. k .. " " .. v .. ")",
-                        "")
+function document_variables (symbol)
+  if symbol.value then
+    io.stdout:writelines (
+      "; " .. symbol["variable-documentation"]:gsub ("\n", "\n; "),
+      "; Default value is " .. symbol.value .. ".",
+      "(setq " .. symbol.name .. " " .. symbol.value .. ")",
+      ""
+    )
+  end
 end
+(require "zmacs.eval").mapatoms (document_variables)
