@@ -408,6 +408,7 @@ end
 ------
 -- Call a function on every symbol in obarray.
 -- If `func` returns `true`, mapatoms returns immediately.
+-- @function mapatoms
 -- @func func a function that takes a symbol as its argument
 -- @tparam[opt=obarray] table symtab a table with symbol values
 -- @return `true` if `func` signalled early exit by returning `true`,
