@@ -34,13 +34,31 @@
 
 
 local lisp = require "zmacs.zlisp"
-local Cons, fetch = lisp.Cons, lisp.fetch
+local Cons = lisp.Cons
 
 
 
 --[[ ======================== ]]--
 --[[ Symbol Table Management. ]]--
 --[[ ======================== ]]--
+
+
+--- Convert a '-' delimited symbol-name to be '_' delimited.
+-- @function mangle
+-- @string name a '-' delimited symbol-name
+-- @treturn string `name` with all '-' transformed into '_'.
+local mangle = memoize (function (name)
+  return name and name:gsub ("%-", "_")
+end)
+
+
+--- Fetch the value of a previously defined symbol name.
+-- Handle symbol name mangling transparently.
+-- @string name the symbol name
+-- @return the associated symbol value if any, else `nil`
+local function fetch (name)
+  return lisp.fetch (mangle (name))
+end
 
 
 local Defun, marshaller, namer, setter -- forward declarations
@@ -72,7 +90,7 @@ function Defun (name, argtypes, doc, interactive, func)
     },
   }
 
-  lisp.define (name,
+  lisp.define (mangle (name),
     setmetatable (symbol, {
       __call     = marshaller,
       __index    = symbol.plist,
@@ -141,16 +159,6 @@ end
 --[[ ==================== ]]--
 
 
-
---- Convert a '-' delimited symbol-name to be '_' delimited.
--- @function name_to_key
--- @string name a '-' delimited symbol-name
--- @treturn string `name` with all '-' transformed into '_'.
-local name_to_key = memoize (function (name)
-  return name:gsub ("%-", "_")
-end)
-
-
 --- Define a new variable.
 -- Store the value and docstring for a variable for later retrieval.
 -- @string name variable name
@@ -166,7 +174,7 @@ local function Defvar (name, value, doc)
     }
   }
 
-  lisp.define (name_to_key (name),
+  lisp.define (mangle (name),
     setmetatable (symbol, {
       __index    = symbol.plist,
       __newindex = setter,
@@ -183,7 +191,7 @@ end
 -- @tparam bool bool `true` to mark buffer-local, `false` to unmark.
 -- @treturn bool the new buffer-local status
 function set_variable_buffer_local (name, bool)
-  local symbol = fetch (name_to_key (name))
+  local symbol = fetch (name)
   symbol["buffer-local-variable"] = not not bool or nil
 end
 
@@ -193,9 +201,9 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the value of `name` from buffer `bp`
 function fetch_variable (name, bp)
+  name = mangle (name)
   local obarray = (bp or cur_bp or {}).obarray
-  local key     = name_to_key (name)
-  return obarray and obarray[key] or fetch (key)
+  return obarray and obarray[name] or lisp.fetch (name)
 end
 
 
@@ -230,7 +238,7 @@ end
 -- @string name variable name
 -- @treturn string the docstring for `name` if any, else ""
 function get_variable_doc (name)
-  local symbol = fetch (name_to_key (name))
+  local symbol = fetch (name)
   return symbol and symbol["variable-documentation"] or ""
 end
 
@@ -241,8 +249,7 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the new value of `name` from buffer `bp`
 function set_variable (name, value, bp)
-  local key   = name_to_key (name)
-  local found = fetch (key)
+  local found = fetch (name)
   if found and found["buffer-local-variable"] then
     local symbol = {
       name  = name,
@@ -257,7 +264,7 @@ function set_variable (name, value, bp)
 
     bp = bp or cur_bp
     bp.obarray = bp.obarray or {}
-    rawset (bp.obarray, key, symbol)
+    rawset (bp.obarray, mangle (name), symbol)
 
   elseif found then
     found.value = value
@@ -393,13 +400,6 @@ end
 
 
 ------
--- Fetch the value of a defined symbol name.
--- @function fetch
--- @string name the symbol name
--- @return the associated symbol value if any, else `nil`
-
-
-------
 -- Call a function on every symbol in obarray.
 -- If `func` returns `true`, mapatoms returns immediately.
 -- @function mapatoms
@@ -416,7 +416,7 @@ return {
   call_command        = call_command,
   evaluate_expression = evaluate_expression,
   execute_function    = execute_function,
-  fetch               = lisp.fetch,
+  fetch               = fetch,
   fetch_variable      = fetch_variable,
   loadfile            = evaluate_file,
   loadstring          = evaluate_string,
