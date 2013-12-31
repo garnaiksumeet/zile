@@ -177,21 +177,6 @@ function get_function_by_keys (keys, fetch)
   return iscallable (func) and func or nil
 end
 
--- gather_bindings_state:
--- {
---   f: name of function
---   bindings: bindings
--- }
-
-function gather_bindings (key, p, g)
-  if p == g.f then
-    if #g.bindings > 0 then
-      g.bindings = g.bindings .. ", "
-    end
-    g.bindings = g.bindings .. key
-  end
-end
-
 function prompt_key_sequence (prompt, keystr)
   local keys
   if keystr then

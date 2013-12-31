@@ -26,6 +26,16 @@ Whichever character you type to run this command is inserted."
     "return execute_with_uniarg (true, current_prefix_arg, self_insert_command)"))
 
 
+; gather_bindings_state:
+; {
+;   f: symbol to match
+;   bindings: bindings
+; }
+
+(localfun gather_bindings (key p g)
+  "if p == g.f then table.insert (g.bindings, key) end")
+
+
 (defun where-is ()
   "Print message listing key sequences that invoke the command DEFINITION.
 Argument is a command name."
@@ -34,14 +44,14 @@ Argument is a command name."
     "local name = minibuf_read_function_name ('Where is command: ')
 
     if name and lisp.fetch (name) then
-      local g = { f = name, bindings = '' }
+      local g = { f = lisp.fetch (name), bindings = {} }
 
       walk_bindings (root_bindings, gather_bindings, g)
 
       if #g.bindings == 0 then
         minibuf_write (name .. ' is not on any key')
       else
-        minibuf_write (string.format ('%s is on %s', name, g.bindings))
+        minibuf_write (string.format ('%s is on %s', name, table.concat (g.bindings, ', ')))
       end
       return true
     end"))

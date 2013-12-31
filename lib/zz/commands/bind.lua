@@ -34,6 +34,17 @@ Whichever character you type to run this command is inserted.
 )
 
 
+-- gather_bindings_state:
+-- {
+--   f: function to match
+--   bindings: bindings
+-- }
+
+function gather_bindings (key, p, g)
+  if p == g.f then table.insert (g.bindings, key) end
+end
+
+
 Defun ("where_is",
   {},
 [[
@@ -45,14 +56,14 @@ Argument is a command name.
     local name = minibuf_read_function_name ('Where is command: ')
 
     if name and fetch (name) then
-      local g = { f = name, bindings = '' }
+      local g = { f = fetch (name).value, bindings = {} }
 
       walk_bindings (root_bindings, gather_bindings, g)
 
       if #g.bindings == 0 then
         minibuf_write (name .. ' is not on any key')
       else
-        minibuf_write (string.format ('%s is on %s', name, g.bindings))
+        minibuf_write (string.format ('%s is on %s', name, table.concat (g.bindings, ', ')))
       end
       return true
     end
