@@ -22,7 +22,7 @@
 local getopt = require "std.getopt"
 local io     = require "std.io_ext"
 
-local zz   = require "zmacs.zlisp"
+local zz   = require "zile.zlisp"
 local prog = require "zile.version"
 
 

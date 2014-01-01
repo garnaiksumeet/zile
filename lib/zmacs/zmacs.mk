@@ -66,7 +66,6 @@ dist_zmacsdata_DATA =					\
 	lib/zmacs/keymaps.lua				\
 	lib/zmacs/eval.lua				\
 	lib/zmacs/main.lua				\
-	lib/zmacs/zlisp.lua				\
 	$(dist_zmacscmds_DATA)				\
 	$(NOTHING_ELSE)
 

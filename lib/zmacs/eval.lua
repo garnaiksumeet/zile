@@ -33,7 +33,7 @@
 ]]
 
 
-local lisp = require "zmacs.zlisp"
+local lisp = require "zile.zlisp"
 local Cons = lisp.Cons
 
 
