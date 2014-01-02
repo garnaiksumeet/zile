@@ -1,6 +1,6 @@
 -- Basic movement commands.
 --
--- Copyright (c) 2010-2013 Free Software Foundation, Inc.
+-- Copyright (c) 2010-2014 Free Software Foundation, Inc.
 --
 -- This file is part of GNU Zile.
 --

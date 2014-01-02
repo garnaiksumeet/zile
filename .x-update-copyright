@@ -1,4 +1,6 @@
-bootstrap
-build-aux/extract-trace
-build-aux/options-parser
-m4/ax_.*\.m4
+^COPYING$
+^bootstrap$
+^bootstrap.slingshot$
+^build-aux/extract-trace$
+^build-aux/options-parser$
+^m4/ax_.*\.m4$

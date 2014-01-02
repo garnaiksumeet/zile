@@ -1,6 +1,6 @@
 -- Zile-specific library functions
 --
--- Copyright (c) 2006-2010, 2012-2013 Free Software Foundation, Inc.
+-- Copyright (c) 2006-2010, 2012-2014 Free Software Foundation, Inc.
 --
 -- This file is part of GNU Zile.
 --
