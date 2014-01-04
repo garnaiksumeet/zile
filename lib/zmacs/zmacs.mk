@@ -145,62 +145,6 @@ $(dist_zmacsdocdata_DATA): $(srcdir)/lib/zmacs/doc
 
 
 
-## ----------- ##
-## Test suite. ##
-## ----------- ##
-
-
-CD_ZMACSTESTDIR	= abs_srcdir=`$(am__cd) $(srcdir) && pwd`; cd $(zmacstestsdir)
-
-zmacstestsdir	= lib/zmacs/tests
-zmacspackage_m4	= $(zmacstestsdir)/package.m4
-zmacstestsuite	= $(zmacstestsdir)/testsuite
-
-ZMACSTESTSUITE	= lib/zmacs/tests/testsuite
-ZMACSTESTSUITE_AT	= $(zmacstestsdir)/testsuite.at \
-		  $(zmacstestsdir)/message.at \
-		  $(zmacstestsdir)/write-file.at \
-		  $(NOTHING_ELSE)
-
-EXTRA_DIST	+= $(zmacstestsuite) $(ZMACSTESTSUITE_AT) $(zmacspackage_m4)
-
-ZMACSTESTS_ENVIRONMENT = ZMACS="$(abs_builddir)/lib/zmacs/zmacs"
-
-$(zmacstestsuite): $(zmacspackage_m4) $(ZMACSTESTSUITE_AT) Makefile.am
-	$(AM_V_GEN)$(AUTOTEST) -I '$(srcdir)' -I '$(zmacstestsdir)' \
-	  $(ZMACSTESTSUITE_AT) -o '$@'
-
-$(zmacspackage_m4): $(dotversion) lib/zmacs/zmacs.mk
-	$(AM_V_GEN){ \
-	  echo '# Signature of the current package.'; \
-	  echo 'm4_define([AT_PACKAGE_NAME],      [$(PACKAGE_NAME)])'; \
-	  echo 'm4_define([AT_PACKAGE_TARNAME],   [$(PACKAGE_TARNAME)])'; \
-	  echo 'm4_define([AT_PACKAGE_VERSION],   [$(PACKAGE_VERSION)])'; \
-	  echo 'm4_define([AT_PACKAGE_STRING],    [$(PACKAGE_STRING)])'; \
-	  echo 'm4_define([AT_PACKAGE_BUGREPORT], [$(PACKAGE_BUGREPORT)])'; \
-	  echo 'm4_define([AT_PACKAGE_URL],       [$(PACKAGE_URL)])'; \
-	} > '$@'
-
-$(zmacstestsdir)/atconfig: config.status
-	$(AM_V_GEN)$(SHELL) config.status '$@'
-
-DISTCLEANFILES	+= $(zmacstestsdir)/atconfig
-
-# Hook the test suite into the check rule
-check_local += zmacs-check-local
-zmacs-check-local: $(zmacstestsdir)/atconfig $(zmacstestsuite)
-	$(AM_V_at)$(CD_ZMACSTESTDIR); \
-	CONFIG_SHELL='$(SHELL)' '$(SHELL)' "$$abs_srcdir/$(ZMACSTESTSUITE)" \
-	  $(ZMACSTESTS_ENVIRONMENT) $(BUILDCHECK_ENVIRONMENT) $(ZMACSTESTSUITEFLAGS)
-
-# Remove any file droppings left behind by testsuite.
-clean_local += zmacs-clean-local
-zmacs-clean-local:
-	$(CD_ZMACSTESTDIR); \
-	test -f "$$abs_srcdir/$(ZMACSTESTSUITE)" && \
-	  '$(SHELL)' "$$abs_srcdir/$(ZMACSTESTSUITE)" --clean || :
-
-
 ## ------------- ##
 ## Distribution. ##
 ## ------------- ##

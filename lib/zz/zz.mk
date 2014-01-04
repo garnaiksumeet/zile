@@ -130,62 +130,6 @@ $(dist_zzdocdata_DATA): $(srcdir)/lib/zz/doc
 
 
 
-## ----------- ##
-## Test suite. ##
-## ----------- ##
-
-
-CD_ZZTESTDIR	= abs_srcdir=`$(am__cd) $(srcdir) && pwd`; cd $(zztestsdir)
-
-zztestsdir	= lib/zz/tests
-zzpackage_m4	= $(zztestsdir)/package.m4
-zztestsuite	= $(zztestsdir)/testsuite
-
-ZZTESTSUITE	= lib/zz/tests/testsuite
-ZZTESTSUITE_AT	= $(zztestsdir)/testsuite.at \
-		  $(zztestsdir)/message.at \
-		  $(zztestsdir)/write-file.at \
-		  $(NOTHING_ELSE)
-
-EXTRA_DIST	+= $(zztestsuite) $(ZZTESTSUITE_AT) $(zzpackage_m4)
-
-ZZTESTS_ENVIRONMENT = ZZ="$(abs_builddir)/lib/zz/zz"
-
-$(zztestsuite): $(zzpackage_m4) $(ZZTESTSUITE_AT) Makefile.am
-	$(AM_V_GEN)$(AUTOTEST) -I '$(srcdir)' -I '$(zztestsdir)' \
-	  $(ZZTESTSUITE_AT) -o '$@'
-
-$(zzpackage_m4): $(dotversion) lib/zz/zz.mk
-	$(AM_V_GEN){ \
-	  echo '# Signature of the current package.'; \
-	  echo 'm4_define([AT_PACKAGE_NAME],      [$(PACKAGE_NAME)])'; \
-	  echo 'm4_define([AT_PACKAGE_TARNAME],   [$(PACKAGE_TARNAME)])'; \
-	  echo 'm4_define([AT_PACKAGE_VERSION],   [$(PACKAGE_VERSION)])'; \
-	  echo 'm4_define([AT_PACKAGE_STRING],    [$(PACKAGE_STRING)])'; \
-	  echo 'm4_define([AT_PACKAGE_BUGREPORT], [$(PACKAGE_BUGREPORT)])'; \
-	  echo 'm4_define([AT_PACKAGE_URL],       [$(PACKAGE_URL)])'; \
-	} > '$@'
-
-$(zztestsdir)/atconfig: config.status
-	$(AM_V_GEN)$(SHELL) config.status '$@'
-
-DISTCLEANFILES	+= $(zztestsdir)/atconfig
-
-# Hook the test suite into the check rule
-check_local += zz-check-local
-zz-check-local: $(zztestsdir)/atconfig $(zztestsuite)
-	$(AM_V_at)$(CD_ZZTESTDIR); \
-	CONFIG_SHELL='$(SHELL)' '$(SHELL)' "$$abs_srcdir/$(ZZTESTSUITE)" \
-	  $(ZZTESTS_ENVIRONMENT) $(BUILDCHECK_ENVIRONMENT) $(ZZTESTSUITEFLAGS)
-
-# Remove any file droppings left behind by testsuite.
-clean_local += zz-clean-local
-zz-clean-local:
-	$(CD_ZZTESTDIR); \
-	test -f "$$abs_srcdir/$(ZZTESTSUITE)" && \
-	  '$(SHELL)' "$$abs_srcdir/$(ZZTESTSUITE)" --clean || :
-
-
 ## ------------- ##
 ## Distribution. ##
 ## ------------- ##
