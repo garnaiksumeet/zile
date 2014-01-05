@@ -138,6 +138,17 @@ ldoc_DEPS += $(dist_zzdata_DATA)
 
 
 ## ------------- ##
+## Installation. ##
+## ------------- ##
+
+install_exec_hook += zz-install-exec-hook
+zz-install-exec-hook:
+	sed -e 's|@datadir[@]|$(datadir)|g' $(srcdir)/bin/zz >.zzT
+	$(INSTALL_SCRIPT) .zzT $(DESTDIR)$(bindir)/zz
+	rm -f .zzT
+
+
+## ------------- ##
 ## Distribution. ##
 ## ------------- ##
 

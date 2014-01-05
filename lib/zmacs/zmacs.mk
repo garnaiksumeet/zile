@@ -85,7 +85,8 @@ zm__v_ZLC_1 =
 lib/zmacs/commands.lua: $(dist_zmacscmds_DATA)
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
 	test -d "$$d" || $(MKDIR_P) "$$d"
-	$(ZM_V_ZLC)LUA_PATH='$(ZILE_PATH);$(LUA_PATH)'		\
+	$(ZM_V_ZLC)LUA_INIT= LUA_INIT_5_2=			\
+	  LUA_PATH='$(ZILE_PATH);$(LUA_PATH)'			\
 	  $(LUA) $(srcdir)/lib/zmacs/zlc $(dist_zmacscmds_DATA) > $@
 
 doc/dotzmacs.sample: lib/zmacs/mkdotzmacs.lua
@@ -149,6 +150,17 @@ $(dist_zmacsdocdata_DATA): $(srcdir)/lib/zmacs/doc
 ## -------------- ##
 
 ldoc_DEPS += $(dist_zmacsdata_DATA)
+
+
+## ------------- ##
+## Installation. ##
+## ------------- ##
+
+install_exec_hook += zmacs-install-exec-hook
+zmacs-install-exec-hook:
+	sed -e 's|@datadir[@]|$(datadir)|g' $(srcdir)/bin/zmacs >.zmacsT
+	$(INSTALL_SCRIPT) .zmacsT $(DESTDIR)$(bindir)/zmacs
+	rm -f .zmacsT
 
 
 ## ------------- ##

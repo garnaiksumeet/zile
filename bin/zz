@@ -21,6 +21,26 @@ SH=--[[                                             # -*- mode: lua; -*-
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+_lua_version_re='"Lua 5.2"'
+_lua_binaries='lua5.2 lua52 lua'
+
+export LUA_INIT
+export LUA_INIT_5_2
+export LUA_PATH
+export LUA_CPATH
+
+# Be Bourne compatible
+if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
+  emulate sh
+  NULLCMD=:
+  # Zsh 3.x and 4.x performs word splitting on ${1+"$@"}, which
+  # is contrary to our usage.  Disable this feature.
+  alias -g '${1+"$@"}'='"$@"'
+  setopt NO_GLOB_SUBST
+else
+  case `(set -o) 2>/dev/null` in *posix*) set -o posix;; esac
+fi
+
 # If LUA is not set, search PATH for something suitable.
 test -n "$LUA" || {
   # Check that the supplied binary is executable and returns a compatible
@@ -28,15 +48,17 @@ test -n "$LUA" || {
   func_vercheck ()
   {
     test -x "$1" && {
-      case `$1 -e 'print (_VERSION)' 2>/dev/null` in
-        "Lua 5.2") LUA=$1 ;;
-      esac
+      eval 'case `'$1' -e "print (_VERSION)" 2>/dev/null` in
+        '"$_lua_version_re"') LUA='$1' ;;
+      esac'
     }
   }
 
+  progname=`echo "$0" |${SED-sed} 's|.*/||'`
+
   save_IFS="$IFS"
   LUA=
-  for x in lua5.2 lua52 lua; do
+  for x in $_lua_binaries; do
     IFS=:
     for dir in $PATH; do
       IFS="$save_IFS"
@@ -45,14 +67,20 @@ test -n "$LUA" || {
     done
     IFS="$save_IFS"
     test -n "$LUA" && break
-    e="${e+$e\n}zz: command not found on PATH: $x"
+    e="${e+$e\n}$progname: command not found on PATH: $x"
   done
 }
 
 test -n "$LUA" || {
-  printf "${e+$e\n}zz: retry after 'export LUA=/path/to/lua52'\n" >&2
+  printf "${e+$e\n}$progname: retry after 'export LUA=/path/to/lua52'\n" >&2
   exit 1
 }
+
+
+LUA_INIT=
+LUA_INIT_5_2=
+test -d '@datadir@' && LUA_PATH='@datadir@/?.lua;'${LUA_PATH-;}
+
 
 # Reexecute using the interpreter suppiled in LUA, or found above.
 exec "$LUA" "$0" "$@"

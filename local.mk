@@ -51,6 +51,7 @@ dist_modules_DATA	=
 ldoc_DEPS		=
 
 clean_local		=
+install_exec_hook	=
 
 include lib/zile/zile.mk
 include lib/zmacs/zmacs.mk
@@ -59,6 +60,7 @@ include tests/tests.mk
 
 check-local: $(check_local)
 clean-local: $(clean_local)
+install-exec-hook: $(install_exec_hook)
 
 ## Use a builtin rockspec build with root at $(srcdir)/lib
 mkrockspecs_args = --module-dir $(srcdir)/lib

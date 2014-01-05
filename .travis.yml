@@ -46,7 +46,7 @@ install:
 # Configure and build.
 script:
   - ./bootstrap
-  - ./configure LUA="$LUA"
+  - ./configure LUA="$LUA" --prefix=`pwd`/_inst
   - make $LUAROCKS_CONFIG
     LUA="$LUA" LUA_INCDIR="$LUA_INCDIR" V=1
     || cat $LUAROCKS_CONFIG config.log
@@ -61,3 +61,7 @@ script:
   # Use bin/specl if we built it, or else the specl rock we just installed.
   - test -f "$SPECL" || SPECL=luarocks/bin/specl;
     LUA_PATH=`pwd`'/lib/?.lua;'"${LUA_PATH-;}" make check SPECL="$SPECL" V=1
+  # Ensure zmacs/zz work from `make install` tree too
+  - make all install
+  - _inst/bin/zmacs --help
+  - _inst/bin/zz --help
