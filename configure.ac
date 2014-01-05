@@ -20,7 +20,7 @@ dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 AC_PREREQ([2.61])
 
 dnl Initialise autoconf and automake
-AC_INIT([Zile], [4], [bug-zile@gnu.org])
+AC_INIT([Zile], [3.1], [bug-zile@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIRS([m4])
 
