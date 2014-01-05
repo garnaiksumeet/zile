@@ -27,11 +27,30 @@ ZILE_PATH = $(abs_builddir)/lib/?.lua;$(abs_srcdir)/lib/?.lua
 RM = rm
 
 
+## ---------- ##
+## Bootstrap. ##
+## ---------- ##
+
+old_NEWS_hash = 42b62d1dc98f4d243f36ed6047e2f473
+
+update_copyright_env = \
+	UPDATE_COPYRIGHT_USE_INTERVALS=1 \
+	UPDATE_COPYRIGHT_FORCE=1
+
+
 ## ------------- ##
 ## Declarations. ##
 ## ------------- ##
 
-clean_local =
+classesdir		= $(docdir)/classes
+modulesdir		= $(docdir)/modules
+
+dist_doc_DATA		=
+dist_classes_DATA	=
+dist_modules_DATA	=
+ldoc_DEPS		=
+
+clean_local		=
 
 include lib/zile/zile.mk
 include lib/zmacs/zmacs.mk
@@ -68,17 +87,27 @@ _travis_yml	= $(NOTHING_ELSE)
 
 EXTRA_DIST +=						\
 	FAQ						\
+	doc/config.ld					\
 	$(NOTHING_ELSE)
 
+
+
+## -------------- ##
+## Documentation. ##
+## -------------- ##
+
+dist_doc_DATA +=			\
+	$(srcdir)/doc/index.html	\
+	$(srcdir)/doc/ldoc.css
+
+dist_classes_DATA += $(wildcard $(srcdir)/doc/files/*.html)
+dist_modules_DATA += $(wildcard $(srcdir)/doc/modules/*.html)
+
+$(dist_doc_DATA): $(ldoc_DEPS)
+	cd $(srcdir) && $(LDOC) -c doc/config.ld .
 
 ## ------------ ##
 ## Maintenance. ##
 ## ------------ ##
-
-# Use dashes instead of lists when updating copyright headers
-update_copyright_env = UPDATE_COPYRIGHT_USE_INTERVALS=1
-
-# Set format of NEWS
-old_NEWS_hash = 42b62d1dc98f4d243f36ed6047e2f473
 
 FORCE:

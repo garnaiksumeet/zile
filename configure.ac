@@ -32,6 +32,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 dnl Lua 5.2
 AX_PROG_LUA([5.2])
+AC_PATH_PROG([LDOC], [ldoc], [:])
 
 dnl help2man
 AC_PATH_PROG([HELP2MAN], [help2man], [false])
@@ -52,7 +53,7 @@ AC_PROG_SED
 AC_PROG_EGREP
 
 dnl Generate output
-SS_CONFIG_TRAVIS
+SS_CONFIG_TRAVIS([ldoc])
 AC_CONFIG_FILES([Makefile lib/zile/version.lua])
 AC_CONFIG_FILES([lib/zmacs/zmacs], [chmod +x lib/zmacs/zmacs])
 AC_CONFIG_FILES([lib/zz/zz], [chmod +x lib/zz/zz])

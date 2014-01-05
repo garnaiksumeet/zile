@@ -144,6 +144,12 @@ $(dist_zmacsdocdata_DATA): $(srcdir)/lib/zmacs/doc
 	fi
 
 
+## -------------- ##
+## Documentation. ##
+## -------------- ##
+
+ldoc_DEPS += $(dist_zmacsdata_DATA)
+
 
 ## ------------- ##
 ## Distribution. ##

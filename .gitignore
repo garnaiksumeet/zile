@@ -24,7 +24,12 @@
 /config.status.lineno
 /configure
 /configure.lineno
-/doc/
+/doc/*.sample
+/doc/*.1
+/doc/classes
+/doc/index.html
+/doc/ldoc.css
+/doc/modules
 /lib/zile/version.lua
 /m4/
 /maint.mk

@@ -130,6 +130,13 @@ $(dist_zzdocdata_DATA): $(srcdir)/lib/zz/doc
 
 
 
+## -------------- ##
+## Documentation. ##
+## -------------- ##
+
+ldoc_DEPS += $(dist_zzdata_DATA)
+
+
 ## ------------- ##
 ## Distribution. ##
 ## ------------- ##

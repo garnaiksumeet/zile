@@ -52,3 +52,5 @@ dist_pkgdata_DATA =				\
 EXTRA_DIST +=					\
 	lib/zile/version.lua			\
 	$(NOTHING_ELSE)
+
+ldoc_DEPS += $(dist_pkgdata_DATA)

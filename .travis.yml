@@ -8,7 +8,7 @@ env:
     - LUAROCKS_CONFIG=build-aux/luarocks-config.lua
     - LUAROCKS_BASE=luarocks-2.1.1
     - LUAROCKS="$LUA $HOME/bin/luarocks"
-    - GENDOC=luarocks/bin/
+    - GENDOC=luarocks/bin/ldoc
     - SPECL=bin/specl
   matrix:
     - LUA=lua5.2             LUA_INCDIR=/usr/include/lua5.2     LUA_SUFFIX=5.2
