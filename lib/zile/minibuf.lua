@@ -31,6 +31,8 @@ function minibuf_refresh ()
       term_minibuf_write (minibuf_contents)
     end
     term_refresh ()
+  elseif bflag and minibuf_contents then
+    term_minibuf_write (minibuf_contents)
   end
 end
 

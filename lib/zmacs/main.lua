@@ -115,13 +115,15 @@ function process_args ()
   -- Leading `-' means process all arguments in order, treating
   -- non-options as arguments to an option with code 1
   -- Leading `:' so as to return ':' for a missing arg, not '?'
+  local errmsg
   local line = 1
   local this_optind = 1
   for c, optarg, optind, longindex in posix.getopt (arg, "-:f:l:q", longopts) do
     if string.byte (c) == 1 then -- Non-option (assume file name)
       longindex = 6
     elseif c == '?' then -- Unknown option
-      minibuf_error (string.format ("Unknown option `%s'", arg[this_optind]))
+      errmsg = string.format ("Unknown option `%s'", arg[this_optind])
+      longindex = -1
     elseif c == ':' then -- Missing argument
       io.stderr:write (string.format ("%s: Option `%s' requires an argument\n",
                                       prog.name, arg[this_optind]))
@@ -180,6 +182,8 @@ function process_args ()
 
     this_optind = optind > 0 and optind or 1
   end
+
+  return errmsg
 end
 
 local function segv_sig_handler (signo)
@@ -205,15 +209,16 @@ local function signal_init ()
 end
 
 function main ()
-  local scratch_bp
+  local scratch_bp, errmsg
 
   signal_init ()
 
-  process_args ()
+  errmsg = process_args ()
 
   os.setlocale ("")
 
   if not bflag then term_init () end
+  if errmsg ~= nil then minibuf_error (errmsg) end
 
   init_default_bindings ()
 
