@@ -11,6 +11,7 @@
 /HACKING
 /INSTALL
 /Makefile.am
+/README
 /README-release
 /aclocal.m4
 /autom4te.cache
