@@ -19,8 +19,8 @@
 
 
 (defun find-file (string)
-  "Edit file @i{filename}.
-Switch to a buffer visiting file @i{filename},
+  "Edit file FILENAME.
+Switch to a buffer visiting file FILENAME,
 creating one if none already exists."
   (interactive)
   (lambda (filename)
@@ -40,9 +40,9 @@ creating one if none already exists."
 
 
 (defun find-file-read-only (string)
-  "Edit file @i{filename} but don't allow changes.
-Like `find-file' but marks buffer as read-only.
-Use @kbd{M-x toggle-read-only} to permit editing."
+  "Edit file FILENAME but don't allow changes.
+Like \\[find-file] but marks buffer as read-only.
+Use \\[toggle-read-only] to permit editing."
   (interactive)
   (lambda (filename)
     "local ok = lisp.execute_function ('find-file', filename)
@@ -82,31 +82,31 @@ If the current buffer now contains an empty file that you just visited
   "Insert contents of file FILENAME into buffer after point.
 Set mark after the inserted text."
   (interactive)
-  (lambda (file)
+  (lambda (filename)
     "local ok = true
 
     if warn_if_readonly_buffer () then
       return false
     end
 
-    if not file then
-      file = minibuf_read_filename ('Insert file: ', cur_bp.dir)
-      if not file then
+    if not filename then
+      filename = minibuf_read_filename ('Insert file: ', cur_bp.dir)
+      if not filename then
         ok = keyboard_quit ()
       end
     end
 
-    if not file or file == '' then
+    if not filename or filename == '' then
       ok = false
     end
 
     if ok then
-      local s = io.slurp (file)
+      local s = io.slurp (filename)
       if s then
         insert_estr (EStr (s))
         lisp.execute_function ('set-mark-command')
       else
-        ok = minibuf_error ('%s: %s', file, posix.errno ())
+        ok = minibuf_error ('%s: %s', filename, posix.errno ())
       end
     end
 
@@ -122,7 +122,7 @@ previous version into a backup file if this is the first save."
 
 
 (defun write-file (string)
-  "Write current buffer into file @i{filename}.
+  "Write current buffer into file FILENAME.
 This makes the buffer visit that file, and marks it as not modified.
 
 Interactively, confirmation is required unless you supply a prefix argument."

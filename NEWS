@@ -47,6 +47,9 @@ GNU Zile NEWS                                    -*- outline -*-
   - Support for FAQ, COPYING and NEWS browsing in editor with \C-h\C-f,
     \C-h\C-c and \C-h\C-n (or F1 prefix equivalents).
 
+  - `describe-function' now shows function signatures in displayed
+    help text.
+
 *** Zz
 
   - A new editor, currently heavily based on Zmacs, but with the zlisp

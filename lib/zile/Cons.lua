@@ -82,6 +82,35 @@ local methods = {
   end,
 
 
+  --- Return a new Cons list with elements that match PREDICATE.
+  -- @function filter
+  -- @func predicate a one parameter function that returns a boolean
+  -- @treturn Cons list of elements where PREDICATE returned `true`
+  filter = function (self, predicate)
+    if self == nil then return nil end
+
+    local car = self.car.value or self.car
+    if predicate (car) then
+      return Cons (car, self.filter (self.cdr, predicate))
+    else
+      return self.filter (self.cdr, predicate)
+    end
+  end,
+
+
+  --- Apply a function to the value field of each car element in a list.
+  -- @function mapconcat
+  -- @func func a one parameter function that returns a string
+  -- @tparam[opt=""] string delim delimiter to place between elements
+  -- @treturn string `delim` delimited concatenation of the list.
+  mapconcat = function (self, func, delim)
+    delim = delim or ""
+    local s = tostring (func (self.car.value or self.car))
+    if self.cdr == nil then return s end
+    return s .. delim .. self.mapconcat (self.cdr, func, delim)
+  end,
+
+
   --- Return a non-destructively reversed cons list.
   -- @function reverse
   -- @treturn Cons a new list with elements in reverse order

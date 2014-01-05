@@ -19,6 +19,9 @@
 
 
 (defun message (string)
-  "Write to the minibuffer."
+  "Display a message at the bottom of the screen.
+
+In batch mode, the message is printed to the standard error stream,
+followed by a newline."
   (lambda (msg)
    "minibuf_write (msg)"))

@@ -19,15 +19,15 @@
 
 
 (defun copy-to-register (number)
-  "Copy region into register @i{register}."
+  "Copy region into register REGISTER."
   (interactive)
-  (lambda (reg)
-    "if not reg then
+  (lambda (register)
+    "if not register then
       minibuf_write ('Copy to register: ')
-      reg = getkey_unfiltered (GETKEY_DEFAULT)
+      register = getkey_unfiltered (GETKEY_DEFAULT)
     end
 
-    if reg == 7 then
+    if register == 7 then
       return keyboard_quite ()
     else
       minibuf_clear ()
@@ -35,7 +35,7 @@
       if not rp then
         return false
       else
-        register_store (reg, get_buffer_region (cur_bp, rp))
+        register_store (register, get_buffer_region (cur_bp, rp))
       end
     end
 
@@ -43,31 +43,31 @@
 
 
 (defun insert-register (number)
-  "Insert contents of the user specified register.
+  "Insert contents of REGISTER. (REGISTER is a character.)
 Puts point before and mark after the inserted text."
   (interactive)
-  (lambda (reg)
+  (lambda (register)
     "local ok = true
 
     if warn_if_readonly_buffer () then
       return false
     end
 
-    if not reg then
+    if not register then
       minibuf_write ('Insert register: ')
-      reg = getkey_unfiltered (GETKEY_DEFAULT)
+      register = getkey_unfiltered (GETKEY_DEFAULT)
     end
 
-    if reg == 7 then
+    if register == 7 then
       ok = keyboard_quite ()
     else
       minibuf_clear ()
-      if register_isempty (reg) then
+      if register_isempty (register) then
         minibuf_error ('Register does not contain text')
         ok = false
       else
         lisp.execute_function ('set-mark-command')
-	regnum = reg
+	regnum = register
         execute_with_uniarg (true, current_prefix_arg, insert_register)
         lisp.execute_function ('exchange_point_and_mark')
         deactivate_mark ()
@@ -78,7 +78,7 @@ Puts point before and mark after the inserted text."
 
 
 (defun list-registers ()
-  "List defined registers."
+  "Display a list of nonempty registers saying briefly what they contain."
   (interactive)
   (lambda ()
     "write_temp_buffer ('*Registers List*', true, write_registers_list)"))

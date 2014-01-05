@@ -48,7 +48,7 @@ The values val are expressions; they are evaluated."
 (defun execute-extended-command (number)
   "Read function name, then read its arguments and call it."
   (interactive)
-  (lambda (n)
+  (lambda (prefixarg)
     "local msg = ''
 
     if lastflag.set_uniarg then
@@ -62,17 +62,16 @@ The values val are expressions; they are evaluated."
 
     local name = minibuf_read_function_name (msg)
     local command = name and lisp.fetch (name)
-    return command and lisp.execute_function (command, n) or nil"))
+    return command and lisp.execute_function (command, prefixarg) or nil"))
 
 
 (defun eval-buffer (string)
   "Execute the current buffer as Lisp code.
-
 When called from a Lisp program (i.e., not interactively), this
-function accepts an optional argument, the buffer to evaluate (nil
+function accepts an optional argument, the BUFFER to evaluate (nil
 means use current buffer)."
   (interactive)
-  (lambda (buffer)
+  (lambda (&optional buffer)
     "local bp = (buffer and buffer ~= '') and find_buffer (buffer) or cur_bp
     return lisp.loadstring (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))"))
 
@@ -81,15 +80,17 @@ means use current buffer)."
   "history_new ()")
 
 (defun eval-expression (string)
-  "Evaluate a lisp expression and print result in the minibuffer."
+  "Evaluate EXP and print result in the echo area.
+When called interactively, read a ZLisp expression and
+evaluate it."
   (interactive)
-  (lambda (expr)
-    "if not expr then
-      expr = minibuf_read ('Eval: ', '', nil, exprs_history)
+  (lambda (exp)
+    "if not exp then
+      exp = minibuf_read ('Eval: ', '', nil, exprs_history)
     end
 
-    lisp.loadstring (expr)
+    lisp.loadstring (exp)
 
-    if expr then
-      add_history_element (exprs_history, expr)
+    if exp then
+      add_history_element (exprs_history, exp)
     end"))

@@ -58,19 +58,21 @@
 
 
 (defun mark-word (number)
-  "Set mark argument words away from point."
+  "Set mark ARG words away from point.
+The place mark goes is the same place \\[forward-word] would
+move to with the same argument."
   (interactive)
-  (lambda (n)
-    "return mark (n, 'forward-word')"))
+  (lambda (arg)
+    "return mark (arg, 'forward-word')"))
 
 
 (defun mark-sexp (number)
-  "Set mark @i{arg} sexps from point.
-The place mark goes is the same place @kbd{C-M-f} would
+  "Set mark ARG sexps from point.
+The place mark goes is the same place \\[forward-sexp] would
 move to with the same argument."
   (interactive)
-  (lambda (n)
-    "return mark (n, 'forward-sexp')"))
+  (lambda (arg)
+    "return mark (arg, 'forward-sexp')"))
 
 
 (defun mark-paragraph ()

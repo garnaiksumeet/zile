@@ -21,7 +21,7 @@
 (defun start-kbd-macro ()
   "Record subsequent keyboard input, defining a keyboard macro.
 The commands are recorded even as they are executed.
-Use @kbd{C-x )} to finish recording and make the macro available."
+Use \\[end-kbd-macro] to finish recording and make the macro available."
   (interactive)
   (lambda ()
     "if thisflag.defining_macro then
@@ -41,8 +41,8 @@ Use @kbd{C-x )} to finish recording and make the macro available."
 
 (defun end-kbd-macro ()
   "Finish defining a keyboard macro.
-The definition was started by @kbd{C-x (}.
-The macro is now available for use via @kbd{C-x e}."
+The definition was started by \\[start-kbd-macro].
+The macro is now available for use via \\[execute-kbd-macro]."
   (interactive)
   (lambda ()
     "if not thisflag.defining_macro then
@@ -54,7 +54,7 @@ The macro is now available for use via @kbd{C-x e}."
 
 
 (defun call-last-kbd-macro ()
-  "Call the last keyboard macro that you defined with @kbd{C-x (}.
+  "Call the last keyboard macro that you defined with \\[start-kbd-macro].
 A prefix argument serves as a repeat count."
   (interactive)
   (lambda ()

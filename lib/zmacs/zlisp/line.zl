@@ -149,14 +149,14 @@ Indentation is done using the `indent-for-tab-command' function."
 
 
 (defun delete-char (number)
-  "Delete the following @i{n} characters (previous if @i{n} is negative)."
+  "Delete the following N characters (previous if N is negative)."
   (interactive)
   (lambda (n)
     "return execute_with_uniarg (true, n, delete_char, backward_delete_char)"))
 
 
 (defun backward-delete-char (number)
-  "Delete the previous @i{n} characters (following if @i{n} is negative)."
+  "Delete the previous N characters (following if N is negative)."
   (interactive)
   (lambda (n)
     "return execute_with_uniarg (true, n, backward_delete_char, delete_char)"))
@@ -182,8 +182,8 @@ Indentation is done using the `indent-for-tab-command' function."
   "Insert a tabulation at the current point position into the current
 buffer."
   (interactive)
-  (lambda (n)
-    "return execute_with_uniarg (true, n, insert_tab)"))
+  (lambda (&optional arg)
+    "return execute_with_uniarg (true, arg, insert_tab)"))
 
 
 (localfun newline ()
@@ -197,14 +197,16 @@ buffer."
 
 (defun newline (number)
   "Insert a newline at the current point position into
-the current buffer."
+the current buffer.
+With ARG insert that many newlines."
   (interactive)
-  (lambda (n)
-    "return execute_with_uniarg (true, n, newline)"))
+  (lambda (&optional arg)
+    "return execute_with_uniarg (true, arg, newline)"))
 
 
 (defun open-line (number)
-  "Insert a newline and leave point before it."
+  "Insert a newline and leave point before it.
+with arg N, insert N newlines."
   (interactive)
   (lambda (n)
     "return execute_with_uniarg (true, n, intercalate_newline)"))

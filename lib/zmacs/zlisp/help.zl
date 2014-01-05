@@ -29,7 +29,7 @@
 
 
 (defun describe-function (string)
-  "Display the full documentation of a function."
+  "Display the full documentation of FUNCTION (a symbol)."
   (interactive)
   (lambda (name)
     "if not name then
@@ -55,12 +55,12 @@
 
 
 (defun describe-key (string)
-  "Display documentation of the command invoked by a key sequence."
+  "Display documentation of the function invoked by KEY."
   (interactive)
-  (lambda (keystr)
+  (lambda (key)
     "local command, binding
-    if keystr then
-      local keys = keystrtovec (keystr)
+    if key then
+      local keys = keystrtovec (key)
       if not keys then
         return false
       end
@@ -92,7 +92,7 @@
 
 
 (defun describe-variable (string)
-  "Display the full documentation of a variable."
+  "Display the full documentation of VARIABLE (a symbol)."
   (interactive)
   (lambda (name)
     "name = name or minibuf_read_variable_name ('Describe variable: ')

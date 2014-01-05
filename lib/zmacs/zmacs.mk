@@ -82,12 +82,13 @@ zm__v_ZLC_  = $(zm__v_ZLC_@AM_DEFAULT_V@)
 zm__v_ZLC_0 = @echo "  ZLC     " $@;
 zm__v_ZLC_1 =
 
-lib/zmacs/commands.lua: $(dist_zmacscmds_DATA)
+lib/zmacs/commands.lua: $(srcdir)/lib/zmacs/zlc $(dist_zmacscmds_DATA)
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
 	test -d "$$d" || $(MKDIR_P) "$$d"
 	$(ZM_V_ZLC)LUA_INIT= LUA_INIT_5_2=			\
 	  LUA_PATH='$(ZILE_PATH);$(LUA_PATH)'			\
-	  $(LUA) $(srcdir)/lib/zmacs/zlc $(dist_zmacscmds_DATA) > $@
+	  $(LUA) $(srcdir)/lib/zmacs/zlc $(dist_zmacscmds_DATA) > '$@' || rm -f '$@'
+	test -f '$@'
 
 doc/dotzmacs.sample: lib/zmacs/mkdotzmacs.lua
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\

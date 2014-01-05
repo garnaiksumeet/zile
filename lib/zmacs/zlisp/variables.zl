@@ -35,14 +35,14 @@ buffer.")
 
 (defvar tab-always-indent t
   "Controls the operation of the @kbd{TAB} key.
-If @samp{t}, hitting @kbd{TAB} always just indents the current line.
-If @samp{nil}, hitting @kbd{TAB} indents the current line if point is at the
+If @samp{t}, hitting TAB always just indents the current line.
+If @samp{nil}, hitting TAB indents the current line if point is at the
 left margin or in the line's indentation, otherwise it inserts a
-'real' @kbd{TAB} character.")
+'real' TAB character.")
 
 
 (defvar indent-tabs-mode t
-  "If non-nil, insert-tab inserts 'real' @kbd{TAB}s; otherwise, it always inserts
+  "If non-nil, insert-tab inserts 'real' TABs; otherwise, it always inserts
 spaces.")
 (make-variable-buffer-local 'indent-tabs-mode)
 
@@ -80,25 +80,29 @@ Automatically becomes buffer-local when set in any fashion.")
 
 (defvar make-backup-files t
   "Non-nil means make a backup of a file the first time it is saved.
-This is done by appending `@samp{~}' to the file name.")
+This is done by appending `~' to the file name.")
 
 
 (defvar backup-directory nil
   "The directory for backup files, which must exist.
-If this variable is @samp{nil}, the backup is made in the original file's
+If this variable is nil, the backup is made in the original file's
 directory.
 This value is used only when `make-backup-files' is @samp{t}.")
 
 
 (defun set-variable (string string)
-  "Set a variable value to the user-specified value."
+  "Set VARIABLE to VALUE.  VALUE is a Lisp object.
+VARIABLE should be a user option variable name, a Lisp variable
+meant to be customized by users.  You should enter VALUE in Lisp syntax,
+so if you want VALUE to be a string, you must surround it with doublequotes.
+VALUE is used literally, not evaluated."
   (interactive)
-  (lambda (name value)
-    "name = name or minibuf_read_variable_name ('Set variable: ')
-    if not name then return false end
+  (lambda (variable value)
+    "variable = variable or minibuf_read_variable_name ('Set variable: ')
+    if not variable then return false end
 
-    value = value or minibuf_read (string.format ('Set %s to value: ', name), '')
+    value = value or minibuf_read (string.format ('Set %s to value: ', variable), '')
     if not value then return keyboard_quit () end
 
-    lisp.set_variable (name, value)
+    lisp.set_variable (variable, value)
     return true"))

@@ -22,7 +22,7 @@
   "Insert the character you type.
 Whichever character you type to run this command is inserted."
   (interactive)
-  (lambda ()
+  (lambda (n)
     "return execute_with_uniarg (true, current_prefix_arg, self_insert_command)"))
 
 
@@ -40,7 +40,7 @@ Whichever character you type to run this command is inserted."
   "Print message listing key sequences that invoke the command DEFINITION.
 Argument is a command name."
   (interactive)
-  (lambda ()
+  (lambda (definition)
     "local name = minibuf_read_function_name ('Where is command: ')
 
     if name and lisp.fetch (name) then
@@ -78,25 +78,25 @@ Argument is a command name."
 
 
 (defun global-set-key (string string)
-  "Bind a command to a key sequence.
+  "Bind a COMMAND to a KEY sequence.
 Read key sequence and function name, and bind the function to the key
 sequence."
   (interactive)
-  (lambda (keystr name)
-    "local keys = prompt_key_sequence ('Set key globally', keystr)
+  (lambda (key command)
+    "local keys = prompt_key_sequence ('Set key globally', key)
 
-    if keystr == nil then
-      keystr = tostring (keys)
+    if key == nil then
+      key = tostring (keys)
     end
 
-    if not name then
-      name = minibuf_read_function_name (string.format ('Set key %s to command: ', keystr))
-      if not name then return false end
+    if not command then
+      command = minibuf_read_function_name (string.format ('Set key %s to command: ', key))
+      if not command then return false end
     end
-    local func = lisp.fetch (name)
+    local func = lisp.fetch (command)
 
     if not func then -- Possible if called non-interactively
-      return minibuf_error (string.format ([[No such function `%s']], name))
+      return minibuf_error (string.format ([[No such function `%s']], command))
     end
 
     root_bindings[keys] = func
@@ -104,14 +104,14 @@ sequence."
 
 
 (defun global-unset-key (string)
-  "Remove global binding of a key sequence.
-Read key sequence and unbind any function already bound to that sequence."
+  "Remove global binding of KEY.
+KEY is a string representing a sequence of keystrokes."
   (interactive)
-  (lambda (keystr)
-    "local keys = prompt_key_sequence ('Unset key globally', keystr)
+  (lambda (key)
+    "local keys = prompt_key_sequence ('Unset key globally', key)
 
-    if keystr == nil then
-      keystr = tostring (keys)
+    if key == nil then
+      key = tostring (keys)
     end
 
     root_bindings[keys] = nil
@@ -198,7 +198,9 @@ by 4 each time."
 
 
 (defun keyboard-quit ()
-  "Cancel current command."
+  "Signal a `quit' condition.
+During execution of Lisp code, this character causes a quit directly.
+At top-level, as an editor command, this simply beeps."
   (interactive)
   "keyboard_quit")
 

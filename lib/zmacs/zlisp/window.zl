@@ -129,7 +129,7 @@ Both windows display the same buffer now current."
 
 
 (defun set-screen-height (number)
-  "Set the usable number of lines for display on the screen."
+  "Set the usable number of LINES for display on the screen."
   (interactive)
   (lambda (lines)
     "local ok, errmsg = term_resize (lines or term_height (), term_width ())
@@ -141,11 +141,11 @@ Both windows display the same buffer now current."
 
 
 (defun set-screen-size (number number)
-  "Set the number of usable lines and columns for display on the screen."
+  "Set the number of usable LINES and COLUMNS for display on the screen."
   (interactive)
-  (lambda (lines cols)
+  (lambda (lines columns)
     "local ok, errmsg = term_resize (lines or term_height (),
-                                    cols or term_width ())
+                                    columns or term_width ())
 
     if not ok then
       minibuf_error (errmsg)
@@ -154,10 +154,10 @@ Both windows display the same buffer now current."
 
 
 (defun set-screen-width (number)
-  "Set the usable number of columns for display on the screen."
+  "Set the usable number of COLUMNS for display on the screen."
   (interactive)
-  (lambda (cols)
-    "local ok, errmsg = term_resize (term_height (), cols or term_width ())
+  (lambda (columns)
+    "local ok, errmsg = term_resize (term_height (), columns or term_width ())
 
     if not ok then
       minibuf_error (errmsg)

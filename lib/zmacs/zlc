@@ -60,20 +60,23 @@ zz.define ("make-variable-buffer-local",
   end
 )
 
--- (defun NAME (PARAM...) DOCSTRING [(interactive)] (function "IMPLEMENTATION"))
+
+-- Return true if VALUE is a valid parameter name.
+local function isname (value)
+  return value == "..." or value:match "^[%w_]" ~= nil
+end
+
+
+-- (defun NAME (PARAM...) DOCSTRING [(interactive)] (lambda "IMPLEMENTATION"))
 -- A special form for describing Zmacs commands.  Each time it is called
 -- by Zlisp, output a lua command declaration for binding into Zmacs.
 zz.define ("defun",
   function (arglist)
-    local params = arglist:nth (2).value
-
-    if params and params.car then
-      params = '"' .. params:concat ('", "') .. '"'
-    else
-      params = ""
-    end
-
+    local name        = arglist:nth (1).value
+    local typelist    = arglist:nth (2).value
+    local docstring   = arglist:nth (3).value
     local interactive = arglist:nth (4).value
+
     local impl
     if interactive.car and interactive.car.value == "interactive" then
       impl = arglist:nth (5).value
@@ -83,12 +86,33 @@ zz.define ("defun",
       interactive = false
     end
 
+    if typelist and typelist.car then
+      typelist = '"' .. typelist:concat ('", "') .. '"'
+    else
+      typelist = ""
+    end
+
+    local signature
     if type (impl) ~= "string" then
+      local arglist = impl.cdr.car and impl.cdr.car.value or nil
+      if arglist then
+        signature = name .. " " ..
+	  arglist:mapconcat (function (value)
+		               return isname (value) and value:upper () or value
+			     end, " ")
+      end
+
       impl = zz.call_command (impl.car.value, impl.cdr)
     end
 
+    -- Don't re-add a function signature if docstring has one already.
+    if docstring:match "^%(" == nil then
+      signature = signature or name
+      docstring = "(" .. signature .. ")\n\n" .. docstring
+    end
+
     writef ('\n\nDefun ("%s",\n  {%s},\n[[\n%s\n]],\n  %s,\n  %s\n)\n',
-            arglist:nth (1).value, params, arglist:nth (3).value,
+            name, typelist, docstring,
 	    tostring (interactive), tostring (impl))
   end
 )
@@ -99,7 +123,13 @@ zz.define ("lambda",
     local params = arglist:nth (1).value
 
     if params and params.car then
-      params = params:concat (", ")
+      params = params:filter (isname)
+    end
+
+    if params and params.car then
+      params = params:mapconcat (function (value)
+                                   return value:gsub ("[^%w%d%.]", "_")
+                                 end, ", ")
     else
       params = ""
     end

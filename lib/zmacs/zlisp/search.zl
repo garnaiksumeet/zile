@@ -19,31 +19,37 @@
 
 
 (defun search-forward (string)
-  "Search forward from point for the user specified text."
+  "Search forward from point for STRING."
   (interactive)
-  (lambda (pattern)
-    "return do_search (true, false, pattern)"))
+  (lambda (string)
+    "return do_search (true, false, string)"))
 
 
 (defun search-backward (string)
-  "Search backward from point for the user specified text."
+  "Search backward from point for STRING."
   (interactive)
-  (lambda (pattern)
-    "return do_search (false, false, pattern)"))
+  (lambda (string)
+    "return do_search (false, false, string)"))
 
 
 (defun search-forward-regexp (string)
-  "Search forward from point for regular expression REGEXP."
+  "Search forward from point for regular expression REGEXP.
+
+Search case-sensitivity is determined by the value of the variable
+`case-fold-search'."
   (interactive)
-  (lambda (pattern)
-    "return do_search (true, true, pattern)"))
+  (lambda (regexp)
+    "return do_search (true, true, regexp)"))
 
 
 (defun search-backward-regexp (string)
-  "Search backward from point for match for regular expression REGEXP."
+  "Search backward from point for match for regular expression REGEXP.
+
+Search case-sensitivity is determined by the value of the variable
+`case-fold-search'."
   (interactive)
-  (lambda (pattern)
-    "return do_search (false, true, pattern)"))
+  (lambda (regexp)
+    "return do_search (false, true, regexp)"))
 
 
 (defun isearch-forward ()
@@ -73,8 +79,8 @@ Type @kbd{C-r} to search again backward, @kbd{C-s} to search again forward.
 (defun isearch-forward-regexp ()
   "Do incremental search forward for regular expression.
 With a prefix argument, do a regular string search instead.
-Like ordinary incremental search except that your input
-is treated as a regexp.  See @kbd{M-x isearch-forward} for more info."
+Like ordinary incremental search except that your input is treated
+as a regexp.  See the command `isearch-forward' for more information."
   (interactive)
   (lambda ()
     "return isearch (true, not lastflag.set_uniarg)"))
@@ -83,8 +89,8 @@ is treated as a regexp.  See @kbd{M-x isearch-forward} for more info."
 (defun isearch-backward-regexp ()
   "Do incremental search backward for regular expression.
 With a prefix argument, do a regular string search instead.
-Like ordinary incremental search except that your input
-is treated as a regexp.  See @kbd{M-x isearch-backward} for more info."
+Like ordinary incremental search except that your input is treated
+as a regexp.  See `isearch-backward' for more information."
   (interactive)
   (lambda ()
     "return isearch (false, not lastflag.set_uniarg)"))

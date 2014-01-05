@@ -22,7 +22,7 @@
   "Kill buffer BUFFER.
 With a nil argument, kill the current buffer."
   (interactive)
-  (lambda (buffer)
+  (lambda (&optional buffer)
     "local ok = true
 
     if not buffer then
@@ -57,7 +57,7 @@ With a nil argument, kill the current buffer."
 
 
 (defun switch-to-buffer (string)
-  "Select buffer @i{buffer} in the current window."
+  "Display buffer BUFFER in the selected window."
   (interactive)
   (lambda (buffer)
     "local ok = true

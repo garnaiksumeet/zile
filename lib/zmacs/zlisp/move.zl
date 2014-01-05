@@ -31,10 +31,12 @@
 
 
 (defun backward-char (number)
-  "Move point left N characters (right if N is negative).
-On attempt to pass beginning or end of buffer, stop and signal error."
+  "Move point N characters backward (forward if N is negative).
+On attempt to pass beginning or end of buffer, stop and signal error.
+Interactively, N is the numeric prefix argument.
+If N is omitted or nil, move point 1 character backward."
   (interactive)
-  (lambda (n)
+  (lambda (&optional n)
     "local ok = move_char (-(n or 1))
     if not ok then
       minibuf_error ('Beginning of buffer')
@@ -43,10 +45,12 @@ On attempt to pass beginning or end of buffer, stop and signal error."
 
 
 (defun forward-char (number)
-  "Move point right N characters (left if N is negative).
-On reaching end of buffer, stop and signal error."
+  "Move point N characters forward (backward if N is negative).
+On attempt to pass beginning or end of buffer, stop and signal error.
+Interactively, N is the numeric prefix argument.
+If N is omitted or nil, move point 1 character forward."
   (interactive)
-  (lambda (n)
+  (lambda (&optional n)
     "local ok = move_char (n or 1)
     if not ok then
       minibuf_error ('End of buffer')
@@ -55,28 +59,32 @@ On reaching end of buffer, stop and signal error."
 
 
 (defun goto-char (number)
-  "Set point to @i{position}, a number.
+  "Set point to POSITION, a number.
 Beginning of buffer is position 1."
   (interactive)
-  (lambda (n)
-    "if not n then
-      n = minibuf_read_number ('Goto char: ')
+  (lambda (position)
+    "if not position then
+      position = minibuf_read_number ('Goto char: ')
     end
 
-    return type (n) == 'number' and goto_offset (math.min (get_buffer_size (cur_bp) + 1, math.max (n, 1)))"))
+    return type (position) == 'number' and
+      goto_offset (math.min (get_buffer_size (cur_bp) + 1, math.max (position, 1)))"))
 
 
 (defun goto-line (number)
-  "Goto @i{line}, counting from line 1 at beginning of buffer."
+  "Goto LINE, counting from line 1 at beginning of buffer.
+If called interactively, a numeric prefix argument specifies
+LINE; without a numeric prefix argument, read LINE from the
+minibuffer."
   (interactive)
-  (lambda (n)
-    "n = n or current_prefix_arg
-    if not n and command.is_interactive () then
-      n = minibuf_read_number ('Goto line: ')
+  (lambda (line)
+    "line = line or current_prefix_arg
+    if not line and command.is_interactive () then
+      line = minibuf_read_number ('Goto line: ')
     end
 
-    if type (n) == 'number' then
-      move_line ((math.max (n, 1) - 1) - offset_to_line (cur_bp, get_buffer_pt (cur_bp)))
+    if type (line) == 'number' then
+      move_line ((math.max (line, 1) - 1) - offset_to_line (cur_bp, get_buffer_pt (cur_bp)))
       beginning_of_line ()
     else
       return false
@@ -84,23 +92,29 @@ Beginning of buffer is position 1."
 
 
 (defun previous-line (number)
-  "Move cursor vertically up one line.
+  "Move cursor vertically up ARG lines.
+
+ARG defaults to 1.
+
 If there is no character in the target line exactly over the current column,
 the cursor is positioned after the character in that line which spans this
 column, or at the end of the line if it is not long enough."
   (interactive)
-  (lambda (n)
-    "return move_line (-(n or current_prefix_arg or 1))"))
+  (lambda (&optional arg)
+    "return move_line (-(arg or current_prefix_arg or 1))"))
 
 
 (defun next-line (number)
-  "Move cursor vertically down one line.
+  "Move cursor vertically down ARG lines.
+
+ARG defaults to 1.
+
 If there is no character in the target line exactly under the current column,
 the cursor is positioned after the character in that line which spans this
 column, or at the end of the line if it is not long enough."
   (interactive)
-  (lambda (n)
-    "return move_line (n or current_prefix_arg or 1)"))
+  (lambda (&optional arg)
+    "return move_line (arg or current_prefix_arg or 1)"))
 
 
 (defun beginning-of-buffer ()
@@ -120,22 +134,24 @@ column, or at the end of the line if it is not long enough."
 (defun scroll-down (number)
   "Scroll text of current window downward near full screen."
   (interactive)
-  (lambda (n)
-    "return execute_with_uniarg (false, n or 1, scroll_down, scroll_up)"))
+  (lambda (&optional arg)
+    "return execute_with_uniarg (false, arg or 1, scroll_down, scroll_up)"))
 
 
 (defun scroll-up (number)
   "Scroll text of current window upward near full screen."
   (interactive)
-  (lambda (n)
-    "return execute_with_uniarg (false, n or 1, scroll_up, scroll_down)"))
+  (lambda (&optional arg)
+    "return execute_with_uniarg (false, arg or 1, scroll_up, scroll_down)"))
 
 
 (defun forward-line (number)
   "Move N lines forward (backward if N is negative).
-Precisely, if point is on line I, move to the start of line I + N."
+Precisely, if point is on line I, move to the start of line I + N
+('start of line' in the logical order).
+If there isn't room, go as far as possible (no error)."
   (interactive)
-  (lambda (n)
+  (lambda (&optional n)
     "n = n or current_prefix_arg or 1
     if n ~= 0 then
       beginning_of_line ()
@@ -164,35 +180,39 @@ Precisely, if point is on line I, move to the start of line I + N."
 
 
 (defun backward-paragraph (number)
-  "Move backward to start of paragraph.  With argument N, do it N times."
+  "Move backward to start of paragraph.
+With argument ARG, do it ARG times;
+a negative argument ARG = -N means move forward N paragraphs"
   (interactive)
-  (lambda (n)
-    "return move_paragraph (n or 1, previous_line, next_line, beginning_of_line)"))
+  (lambda (&optional arg)
+    "return move_paragraph (arg or 1, previous_line, next_line, beginning_of_line)"))
 
 
 (defun forward-paragraph (number)
-  "Move forward to end of paragraph.  With argument N, do it N times."
+  "Move forward to end of paragraph.
+With argument ARG, do it ARG times;
+a negative argument ARG = -N means move backward N paragraphs"
   (interactive)
-  (lambda (n)
-    "return move_paragraph (n or 1, next_line, previous_line, end_of_line)"))
+  (lambda (&optional arg)
+    "return move_paragraph (arg or 1, next_line, previous_line, end_of_line)"))
 
 
 (defun forward-sexp (number)
   "Move forward across one balanced expression (sexp).
-With argument, do it that many times.  Negative arg -N means
+With ARG, do it that many times.  Negative arg -N means
 move backward across N balanced expressions."
   (interactive)
-  (lambda (n)
-    "return move_with_uniarg (n or 1, move_sexp)"))
+  (lambda (&optional arg)
+    "return move_with_uniarg (arg or 1, move_sexp)"))
 
 
 (defun backward-sexp (number)
   "Move backward across one balanced expression (sexp).
-With argument, do it that many times.  Negative arg -N means
+With ARG, do it that many times.  Negative arg -N means
 move forward across N balanced expressions."
   (interactive)
-  (lambda (n)
-    "return move_with_uniarg (-(n or 1), move_sexp)"))
+  (lambda (&optional arg)
+    "return move_with_uniarg (-(arg or 1), move_sexp)"))
 
 
 (defun back-to-indentation ()
@@ -206,17 +226,17 @@ move forward across N balanced expressions."
 
 
 (defun forward-word (number)
-  "Move point forward one word (backward if the argument is negative).
-With argument, do this that many times."
+  "Move point forward ARG words (backward if ARG is negative).
+If ARG is omitted or nil, move point forward one word."
   (interactive)
-  (lambda (n)
-    "return move_with_uniarg (n or 1, move_word)"))
+  (lambda (&optional arg)
+    "return move_with_uniarg (arg or 1, move_word)"))
 
 
 (defun backward-word (number)
-  "Move backward until encountering the end of a word (forward if the
-argument is negative).
-With argument, do this that many times."
+  "Move backward until encountering the beginning of a word.
+With argument ARG, do this that many times.
+if ARG is omtted or nil, move point backward one word."
   (interactive)
-  (lambda (n)
-    "return move_with_uniarg (-(n or 1), move_word)"))
+  (lambda (&optional arg)
+    "return move_with_uniarg (-(arg or 1), move_word)"))
