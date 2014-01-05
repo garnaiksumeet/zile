@@ -2,6 +2,7 @@
 SH=--[[                                             # -*- mode: lua; -*-
 ##
 ## Program initialisation
+## Written by Reuben Thomas, 2010
 ##
 ## Copyright (c) 2010-2014 Free Software Foundation, Inc.
 ##
