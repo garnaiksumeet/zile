@@ -54,7 +54,8 @@ AC_PROG_EGREP
 
 dnl Generate output
 SS_CONFIG_TRAVIS([ldoc])
-AC_CONFIG_FILES([Makefile lib/zile/version.lua])
-AC_CONFIG_FILES([lib/zmacs/zmacs], [chmod +x lib/zmacs/zmacs])
-AC_CONFIG_FILES([lib/zz/zz], [chmod +x lib/zz/zz])
+AC_CONFIG_FILES([Makefile], [chmod 444 Makefile])
+AC_CONFIG_FILES([lib/zile/version.lua], [chmod 444 lib/zile/version.lua])
+AC_CONFIG_FILES([lib/zmacs/zmacs], [chmod 555 lib/zmacs/zmacs])
+AC_CONFIG_FILES([lib/zz/zz], [chmod 555 lib/zz/zz])
 AC_OUTPUT
