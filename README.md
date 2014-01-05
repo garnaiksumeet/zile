@@ -1,5 +1,7 @@
 # GNU Zile
 
+[![travis-ci status](https://secure.travis-ci.org/gvvaughan/zile.png)](http://travis-ci.org/gvvaughan/zile/builds)
+
 GNU Zile is free software, licensed under the GNU GPL.
 
 Copyright (c) 1997-2014 Free Software Foundation, Inc.
@@ -36,7 +38,8 @@ For exact version dependencies, see `require_version` statments in
  [emacs]:      http://www.gnu.org/s/emacs
  [gnulib]:     http://www.gnu.org/s/gnulib
  [lrexlib]:    http://rrthomas.github.io/lrexlib/
- [lua-stdlib]: http://rrthomasgithub.io/lua-stdlib/
+ [lua-stdlib]: http://rrthomas.github.io/lua-stdlib/
+ [luaposix]:   http://luaposix.github.io/luaposix/
  [luarocks]:   http://www.luarocks.org/
 
 
@@ -70,6 +73,8 @@ The rest of the files in the top-level directory are part of the
  [install]:   http://git.savannah.gnu.org/cgit/zile.git/tree/INSTALL?h=release
  [lib]:       http://git.savannah.gnu.org/cgit/zile.git/tree/lib
  [m4]:        http://git.savannah.gnu.org/cgit/zile.git/tree/m4?h=release
+ [news]:      http://git.savannah.gnu.org/cgit/zile.git/tree/NEWS
+ [thanks]:    http://git.savannah.gnu.org/cgit/zile.git/tree/THANKS
 
 
 ## Web Pages
@@ -81,6 +86,7 @@ The rest of the files in the top-level directory are part of the
    [mirror][] for faster downloads and to reduce stress on the main GNU
    machine.
 
+ [gnu savannah]:      http://savannah.gnu.org
  [mirror]:            http://www.gnu.org/order/ftp.html
  [releases]:          http://ftpmirror.gnu.org/zile/
  [zile]:              http://www.gnu.org/s/zile/
@@ -134,7 +140,7 @@ then run this command to import it:
 
     gpg --keyserver keys.gnupg.net --recv-keys 80EE4A00
 
-and then rerun the `gpg --verify' command.
+and then rerun the `gpg --verify` command.
 
 Generic instructions for how to build GNU Zile from a release tarball
 are contained in the file [INSTALL][].
