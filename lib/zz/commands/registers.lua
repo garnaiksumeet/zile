@@ -34,7 +34,7 @@ Copy region into register @i{register}.
     end
 
     if reg == 7 then
-      return keyboard_quite ()
+      return keyboard_quit ()
     else
       minibuf_clear ()
       local rp = calculate_the_region ()
@@ -70,7 +70,7 @@ Puts point before and mark after the inserted text.
     end
 
     if reg == 7 then
-      ok = keyboard_quite ()
+      ok = keyboard_quit ()
     else
       minibuf_clear ()
       if register_isempty (reg) then
