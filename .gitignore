@@ -28,7 +28,6 @@
 /lib/zile/version.lua
 /m4/
 /maint.mk
-/travis.yml.in
 /zile*.tar.gz
 /zile*.tar.gz.directive*
 /zile*.tar.gz.sig

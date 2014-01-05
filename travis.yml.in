@@ -3,12 +3,12 @@ language: erlang
 
 env:
   global:
-    - PACKAGE=zile
+    - PACKAGE=@PACKAGE@
     - ROCKSPEC=$PACKAGE-git-1.rockspec
     - LUAROCKS_CONFIG=build-aux/luarocks-config.lua
     - LUAROCKS_BASE=luarocks-2.1.1
     - LUAROCKS="$LUA $HOME/bin/luarocks"
-    - GENDOC=luarocks/bin/
+    - GENDOC=luarocks/bin/@GENDOC@
     - SPECL=bin/specl
   matrix:
     - LUA=lua5.2             LUA_INCDIR=/usr/include/lua5.2     LUA_SUFFIX=5.2
@@ -53,7 +53,7 @@ script:
   # Set Lua and Shell paths up for local luarocks tree.
   - eval `$LUAROCKS path`
   - export PATH=`pwd`/luarocks/bin:$PATH
-  - $LUAROCKS install lyaml;
+  @EXTRA_ROCKS@
   - make rockspecs LUAROCKS="$LUAROCKS" V=1
     || { $LUAROCKS path; cat $ROCKSPEC; }
   # LuaRocks make will fail if dependencies are missing.
