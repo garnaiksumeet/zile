@@ -22,7 +22,7 @@ AC_PREREQ([2.61])
 dnl Initialise autoconf and automake
 AC_INIT([Zile], [3.1], [bug-zile@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIR([m4])
 
 AS_BOX([Configuring AC_PACKAGE_TARNAME AC_PACKAGE_VERSION])
 echo
