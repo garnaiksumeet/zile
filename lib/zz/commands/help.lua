@@ -17,16 +17,24 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
+local bind = require "zz.bind"
 local eval = require "zz.eval"
 local Defun, fetch, zz = eval.Defun, eval.fetch, eval.sandbox
 
 
 local function write_function_description (command)
   insert_string (string.format (
-     '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n%s',
+     '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n',
      tostring (command),
-     command['interactive-form'] and 'an interactive' or 'a',
-     command['documentation']))
+     command['interactive-form'] and 'an interactive' or 'a'))
+
+     local bindings = bind.where_is (tostring (command))
+     if bindings and #bindings > 0 then
+       insert_string (string.format (
+         'It is bound to %s.\n\n', table.concat (bindings, ', ')))
+     end
+
+     insert_string (command['documentation'])
 end
 
 

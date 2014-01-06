@@ -20,12 +20,21 @@
 
 ;; FIXME: Add apropos
 
+(localvar bind "require 'zmacs.bind'")
+
 (localfun write_function_description (command)
   "insert_string (string.format (
-     '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n%s',
+     '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n',
      tostring (command),
-     command['interactive-form'] and 'an interactive' or 'a',
-     command['function-documentation']))")
+     command['interactive-form'] and 'an interactive' or 'a'))
+
+     local bindings = bind.where_is (tostring (command))
+     if bindings and #bindings > 0 then
+       insert_string (string.format (
+         'It is bound to %s.\n\n', table.concat (bindings, ', ')))
+     end
+
+     insert_string (command['function-documentation'])")
 
 
 (defun describe-function (string)
