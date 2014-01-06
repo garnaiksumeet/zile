@@ -61,10 +61,11 @@ dist_zmacscmds_DATA =					\
 
 dist_zmacsdata_DATA =					\
 	lib/zmacs/default-bindings-el.lua		\
+	lib/zmacs/bind.lua				\
 	lib/zmacs/callbacks.lua				\
 	lib/zmacs/commands.lua				\
-	lib/zmacs/keymaps.lua				\
 	lib/zmacs/eval.lua				\
+	lib/zmacs/keymaps.lua				\
 	lib/zmacs/main.lua				\
 	$(dist_zmacscmds_DATA)				\
 	$(NOTHING_ELSE)

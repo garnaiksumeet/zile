@@ -58,10 +58,11 @@ dist_zzcmds_DATA =					\
 
 dist_zzdata_DATA =					\
 	lib/zz/default-bindings.lua			\
+	lib/zz/bind.lua					\
 	lib/zz/callbacks.lua				\
 	lib/zz/commands.lua				\
-	lib/zz/keymaps.lua				\
 	lib/zz/eval.lua					\
+	lib/zz/keymaps.lua				\
 	lib/zz/main.lua					\
 	$(dist_zzcmds_DATA)				\
 	$(NOTHING_ELSE)

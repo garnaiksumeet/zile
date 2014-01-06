@@ -17,7 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
-local eval  = require "zz.eval"
+local bind = require "zz.bind"
+local eval = require "zz.eval"
 local Defun, fetch = eval.Defun, eval.fetch
 
 
@@ -34,17 +35,6 @@ Whichever character you type to run this command is inserted.
 )
 
 
--- gather_bindings_state:
--- {
---   f: function to match
---   bindings: bindings
--- }
-
-function gather_bindings (key, p, g)
-  if p == g.f then table.insert (g.bindings, key) end
-end
-
-
 Defun ("where_is",
   {},
 [[
@@ -52,18 +42,16 @@ Print message listing key sequences that invoke the command DEFINITION.
 Argument is a command name.
 ]],
   true,
-  function ()
-    local name = minibuf_read_function_name ('Where is command: ')
+  function (definition)
+    definition = definition or minibuf_read_function_name ('Where is command: ')
 
-    if name and fetch (name) then
-      local g = { f = fetch (name).value, bindings = {} }
-
-      walk_bindings (root_bindings, gather_bindings, g)
-
-      if #g.bindings == 0 then
-        minibuf_write (name .. ' is not on any key')
+    local bindings = bind.where_is (definition)
+    if bindings ~= nil then
+      if #bindings == 0 then
+        minibuf_write (definition .. ' is not on any key')
       else
-        minibuf_write (string.format ('%s is on %s', name, table.concat (g.bindings, ', ')))
+        minibuf_write (string.format ('%s is on %s',
+	                              definition, table.concat (bindings, ', ')))
       end
       return true
     end
