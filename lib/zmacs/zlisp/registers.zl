@@ -18,6 +18,16 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+(localvar regs
+  "Table of register contents."
+  "{}")
+
+(localfun register_isempty (reg)
+  "return not regs[term_bytetokey (reg)]")
+
+(localfun register_store (reg data)
+  "regs[term_bytetokey (reg)] = data")
+
 (defun copy-to-register (number)
   "Copy region into register REGISTER."
   (interactive)
@@ -41,6 +51,14 @@
 
     return true"))
 
+
+(localvar regnum
+  "Copy of REGISTER argument from `insert-register'."
+  "false")
+
+(localfun insert_register ()
+  "insert_estr (regs[term_bytetokey (regnum)])
+  return true")
 
 (defun insert-register (number)
   "Insert contents of REGISTER. (REGISTER is a character.)
@@ -75,6 +93,24 @@ Puts point before and mark after the inserted text."
     end
 
     return ok"))
+
+
+(localfun write_registers_list (i)
+  "for i, r in pairs (regs) do
+    if r then
+      insert_string (string.format ('Register %s contains ', tostring (i)))
+      r = tostring (r)
+
+      if r == '' then
+        insert_string ('the empty string\n')
+      elseif r:match ('^%s+$') then
+        insert_string ('whitespace\n')
+      else
+        local len = math.min (20, math.max (0, cur_wp.ewidth - 6)) + 1
+        insert_string (string.format ('text starting with\n    %s\n', string.sub (r, 1, len)))
+      end
+    end
+  end")
 
 
 (defun list-registers ()

@@ -20,6 +20,22 @@
 local eval = require "zz.eval"
 local Defun, zz = eval.Defun, eval.sandbox
 
+local regs = {}
+local regnum = false
+
+
+local function register_isempty (reg)
+  return not regs[term_bytetokey (reg)]
+end
+
+local function register_store (reg, data)
+  regs[term_bytetokey (reg)] = data
+end
+
+local function insert_register ()
+  insert_estr (regs[term_bytetokey (regnum)])
+  return true
+end
 
 Defun ("copy_to_register",
   {"number"},
@@ -88,6 +104,25 @@ Puts point before and mark after the inserted text.
     return ok
   end
 )
+
+
+local function write_registers_list (i)
+  for i, r in pairs (regs) do
+    if r then
+      insert_string (string.format ("Register %s contains ", tostring (i)))
+      r = tostring (r)
+
+      if r == "" then
+        insert_string ("the empty string\n")
+      elseif r:match ("^%s+$") then
+        insert_string ("whitespace\n")
+      else
+        local len = math.min (20, math.max (0, cur_wp.ewidth - 6)) + 1
+        insert_string (string.format ("text starting with\n    %s\n", string.sub (r, 1, len)))
+      end
+    end
+  end
+end
 
 
 Defun ("list_registers",

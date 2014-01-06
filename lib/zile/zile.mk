@@ -38,7 +38,6 @@ dist_pkgdata_DATA =				\
 	lib/zile/marker.lua			\
 	lib/zile/minibuf.lua			\
 	lib/zile/redisplay.lua			\
-	lib/zile/registers.lua			\
 	lib/zile/search.lua			\
 	lib/zile/term_curses.lua		\
 	lib/zile/term_minibuf.lua		\
