@@ -22,6 +22,19 @@
 
 (localvar bind "require 'zmacs.bind'")
 
+
+(localfun expand_kbd_refs (s)
+  "Replace occurrences of \\[command-name] with bound keystring."
+  "return (s:gsub ('\\\\%[([^%]]+)%]', function (name)
+    local bindings = bind.where_is (name)
+    if bindings and #bindings > 0 then
+      return tostring (bindings[1])
+    else
+      return 'M-x ' .. name .. ' RET'
+    end
+  end))")
+
+
 (localfun write_function_description (command)
   "insert_string (string.format (
      '%s is %s %s function in ' .. [[`%s']].. '.\n\n',
@@ -36,7 +49,7 @@
          'It is bound to %s.\n\n', table.concat (bindings, ', ')))
      end
 
-     insert_string (command['function-documentation'])")
+     insert_string (expand_kbd_refs (command['function-documentation']))")
 
 
 (defun describe-function (string)
@@ -64,7 +77,7 @@
     command['interactive-form'] and 'an interactive' or 'a',
     command['source-file'] and 'compiled Lisp' or 'built-in',
     command['source-file'] or 'Lua source code',
-    command['function-documentation']))")
+    expand_kbd_refs (command['function-documentation'])))")
 
 
 (defun describe-key (string)
@@ -103,7 +116,8 @@
     'Its value is %s\n\n%s',
     tostring (symbol),
     symbol['source-file'] or 'Lua source code',
-    symbol.value, symbol['variable-documentation']))")
+    symbol.value,
+    expand_kbd_refs (symbol['variable-documentation'])))")
 
 
 (defun describe-variable (string)

@@ -47,6 +47,12 @@ GNU Zile NEWS                                    -*- outline -*-
   - Support for FAQ, COPYING and NEWS browsing in editor with \C-h\C-f,
     \C-h\C-c and \C-h\C-n (or F1 prefix equivalents).
 
+  - In docstrings for interactive commands and user configurable
+    variables, \\[command-name] is now expanded to a key-binding for
+    `command-name` by "\C-hf", "\C-hv" etc.  just like Emacs. For
+    example, see the documentation for `start-kbd-macro` and
+    `end-kbd-macro`.
+
   - `describe-function` now shows bound keys and function signatures
     in displayed help text.
 
