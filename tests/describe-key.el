@@ -1,7 +1,7 @@
 (describe-key "\C-f")
 (other-window 1)
 (set-mark (point))
-(forward-line)
+(forward-word 11)
 (copy-region-as-kill (mark) (point))
 (other-window -1)
 (yank)

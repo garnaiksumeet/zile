@@ -24,9 +24,11 @@
 
 (localfun write_function_description (command)
   "insert_string (string.format (
-     '%s is %s built-in function in ' .. [[`Lua source code']] .. '.\n\n',
+     '%s is %s %s function in ' .. [[`%s']].. '.\n\n',
      tostring (command),
-     command['interactive-form'] and 'an interactive' or 'a'))
+     command['interactive-form'] and 'an interactive' or 'a',
+     command['source-file'] and 'compiled Lisp' or 'built-in',
+     command['source-file'] or 'Lua source code'))
 
      local bindings = bind.where_is (tostring (command))
      if bindings and #bindings > 0 then
@@ -55,11 +57,13 @@
 
 (localfun write_key_description (command binding)
   "insert_string (string.format (
-    '%s runs the command %s, which is %s built-in\n' ..
-    'function in ' .. [[`Lua source code']] .. '.\n\n%s',
+    '%s runs the command %s, which is %s %s\n' ..
+    'function in ' .. [[`%s']] .. '.\n\n%s',
     binding,
     tostring (command),
     command['interactive-form'] and 'an interactive' or 'a',
+    command['source-file'] and 'compiled Lisp' or 'built-in',
+    command['source-file'] or 'Lua source code',
     command['function-documentation']))")
 
 
@@ -95,9 +99,11 @@
 
 (localfun write_variable_description (symbol)
   "insert_string (string.format (
-    '%s is a variable defined in ' .. [[`Lua source code']] .. '.\n\n' ..
+    '%s is a variable defined in ' .. [[`%s']] .. '.\n\n' ..
     'Its value is %s\n\n%s',
-    tostring (symbol), symbol.value, symbol['variable-documentation']))")
+    tostring (symbol),
+    symbol['source-file'] or 'Lua source code',
+    symbol.value, symbol['variable-documentation']))")
 
 
 (defun describe-variable (string)

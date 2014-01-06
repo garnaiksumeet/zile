@@ -76,15 +76,17 @@ local Defun, marshaller, namer, setter -- forward declarations
 --- Define a command in the execution environment for the evaluator.
 -- @string name command name
 -- @tparam table argtypes a list of type strings that arguments must match
+-- @string source name of the file `name` was compiled from, or nil
 -- @string doc docstring
 -- @bool interactive `true` if this command can be called interactively
 -- @func func function to call after marshalling arguments
-function Defun (name, argtypes, doc, interactive, func)
+function Defun (name, argtypes, source, doc, interactive, func)
   local symbol = {
     name  = name,
     func  = func,
     plist = {
       ["marshall-argtypes"]      = argtypes,
+      ["source-file"]            = source,
       ["function-documentation"] = doc:chomp (),
       ["interactive-form"]       = interactive,
     },
@@ -163,13 +165,15 @@ end
 -- Store the value and docstring for a variable for later retrieval.
 -- @string name variable name
 -- @param value value to store in variable `name`
+-- @string source name of the file `name` was compiled from, or nil
 -- @string doc variable's docstring
-local function Defvar (name, value, doc)
+local function Defvar (name, value, source, doc)
   doc = doc or ""
   local symbol = {
     name  = name,
     value = value,
     plist = {
+      ["source-file"]            = source,
       ["variable-documentation"] = doc:chomp (),
     }
   }
