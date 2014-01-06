@@ -41,13 +41,3 @@ function recase (s, newcase)
 
   return bs
 end
-
--- Turn texinfo markup into plain text
-function texi (s)
-  s = string.gsub (s, "@i{([^}]+)}", function (s) return string.upper (s) end)
-  s = string.gsub (s, "@kbd{([^}]+)}", "%1")
-  s = string.gsub (s, "@samp{([^}]+)}", "%1")
-  s = string.gsub (s, "@itemize%s[^\n]*\n", "")
-  s = string.gsub (s, "@end%s[^\n]*\n", "")
-  return s
-end

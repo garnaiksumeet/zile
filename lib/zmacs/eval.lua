@@ -85,7 +85,7 @@ function Defun (name, argtypes, doc, interactive, func)
     func  = func,
     plist = {
       ["marshall-argtypes"]      = argtypes,
-      ["function-documentation"] = texi (doc:chomp ()),
+      ["function-documentation"] = doc:chomp (),
       ["interactive-form"]       = interactive,
     },
   }
@@ -170,7 +170,7 @@ local function Defvar (name, value, doc)
     name  = name,
     value = value,
     plist = {
-      ["variable-documentation"] = texi (doc:chomp ()),
+      ["variable-documentation"] = doc:chomp (),
     }
   }
 

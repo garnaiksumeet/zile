@@ -77,6 +77,19 @@ local Defun, marshaller, namer, setter -- forward declarations
 -- @param value symbol value
 
 
+
+--- Turn texinfo markup into plain text
+-- @string s a string with a subset of texinfo markup.
+-- @treturn a copy of `s` with markup expanded as plain text
+function texi (s)
+  s = string.gsub (s, "@i{([^}]+)}", function (s) return string.upper (s) end)
+  s = string.gsub (s, "@kbd{([^}]+)}", "%1")
+  s = string.gsub (s, "@samp{([^}]+)}", "%1")
+  s = string.gsub (s, "@itemize%s[^\n]*\n", "")
+  s = string.gsub (s, "@end%s[^\n]*\n", "")
+  return s
+end
+
 --- Define a command in the execution environment for the evaluator.
 -- @string name command name
 -- @tparam table argtypes a list of type strings that arguments must match
