@@ -64,12 +64,12 @@ dist_zzdata_DATA =					\
 	lib/zz/eval.lua					\
 	lib/zz/keymaps.lua				\
 	lib/zz/main.lua					\
-	$(dist_zzcmds_DATA)				\
 	$(NOTHING_ELSE)
 
 zz_zz_DEPS =						\
 	Makefile					\
 	lib/zz/zz.in					\
+	$(dist_zzcmds_DATA)				\
 	$(dist_zzdata_DATA)				\
 	$(NOTHING_ELSE)
 
@@ -81,7 +81,7 @@ doc/dotzz.sample: lib/zz/mkdotzz.lua
 	LUA_PATH='$(ZILE_PATH);$(LUA_PATH)'			\
 	  $(LUA) $(srcdir)/lib/zz/mkdotzz.lua > '$@'
 
-doc/zz.1: lib/zz/man-extras $(dist_zzdata_DATA)
+doc/zz.1: lib/zz/man-extras $(zz_zz_DEPS)
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
 	test -d "$$d" || $(MKDIR_P) "$$d"
 ## Exit gracefully if zz.1.in is not writeable, such as during distcheck!
@@ -135,7 +135,7 @@ $(dist_zzdocdata_DATA): $(srcdir)/lib/zz/doc
 ## Documentation. ##
 ## -------------- ##
 
-ldoc_DEPS += $(dist_zzdata_DATA)
+ldoc_DEPS += $(zz_zz_DEPS)
 
 
 ## ------------- ##

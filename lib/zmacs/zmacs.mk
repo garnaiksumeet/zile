@@ -67,12 +67,12 @@ dist_zmacsdata_DATA =					\
 	lib/zmacs/eval.lua				\
 	lib/zmacs/keymaps.lua				\
 	lib/zmacs/main.lua				\
-	$(dist_zmacscmds_DATA)				\
 	$(NOTHING_ELSE)
 
 zmacs_zmacs_DEPS =					\
 	Makefile					\
 	lib/zmacs/zmacs.in				\
+	$(dist_zmacscmds_DATA)				\
 	$(dist_zmacsdata_DATA)				\
 	$(NOTHING_ELSE)
 
@@ -98,7 +98,7 @@ doc/dotzmacs.sample: lib/zmacs/mkdotzmacs.lua
 	LUA_PATH='$(ZILE_PATH);$(LUA_PATH)'			\
 	  $(LUA) $(srcdir)/lib/zmacs/mkdotzmacs.lua > '$@'
 
-doc/zmacs.1: lib/zmacs/man-extras lib/zmacs/help2man-wrapper $(dist_zmacsdata_DATA)
+doc/zmacs.1: lib/zmacs/man-extras lib/zmacs/help2man-wrapper $(zmacs_zmacs_DEPS)
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
 	test -d "$$d" || $(MKDIR_P) "$$d"
 ## Exit gracefully if zmacs.1.in is not writeable, such as during distcheck!
@@ -151,7 +151,7 @@ $(dist_zmacsdocdata_DATA): $(srcdir)/lib/zmacs/doc
 ## Documentation. ##
 ## -------------- ##
 
-ldoc_DEPS += $(dist_zmacsdata_DATA)
+ldoc_DEPS += $(zmacs_zmacs_DEPS)
 
 
 ## ------------- ##
