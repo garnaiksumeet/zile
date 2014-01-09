@@ -97,6 +97,10 @@ With a nil argument, kill the current buffer."
     "cur_bp.readonly = not cur_bp.readonly"))
 
 
+(defvar auto-fill-mode nil
+  "If non-nil, Auto Fill Mode is automatically enabled.")
+
+
 (defun auto-fill-mode ()
   "Toggle Auto Fill mode.
 In Auto Fill mode, inserting a space at a column beyond `fill-column'

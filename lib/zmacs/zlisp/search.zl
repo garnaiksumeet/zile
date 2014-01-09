@@ -32,6 +32,11 @@
     "return do_search (false, false, string)"))
 
 
+(defvar case-fold-search t
+  "Non-nil means searches ignore case.")
+(make-variable-buffer-local 'case-fold-search)
+
+
 (defun search-forward-regexp (string)
   "Search forward from point for regular expression REGEXP.
 
@@ -105,6 +110,10 @@ the first letter is, and nil otherwise."
   elseif s:match ('^%u%U*') then
     return 'capitalized'
   end")
+
+
+(defvar case-replace t
+  "Non-nil means `query-replace' should preserve case in replacements.")
 
 
 (defun query-replace ()

@@ -20,6 +20,29 @@
 ;; MA 02111-1301, USA.
 
 
+(defvar indent-tabs-mode t
+  "If non-nil, insert-tab inserts 'real' TABs; otherwise, it always inserts
+spaces.")
+(make-variable-buffer-local 'indent-tabs-mode)
+
+
+(defvar tab-always-indent t
+  "Controls the operation of the @kbd{TAB} key.
+If @samp{t}, hitting TAB always just indents the current line.
+If @samp{nil}, hitting TAB indents the current line if point is at the
+left margin or in the line's indentation, otherwise it inserts a
+'real' TAB character.")
+
+
+(defvar tab-width 8
+  "Distance between tab stops (for display of tab characters), in columns.")
+(make-variable-buffer-local 'tab-width)
+
+
+(defvar standard-indent 4
+  "Default number of columns for margin-changing functions to indent.")
+
+
 (defun indent-for-tab-command ()
   "Indent line or insert a tab.
 Depending on `tab-always-indent', either insert a tab or indent.
@@ -184,6 +207,12 @@ buffer."
   (interactive)
   (lambda (&optional arg)
     "return execute_with_uniarg (true, arg, insert_tab)"))
+
+
+(defvar fill-column 70
+  "Column beyond which automatic line-wrapping should happen.
+Automatically becomes buffer-local when set in any fashion.")
+(make-variable-buffer-local 'fill-column)
 
 
 (localfun newline ()

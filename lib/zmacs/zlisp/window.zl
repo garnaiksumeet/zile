@@ -18,6 +18,17 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+(defvar highlight-nonselected-windows nil
+  "If non-nil, highlight region even in nonselected windows.")
+
+
+(defvar transient-mark-mode t
+  "If non-nil, deactivates the mark when the buffer contents change.
+Also enables highlighting of the region whenever the mark is active.
+The variable `highlight-nonselected-windows' controls whether to
+highlight all windows or just the selected window.")
+
+
 (defun delete-window ()
   "Remove the current window from the screen."
   (interactive)

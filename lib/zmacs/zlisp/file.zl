@@ -113,6 +113,18 @@ Set mark after the inserted text."
     return ok"))
 
 
+(defvar make-backup-files t
+  "Non-nil means make a backup of a file the first time it is saved.
+This is done by appending `~' to the file name.")
+
+
+(defvar backup-directory nil
+  "The directory for backup files, which must exist.
+If this variable is nil, the backup is made in the original file's
+directory.
+This value is used only when `make-backup-files' is @samp{t}.")
+
+
 (defun save-buffer ()
   "Save current buffer in visited file if modified.  By default, makes the
 previous version into a backup file if this is the first save."

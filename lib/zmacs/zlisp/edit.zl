@@ -18,6 +18,10 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+(defvar ring-bell t
+  "Non-nil means ring the terminal bell on any error.")
+
+
 (defun set-fill-column (number)
   "Set `fill-column' to specified argument.
 Use C-u followed by a number to specify a column.
