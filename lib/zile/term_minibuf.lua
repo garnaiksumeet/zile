@@ -215,11 +215,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
 end
 
 function term_minibuf_write (s)
-  if bflag then
-    io.write (s .. "\n")
-  else
-    term_move (term_height () - 1, 0)
-    term_clrtoeol ()
-    term_addstr (string.sub (s, 1, math.min (#s, term_width ())))
-  end
+  term_move (term_height () - 1, 0)
+  term_clrtoeol ()
+  term_addstr (string.sub (s, 1, math.min (#s, term_width ())))
 end

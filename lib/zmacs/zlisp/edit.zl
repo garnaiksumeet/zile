@@ -46,8 +46,8 @@ Just C-u as argument means to use the current column."
       return minibuf_error ('set-fill-column requires an explicit argument')
     end
 
-    minibuf_write (string.format ('Fill column set to %d (was %d)', arg,
-                                  lisp.get_variable_number ('fill-column')))
+    minibuf_echo (string.format ('Fill column set to %d (was %d)', arg,
+                                 lisp.get_variable_number ('fill-column')))
     lisp.set_variable ('fill-column', tostring (arg))
     return true"))
 

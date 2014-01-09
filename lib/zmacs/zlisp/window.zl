@@ -129,14 +129,14 @@ Both windows display the same buffer now current."
   "The total number of lines available for display on the screen."
   (interactive)
   (lambda ()
-    "minibuf_write (tostring (term_height ()))"))
+    "minibuf_echo (tostring (term_height ()))"))
 
 
 (defun screen-width ()
   "The total number of lines available for display on the screen."
   (interactive)
   (lambda ()
-    "minibuf_write (tostring (term_width ()))"))
+    "minibuf_echo (tostring (term_width ()))"))
 
 
 (defun set-screen-height (number)

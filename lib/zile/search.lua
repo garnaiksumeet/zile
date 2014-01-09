@@ -207,7 +207,7 @@ function isearch (forward, regexp)
           -- Save search string.
           last_search = pattern
 
-          minibuf_write ("Mark saved when search started")
+          minibuf_echo ("Mark saved when search started")
         else
           minibuf_clear ()
         end

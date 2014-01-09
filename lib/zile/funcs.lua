@@ -113,13 +113,13 @@ function pipe_command (cmd, output, replace, input)
     local eol = string.find (out, "\n")
 
     if #out == 0 then
-      minibuf_write ("(Shell command succeeded with no output)")
+      minibuf_echo ("(Shell command succeeded with no output)")
     else
       if output == nil then
         local more_than_one_line = eol and eol ~= #out
         write_temp_buffer ("*Shell Command Output*", more_than_one_line, insert_string, out)
         if not more_than_one_line then
-          minibuf_write (out)
+          minibuf_echo (out)
         end
       else
         local bp = find_buffer (output) or cur_bp

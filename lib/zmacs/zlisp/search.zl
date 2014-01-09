@@ -192,7 +192,7 @@ what to do with it."
     end
 
     if ok then
-      minibuf_write (string.format ('Replaced %d occurrence%s', count, count ~= 1 and 's' or ''))
+      minibuf_echo (string.format ('Replaced %d occurrence%s', count, count ~= 1 and 's' or ''))
     end
 
     return ok"))

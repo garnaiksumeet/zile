@@ -260,7 +260,7 @@ function write_buffer (bp, needname, confirm, name, prompt)
     bp.temporary = false
     bp.nosave = false
     if backup_and_write (bp, name) then
-      minibuf_write ("Wrote " .. name)
+      minibuf_echo ("Wrote " .. name)
       bp.modified = false
       undo_set_unchanged (bp.last_undop)
     else
@@ -276,7 +276,7 @@ function save_buffer (bp)
     return write_buffer (bp, bp.needname, false, bp.filename, "File to save in: ")
   end
 
-  minibuf_write ("(No changes need to be saved)")
+  minibuf_echo ("(No changes need to be saved)")
   return true
 end
 
@@ -316,7 +316,7 @@ function save_some_buffers ()
   end
 
   if none_to_save then
-    minibuf_write ("(No files need saving)")
+    minibuf_echo ("(No files need saving)")
   end
 
   return true

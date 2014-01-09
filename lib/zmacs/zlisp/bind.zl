@@ -39,10 +39,10 @@ Argument is a command name."
     local bindings = bind.where_is (definition)
     if bindings ~= nil then
       if #bindings == 0 then
-        minibuf_write (definition .. ' is not on any key')
+        minibuf_echo (definition .. ' is not on any key')
       else
-        minibuf_write (string.format ('%s is on %s',
-                                      definition, table.concat (bindings, ', ')))
+        minibuf_echo (string.format ('%s is on %s',
+                                     definition, table.concat (bindings, ', ')))
       end
       return true
     end"))

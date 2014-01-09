@@ -31,8 +31,6 @@ function minibuf_refresh ()
       term_minibuf_write (minibuf_contents)
     end
     term_refresh ()
-  elseif bflag and minibuf_contents then
-    term_minibuf_write (minibuf_contents)
   end
 end
 
@@ -49,10 +47,25 @@ function minibuf_write (s)
   end
 end
 
--- Write the specified error string in the minibuffer and signal an error.
+-- Write the specified error string in the minibuffer, or to stderr in
+-- batch mode, and signal an error.
 function minibuf_error (s)
-  minibuf_write (s)
+  if bflag then
+    io.stderr:write (s .. "\n")
+  else
+    minibuf_write (s)
+  end
   return ding ()
+end
+
+-- Write the specified string to the minibuffer, or to stdout in batch
+-- mode.
+function minibuf_echo (s)
+  if bflag then
+    io.stdout:write (s .. "\n")
+  else
+    minibuf_write (s)
+  end
 end
 
 function keyboard_quit ()

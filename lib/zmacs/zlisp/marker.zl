@@ -45,7 +45,7 @@
   (interactive)
   (lambda ()
     "lisp.execute_function ('set-mark')
-    minibuf_write ('Mark set')"))
+    minibuf_echo ('Mark set')"))
 
 
 (localfun mark (uniarg func)

@@ -24,4 +24,4 @@
 In batch mode, the message is printed to the standard error stream,
 followed by a newline."
   (lambda (msg)
-   "minibuf_write (msg)"))
+   "minibuf_echo (msg)"))
