@@ -126,7 +126,7 @@ Display the full documentation of a variable.
 
 
 local function find_or_create_buffer_from_module (name)
-  local bp = find_buffer (name)
+  local bp = get_buffer (name)
    if bp then
      switch_to_buffer (bp)
    else

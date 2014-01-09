@@ -42,7 +42,7 @@ With a nil argument, kill the current buffer.
 
     local bp
     if buffer and buffer ~= '' then
-      bp = find_buffer (buffer)
+      bp = get_buffer (buffer)
       if not bp then
         minibuf_error (string.format ([[Buffer `%s' not found]], buffer))
         ok = false
@@ -86,7 +86,7 @@ Select buffer @i{buffer} in the current window.
 
     if ok then
       if buffer and buffer ~= '' then
-        bp = find_buffer (buffer)
+        bp = get_buffer (buffer)
         if not bp then
           bp = buffer_new ()
           bp.name = buffer

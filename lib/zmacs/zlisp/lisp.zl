@@ -72,7 +72,7 @@ function accepts an optional argument, the BUFFER to evaluate (nil
 means use current buffer)."
   (interactive)
   (lambda (&optional buffer)
-    "local bp = (buffer and buffer ~= '') and find_buffer (buffer) or cur_bp
+    "local bp = (buffer and buffer ~= '') and get_buffer (buffer) or cur_bp
     return lisp.loadstring (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))"))
 
 

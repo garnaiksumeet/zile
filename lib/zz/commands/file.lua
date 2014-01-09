@@ -273,7 +273,7 @@ Puts mark after the inserted text.
       local bp
 
       if buffer and buffer ~= '' then
-        bp = find_buffer (buffer)
+        bp = get_buffer (buffer)
         if not bp then
           ok = minibuf_error (string.format ([[Buffer `%s' not found]], buffer))
         end

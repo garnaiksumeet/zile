@@ -31,7 +31,7 @@ function write_temp_buffer (name, show, func, ...)
   if show and wp then
     set_current_window (wp)
   else
-    local bp = find_buffer (name)
+    local bp = get_buffer (name)
     if show then
       set_current_window (popup_window ())
     end
@@ -122,7 +122,7 @@ function pipe_command (cmd, output, replace, input)
           minibuf_echo (out)
         end
       else
-        local bp = find_buffer (output) or cur_bp
+        local bp = get_buffer (output) or cur_bp
         local del = 0
         if replace and not warn_if_no_mark (bp) then
           local r = calculate_the_region (bp)

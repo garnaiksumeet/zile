@@ -252,7 +252,7 @@ function set_buffer_names (bp, filename)
   local s = posix.basename (filename)
   local name = s
   local i = 2
-  while find_buffer (name) do
+  while get_buffer (name) do
     name = string.format ("%s<%d>", s, i)
     i = i + 1
   end
@@ -260,7 +260,7 @@ function set_buffer_names (bp, filename)
 end
 
 -- Search for a buffer named `name'.
-function find_buffer (name)
+function get_buffer (name)
   for _, bp in ipairs (buffers) do
     if bp.name == name then
       return bp
