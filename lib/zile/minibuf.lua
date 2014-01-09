@@ -22,9 +22,6 @@ files_history = history_new ()
 
 minibuf_contents = nil
 
-messages_bp = create_auto_buffer ("*Messages*")
-messages_bp.read_only = true
-
 -- Minibuffer wrapper functions.
 
 function minibuf_refresh ()
@@ -60,6 +57,43 @@ function minibuf_error (s)
   return ding ()
 end
 
+-- Maintain *Messages* buffer with less than `message_log_max` lines
+-- by trimming from the beginning of the buffer.
+-- FIXME: One of the calls below corrupts the undo tree for cur_bp if
+--        trim_messages is not called via `with_current_buffer()`.
+local function trim_messages (bp)
+  bp = bp or cur_bp
+
+  bp.noundo = true
+  bp.readonly = false
+  goto_offset (get_buffer_size (bp) + 1, bp)
+  replace_estr (0, EStr (minibuf_contents .. "\n"), bp)
+  bp.lines = (bp.lines or 0) + 1
+
+  local max = eval.get_variable ("message_log_max")
+  if max:match "^%d+$" then
+    local kill_lines = bp.lines - tonumber (max)
+    if kill_lines > 0 then
+      goto_offset (1, bp)
+      while kill_lines > 0 do
+        local o = buffer_next_line (bp, get_buffer_pt (bp))
+        if o == nil then break end
+	goto_offset (o, bp)
+	kill_lines = kill_lines -1
+      end
+      buffer_start_of_line (bp, get_buffer_pt (bp))
+      local kill_chars = get_buffer_pt (bp) - 1
+      goto_offset (1, bp)
+      replace_estr (kill_chars, EStr "", bp)
+      bp.lines = tonumber (max)
+      goto_offset (get_buffer_size (bp) + 1, bp)
+    end
+  end
+  bp.readonly = true
+  bp.modified = false
+end
+
+
 -- Write the specified string to the minibuffer, or to stdout in batch
 -- mode.
 function minibuf_echo (s)
@@ -69,21 +103,10 @@ function minibuf_echo (s)
     minibuf_write (s)
   end
 
-  local max = eval.get_variable 'message_log_max'
+  local max = eval.get_variable ("message_log_max") or "nil"
   if max ~= "nil" then
-    with_current_buffer (messages_bp,
-      insert_string, minibuf_contents .. "\n")
-    messages_bp.lines = (messages_bp.lines or 0) + 1
-    if max:match "^%d+$" then
-      while messages_bp.lines > tonumber (max) do
-	goto_offset (0, messages_bp)
-	local fini = buffer_end_of_line (messages_bp, 0) + 1
-        replace_estr (fini - 1, EStr "")
-	goto_offset (get_buffer_size (messages_bp) + 1, messages_bp)
-	messages_bp.lines = messages_bp.lines - 1
-      end
-    end
-    messages_bp.modified = false
+    local bp = get_buffer_create ("*Messages*", create_auto_buffer)
+    with_current_buffer (bp, trim_messages)
   end
 end
 

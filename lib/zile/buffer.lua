@@ -268,6 +268,13 @@ function get_buffer (name)
   end
 end
 
+-- Return the buffer named `name`, creating a new one with `func` if
+-- needed.
+function get_buffer_create (name, func)
+  func = func or get_buffer
+  return get_buffer (name) or func (name)
+end
+
 -- Temporarily switch buffers, without updating the interface.
 local buffer_stack = {}
 function with_current_buffer (bp, func, ...)
