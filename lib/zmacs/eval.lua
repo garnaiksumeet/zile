@@ -402,6 +402,7 @@ return {
   execute_function    = execute_function,
   fetch               = fetch,
   fetch_variable      = fetch_variable,
+  get_variable        = get_variable,
   get_variable_bool   = get_variable_bool,
   get_variable_number = get_variable_number,
   loadfile            = evaluate_file,
