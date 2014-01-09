@@ -68,9 +68,23 @@ function minibuf_echo (s)
   else
     minibuf_write (s)
   end
-  with_current_buffer (messages_bp,
-    insert_string, minibuf_contents .. "\n")
-  messages_bp.modified = false
+
+  local max = eval.get_variable 'message_log_max'
+  if max ~= "nil" then
+    with_current_buffer (messages_bp,
+      insert_string, minibuf_contents .. "\n")
+    messages_bp.lines = (messages_bp.lines or 0) + 1
+    if max:match "^%d+$" then
+      while messages_bp.lines > tonumber (max) do
+	goto_offset (0, messages_bp)
+	local fini = buffer_end_of_line (messages_bp, 0) + 1
+        replace_estr (fini - 1, EStr "")
+	goto_offset (get_buffer_size (messages_bp) + 1, messages_bp)
+	messages_bp.lines = messages_bp.lines - 1
+      end
+    end
+    messages_bp.modified = false
+  end
 end
 
 function keyboard_quit ()
