@@ -280,12 +280,12 @@ function main ()
   lastflag.need_resync = true
 
   -- Set up screen according to number of files loaded.
-  if #buffers == 3 then
-    -- *scratch* and two files.
+  if #buffers == 4 then
+    -- *scratch*, *Messages* and two files.
     split_window ()
     switch_to_buffer (buffers[#buffers -1])
     lisp.execute_function ("other-window")
-  elseif #buffers > 3 then
+  elseif #buffers > 4 then
     lisp.execute_function ("list-buffers")
   end
 

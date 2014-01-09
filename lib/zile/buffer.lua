@@ -268,6 +268,16 @@ function find_buffer (name)
   end
 end
 
+-- Temporarily switch buffers, without updating the interface.
+local buffer_stack = {}
+function with_current_buffer (bp, func, ...)
+  table.insert (buffer_stack, cur_bp)
+  cur_bp = bp
+  local r = {func (...)}
+  cur_bp = table.remove (buffer_stack)
+  return table.unpack (r)
+end
+
 -- Switch to the specified buffer.
 function switch_to_buffer (bp)
   assert (cur_wp.bp == cur_bp)

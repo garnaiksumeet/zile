@@ -22,6 +22,8 @@ files_history = history_new ()
 
 minibuf_contents = nil
 
+messages_bp = create_auto_buffer ("*Messages*")
+messages_bp.read_only = true
 
 -- Minibuffer wrapper functions.
 
@@ -66,6 +68,9 @@ function minibuf_echo (s)
   else
     minibuf_write (s)
   end
+  with_current_buffer (messages_bp,
+    insert_string, minibuf_contents .. "\n")
+  messages_bp.modified = false
 end
 
 function keyboard_quit ()
