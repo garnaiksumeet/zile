@@ -80,7 +80,7 @@ end
 -- @string s zlisp source
 -- @int    i index of last character scanned so far
 -- @treturn string text of just scanned `token`, or "" for an operator
--- @treturn string `kind` of token: one of `eof`, `string`, `word` or
+-- @treturn string `kind` of token: one of `eof`, `literal`, `word` or
 --   a character from the `isoperator` set above
 -- @treturn int    the index of the next unscanned character in `s`
 local function lex (s, i)
@@ -123,7 +123,7 @@ local function lex (s, i)
       end
     until c == '"'
 
-    return token, "string", i
+    return token, "literal", i
   end
 
   -- Anything else is a `word' - up to the next whitespace or delimiter.
@@ -131,6 +131,10 @@ local function lex (s, i)
     token = token .. c
     c, i = nextch (s, i)
     if isdelimiter[c] or c == nil then
+      -- Except strings of decimal digits, t, and nil which are literals.
+      if token == "t" or token == "nil" or token:match "^%d+$" then
+	return token, "literal", i - 1
+      end
       return token, "word", i - 1
     end
   until false
@@ -162,7 +166,7 @@ local function parse (s)
 	  if errmsg ~= nil then return ok, errmsg end
           ast = push (ast, subtree, nil, quoted)
 
-        elseif kind == "word" or kind == "string" then
+        elseif kind == "word" or kind == "literal" then
           ast = push (ast, token, kind, quoted)
 
 	elseif kind == ")" then

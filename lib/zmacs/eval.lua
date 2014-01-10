@@ -343,12 +343,21 @@ end
 -- @tparam zile.Cons node a node of the AST from @{zmacs.zlisp.parse}.
 -- @treturn zile.Cons the result of evaluating `node`
 local function evaluate_expression (node)
-  if fetch (node.value) ~= nil then
-    return node.quoted and node or evaluate_command (node)
-  elseif node.value == "t" or node.value == "nil" then
+  if node.kind == "literal" or node.quoted then
+    -- literals: t or 123 or 'symbol
     return node
+  elseif node.kind == "word" then
+    -- variable name: tab-width
+    local value = get_variable (node.value)
+    if value then return {value = value, kind = "literal"} end
+  elseif node.value and node.value.car and node.value.car.value then
+    -- function call: (point-min)
+    local symbol = fetch (node.value.car.value)
+    if symbol.func then
+      return evaluate_command (node.value)
+    end
   end
-  return Cons (get_variable (node.value) or node)
+  return Cons (node)
 end
 
 
