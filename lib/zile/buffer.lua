@@ -275,11 +275,25 @@ function get_buffer_create (name, func)
   return get_buffer (name) or func (name)
 end
 
--- Temporarily switch buffers, without updating the interface.
+
 local buffer_stack = {}
-function with_current_buffer (bp, func, ...)
+
+-- Push current buffer on a stack, and temporarily switch to `bp`.
+function push_buffer (bp)
   table.insert (buffer_stack, cur_bp)
   cur_bp = bp
+end
+
+-- Unwind the entire buffer stack.
+function unwind_buffer_stack ()
+  while #buffer_stack > 0 do
+    cur_bp = table.remove (buffer_stack)
+  end
+end
+
+-- Temporarily switch buffers, without updating the interface.
+function with_current_buffer (bp, func, ...)
+  push_buffer (bp)
   local r = {func (...)}
   cur_bp = table.remove (buffer_stack)
   return table.unpack (r)

@@ -35,6 +35,8 @@ function get_and_run_command ()
   else
     minibuf_error (tostring (keys) .. " is undefined")
   end
+
+  unwind_buffer_stack ()
 end
 
 

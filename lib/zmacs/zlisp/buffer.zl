@@ -56,6 +56,23 @@ With a nil argument, kill the current buffer."
     return ok"))
 
 
+(defun set-buffer (string)
+  "Make buffer BUFFER current for editing operations.
+BUFFER must be the name of an existing buffer.
+This function does not display the buffer, so its effect ends when the
+current command terminates.  Use `switch-to-buffer` to switch buffers
+permanently."
+  (lambda (buffer)
+    "local bp
+    if buffer and buffer ~= '' then
+      bp = get_buffer (buffer)
+    end
+    if bp then
+      push_buffer (bp)
+    end
+    return bp ~= nil"))
+
+
 (defun switch-to-buffer (string)
   "Display buffer BUFFER in the selected window."
   (interactive)
