@@ -98,14 +98,23 @@ EXTRA_DIST +=						\
 ## Documentation. ##
 ## -------------- ##
 
-dist_doc_DATA +=			\
-	$(srcdir)/doc/index.html	\
-	$(srcdir)/doc/ldoc.css
+dist_doc_DATA +=				\
+	$(srcdir)/doc/index.html		\
+	$(srcdir)/doc/ldoc.css			\
+	$(NOTHING_ELSE)
 
-dist_classes_DATA += $(wildcard $(srcdir)/doc/files/*.html)
-dist_modules_DATA += $(wildcard $(srcdir)/doc/modules/*.html)
+dist_classes_DATA +=				\
+	$(srcdir)/doc/classes/zile.Cons.html	\
+	$(srcdir)/doc/classes/zile.Set.html	\
+	$(NOTHING_ELSE)
 
-$(dist_doc_DATA): $(ldoc_DEPS)
+dist_modules_DATA +=				\
+	$(srcdir)/doc/modules/zile.zlisp.html	\
+	$(srcdir)/doc/modules/zmacs.eval.html	\
+	$(srcdir)/doc/modules/zz.eval.html	\
+	$(NOTHING_ELSE)
+
+$(dist_doc_DATA) $(dist_classes_DATA) $(dist_modules_DATA): $(ldoc_DEPS)
 	cd $(srcdir) && $(LDOC) -c doc/config.ld .
 
 ## ------------ ##
