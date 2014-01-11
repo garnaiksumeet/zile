@@ -332,7 +332,7 @@ end
 -- @tparam zile.Cons list a cons list, where the first element is a
 --   command name.
 -- @return the result of evaluating `list`, or else `nil`
-local function evaluate_command (list)
+local function eval_command (list)
   return list and list.car and call_command (list.car.value, list.cdr) or nil
 end
 
@@ -342,7 +342,7 @@ end
 -- `setq`, where some nodes of the AST are evaluated and others are not.
 -- @tparam zile.Cons node a node of the AST from @{zmacs.zlisp.parse}.
 -- @treturn zile.Cons the result of evaluating `node`
-local function evaluate_expression (node)
+local function eval_expression (node)
   if node.kind == "literal" or node.quoted then
     -- literals: t or 123 or 'symbol
     return node
@@ -354,7 +354,7 @@ local function evaluate_expression (node)
     -- function call: (point-min)
     local symbol = fetch (node.value.car.value)
     if symbol.func then
-      return evaluate_command (node.value)
+      return eval_command (node.value)
     end
   end
   return Cons (node)
@@ -362,15 +362,14 @@ end
 
 
 --- Evaluate a string of zlisp code.
--- @function loadstring
 -- @string s zlisp source
 -- @return `true` for success, or else `nil` plus an error string
-local function evaluate_string (s)
+local function eval_string (s)
   local ok, list = pcall (lisp.parse, s)
   if not ok then return nil, list end
 
   while list do
-    evaluate_command (list.car.value)
+    eval_command (list.car.value)
     list = list.cdr
   end
   return true
@@ -378,14 +377,13 @@ end
 
 
 --- Evaluate a file of zlisp.
--- @function loadfile
 -- @param file path to a file of zlisp code
 -- @return `true` for success, or else `nil` plus an error string
-local function evaluate_file (file)
+local function eval_file (file)
   local s, errmsg = io.slurp (file)
 
   if s then
-    s, errmsg = evaluate_string (s)
+    s, errmsg = eval_string (s)
   end
 
   return s, errmsg
@@ -407,15 +405,15 @@ return {
   Defun               = Defun,
   Defvar              = Defvar,
   call_command        = call_command,
-  evaluate_expression = evaluate_expression,
+  eval_expression     = eval_expression,
+  eval_file           = eval_file,
+  eval_string         = eval_string,
   execute_function    = execute_function,
   fetch               = fetch,
   fetch_variable      = fetch_variable,
   get_variable        = get_variable,
   get_variable_bool   = get_variable_bool,
   get_variable_number = get_variable_number,
-  loadfile            = evaluate_file,
-  loadstring          = evaluate_string,
   mapatoms            = lisp.mapatoms,
   set_variable        = set_variable,
   set_variable_buffer_local = set_variable_buffer_local,

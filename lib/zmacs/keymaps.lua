@@ -44,7 +44,7 @@ function init_default_bindings ()
                     function (path)
                       if ok == nil then
                         path = path:gsub ("%?", "zmacs/default-bindings-el", 1)
-                        ok, errmsg = lisp.loadfile (path)
+                        ok, errmsg = lisp.eval_file (path)
                       end
                     end)
   return ok, errmsg

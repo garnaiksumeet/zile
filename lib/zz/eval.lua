@@ -347,7 +347,7 @@ end
 -- @function loadstring
 -- @string s Lua source
 -- @return `true` for success, or else `nil` pluss an error string
-local function evaluate_string (s)
+local function eval_string (s)
   local f, errmsg = load (s, nil, 't', sandbox)
   if f == nil then
     return nil, errmsg
@@ -360,11 +360,11 @@ end
 -- @function loadfile
 -- @string file path to a file of Lua code
 -- @return `true` for success, or else `nil` pluss an error string
-local function evaluate_file (file)
+local function eval_file (file)
   local s, errmsg = io.slurp (file)
 
   if s then
-    s, errmsg = evaluate_string (s)
+    s, errmsg = eval_string (s)
 
     if s == nil and errmsg ~= nil then
       minibuf_error (string.format ("%s: %s", file:gsub ("^.*/", "..."), errmsg))
@@ -385,8 +385,8 @@ return {
   get_variable        = get_variable,
   get_variable_bool   = get_variable_bool,
   get_variable_number = get_variable_number,
-  loadstring          = evaluate_string,
-  loadfile            = evaluate_file,
+  loadstring          = eval_string,
+  loadfile            = eval_file,
   mapatoms            = mapatoms,
   sandbox             = sandbox,
   set_variable        = set_variable,

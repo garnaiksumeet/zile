@@ -25,7 +25,7 @@
   (interactive)
   (lambda (file)
     "if file then
-      return lisp.loadfile (file)
+      return lisp.eval_file (file)
     end"))
 
 
@@ -39,7 +39,7 @@ The values val are expressions; they are evaluated."
     "local ret
     local l = {...}
     for i = 1, #l/2 do
-      ret = lisp.evaluate_expression (l[i + 1])
+      ret = lisp.eval_expression (l[i + 1])
       lisp.set_variable (l[i].value, ret.value)
     end
     return ret"))
@@ -73,7 +73,7 @@ means use current buffer)."
   (interactive)
   (lambda (&optional buffer)
     "local bp = (buffer and buffer ~= '') and get_buffer (buffer) or cur_bp
-    return lisp.loadstring (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))"))
+    return lisp.eval_string (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))"))
 
 
 (localvar exprs_history
@@ -89,7 +89,7 @@ evaluate it."
       exp = minibuf_read ('Eval: ', '', nil, exprs_history)
     end
 
-    lisp.loadstring (exp)
+    lisp.eval_string (exp)
 
     if exp then
       add_history_element (exprs_history, exp)

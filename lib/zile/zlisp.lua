@@ -275,7 +275,7 @@ end
 -- @tparam zile.Cons list a cons list, where the first element is a
 --   command name.
 -- @return the result of evaluating `list`, or else `nil`
-local function evaluate_command (list)
+local function eval_command (list)
   return list and list.car and call_command (list.car.value, list.cdr) or nil
 end
 
@@ -283,13 +283,13 @@ end
 --- Evaluate a string of zlisp code.
 -- @string s zlisp source
 -- @return `true` for success, or else `nil` plus an error string
-local function evaluate_string (s)
+local function eval_string (s)
   -- convert error calls in parse to `nil, "errmsg"' return value.
   local ok, list = pcall (parse, s)
   if not ok then return nil, list end
 
   while list do
-    evaluate_command (list.car.value)
+    eval_command (list.car.value)
     list = list.cdr
   end
   return true
@@ -299,11 +299,11 @@ end
 --- Evaluate a file of zlisp.
 -- @param file path to a file of zlisp code
 -- @return `true` for success, or else `nil` plus an error string
-local function evaluate_file (file)
+local function eval_file (file)
   local s, errmsg = io.slurp (file)
 
   if s then
-    s, errmsg = evaluate_string (s)
+    s, errmsg = eval_string (s)
   end
 
   return s, errmsg
@@ -323,8 +323,8 @@ return {
   Cons            = Cons,
   call_command    = call_command,
   define          = define,
-  evaluate_file   = evaluate_file,
-  evaluate_string = evaluate_string,
+  eval_file       = eval_file,
+  eval_string     = eval_string,
   fetch           = fetch,
   mapatoms        = mapatoms,
   parse           = parse,

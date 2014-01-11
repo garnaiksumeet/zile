@@ -232,7 +232,7 @@ function main ()
   if not qflag then
     local s = os.getenv ("HOME")
     if s then
-      lisp.loadfile (s .. "/." .. prog.name)
+      lisp.eval_file (s .. "/." .. prog.name)
     end
   end
 
@@ -258,7 +258,7 @@ function main ()
         minibuf_error (string.format ("Function `%s' not defined", arg))
       end
     elseif type == "loadfile" then
-      ok = lisp.loadfile (arg)
+      ok = lisp.eval_file (arg)
       if not ok then
         minibuf_error (string.format ("Cannot open load file: %s\n", arg))
       end
