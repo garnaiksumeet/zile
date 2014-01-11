@@ -56,6 +56,9 @@ GNU Zile NEWS                                    -*- outline -*-
   - `describe-function` now shows bound keys and function signatures
     in displayed help text.
 
+  - `describe-variable` now shows original values and notification for
+    buffer-local variables.
+
   - New `*Messages*` buffer accumulates minibuf messages.  Maximum
     number of retained messages is limited according to new variable,
     `message-log-max`.  \C-h v message-log-max RET for details.

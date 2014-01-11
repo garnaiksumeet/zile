@@ -112,12 +112,21 @@
 
 (localfun write_variable_description (symbol)
   "insert_string (string.format (
-    '%s is a variable defined in ' .. [[`%s']] .. '.\n\n' ..
-    'Its value is %s\n\n%s',
+    '%s is a variable defined in ' .. [[`%s']] .. '.\n' ..
+    'Its value is %s\n',
     tostring (symbol),
     symbol['source-file'] or 'Lua source code',
-    symbol.value,
-    expand_kbd_refs (symbol['variable-documentation'])))")
+    symbol.value))
+  if symbol['buffer-local-variable'] then
+    local original = lisp.fetch (symbol.name)
+    if original.value ~= symbol.value then
+      insert_string (string.format ('Original value was %s\n',
+        lisp.fetch (symbol.name).value))
+    end
+    insert_string '\n  Automatically becomes buffer-local when set.\n'
+  end
+  insert_string ('\n' ..
+    expand_kbd_refs (symbol['variable-documentation']) .. '\n')")
 
 
 (defun describe-variable (string)
