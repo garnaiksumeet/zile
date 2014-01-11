@@ -340,7 +340,7 @@ end
 --- Evaluate one arbitrary expression.
 -- This function is required to implement ZLisp special forms, such as
 -- `setq`, where some nodes of the AST are evaluated and others are not.
--- @tparam zile.Cons node a node of the AST from @{zmacs.zlisp.parse}.
+-- @tparam zile.Cons node a node of the AST from @{zile.zlisp.parse}.
 -- @treturn zile.Cons the result of evaluating `node`
 local function eval_expression (node)
   if node.kind == "literal" or node.quoted then

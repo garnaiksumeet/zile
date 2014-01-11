@@ -34,7 +34,7 @@
  The scanner is not terribly smart, and doesn't understand escaped
  characters, so don't use nested escaped quotes!
 
- @module zmacs.zlisp
+ @module zile.zlisp
 ]]
 
 local Cons = require "zile.Cons"
