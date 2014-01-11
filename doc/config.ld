@@ -8,6 +8,7 @@ file = {
   -- Classes
   "../lib/zile/Cons.lua",
   "../lib/zile/Set.lua",
+  "../lib/zile/Symbol.lua",
 
   -- Modules
   "../lib/zile/zlisp.lua",

@@ -20,6 +20,7 @@
 dist_pkgdata_DATA =				\
 	lib/zile/Cons.lua			\
 	lib/zile/Set.lua			\
+	lib/zile/Symbol.lua			\
 	lib/zile/astr.lua			\
 	lib/zile/bind.lua			\
 	lib/zile/buffer.lua			\

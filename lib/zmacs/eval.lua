@@ -33,14 +33,44 @@
 ]]
 
 
-local lisp = require "zile.zlisp"
+
+--[[ ======== ]]--
+--[[ Imports. ]]--
+--[[ ======== ]]--
+
+
+local lisp   = require "zile.zlisp"
+
+--- Return a new Cons cell with supplied car and cdr.
+-- @function __call
+-- @param car first element
+-- @param cdr last element
+-- @treturn Cons a new cell containing those elements
 local Cons = lisp.Cons
 
+
+--- Call a function on every symbol in @{zile.Symbol.obarray}.
+-- If `func` returns `true`, mapatoms returns immediately.
+-- @function mapatoms
+-- @func func a function that takes a symbol as its argument
+-- @tparam[opt=obarray] table symtab a table with symbol values
+-- @return `true` if `func` signalled early exit by returning `true`,
+--   otherwise `nil`
+local mapatoms = lisp.mapatoms
 
 
 --[[ ======================== ]]--
 --[[ Symbol Table Management. ]]--
 --[[ ======================== ]]--
+
+
+-- Name mangling wrappers for Symbol methods.
+-- FIXME: the process of mangling is only here so that the name of
+--        a Symbol object as displayed from zmacs is '-' delimited,
+--        but the obarray key shared by code in lib/zile/*.lua uses
+--        Lua valid '_' delimited strings.  Zile code shouldn't be
+--        relying on symbols defined in zmacs/zz, so after factoring
+--        that away, we can get rid of the mangling step entirely.
 
 
 --- Convert a '-' delimited symbol-name to be '_' delimited.
@@ -52,25 +82,41 @@ local mangle = memoize (function (name)
 end)
 
 
---- Fetch the value of a previously defined symbol name.
--- Handle symbol name mangling transparently.
--- @string name the symbol name
--- @return the associated symbol value if any, else `nil`
-local function fetch (name)
-  return lisp.fetch (mangle (name))
+--- Return a new interned @{symbol} initialised from the given arguments.
+-- @string name symbol name
+-- @tparam[opt=obarray] table symtab a table of @{symbol}s
+--   interned
+-- @treturn symbol interned symbol
+local function intern (name, ...)
+  return lisp.intern (mangle (name), ...)
 end
 
 
-local Defun, marshaller, namer, setter -- forward declarations
+--- Check whether `name` was previously interned.
+-- @string name possibly interned name
+-- @tparam[opt=obarray] table symtab a table of @{symbol}s
+-- @treturn symbol symbol previously interned with `name`, else `nil`
+local function fetch (name, ...)
+  return lisp.intern_soft (mangle (name), ...)
+end
+
+
+local Defun, marshaller -- forward declarations
 
 
 ------
--- A named symbol and associated data.
--- @string name symbol name
--- @func func symbol's value as a function
--- @field value symbol's value as a variable
--- @tfield table plist property list associations for symbol
+-- A named symbol and associated metadata.
+-- ZLisp symbols are _lisp-2_ style, with separate slots for a function
+-- and variable value that can both be associated with the same name at
+-- the same time; like elisp.
+-- Property list keys can be any string - some internally used keys are:
+-- `source-file`, `function-documentation`,`variable-documentation` and
+-- `buffer-local-variable`.
 -- @table symbol
+-- @string name display-name of symbol
+-- @func[opt=nil] func function slot
+-- @field[opt=nil] value variable slot
+-- @tfield[opt={}] table plist property list
 
 
 --- Define a command in the execution environment for the evaluator.
@@ -80,26 +126,17 @@ local Defun, marshaller, namer, setter -- forward declarations
 -- @string doc docstring
 -- @bool interactive `true` if this command can be called interactively
 -- @func func function to call after marshalling arguments
+-- @treturn symbol newly interned symbol
 function Defun (name, argtypes, source, doc, interactive, func)
-  local symbol = {
-    name  = name,
-    func  = func,
-    plist = {
-      ["marshall-argtypes"]      = argtypes,
-      ["source-file"]            = source,
-      ["function-documentation"] = doc:chomp (),
-      ["interactive-form"]       = interactive,
-    },
-  }
-
-  lisp.define (mangle (name),
-    setmetatable (symbol, {
-      __call     = marshaller,
-      __index    = symbol.plist,
-      __newindex = setter,
-      __tostring = namer,
-    })
-  )
+  local symbol = intern (name)
+  symbol.name  = name	-- unmangled name
+  rawset (symbol, "func", func)
+  symbol["marshall-argtypes"]      = argtypes
+  symbol["source-file"]            = source
+  symbol["function-documentation"] = doc:chomp ()
+  symbol["interactive-form"]       = interactive
+  getmetatable (symbol).__call = marshaller
+  return symbol
 end
 
 
@@ -133,29 +170,6 @@ function marshaller (symbol, arglist)
 end
 
 
---- Easy symbol name access with @{tostring}.
--- Used as the `__tostring` metamethod of symbols.
--- @local
--- @tparam symbol symbol a symbol
--- @treturn string name of this symbol
-function namer (symbol)
-  return symbol.name
-end
-
-
---- Set a property on a symbol.
--- Used as the `__newindex` metamethod of symbols.
--- @local
--- @tparam symbol symbol a symbol
--- @string propname name of property to set
--- @param value value to store in property `propname`
--- @return the new `value`
-function setter (symbol, propname, value)
-  return rawset (symbol.plist, propname, value)
-end
-
-
-
 --[[ ==================== ]]--
 --[[ Variable Management. ]]--
 --[[ ==================== ]]--
@@ -167,24 +181,14 @@ end
 -- @param value value to store in variable `name`
 -- @string source name of the file `name` was compiled from, or nil
 -- @string doc variable's docstring
+-- @treturn symbol newly interned symbol
 local function Defvar (name, value, source, doc)
-  doc = doc or ""
-  local symbol = {
-    name  = name,
-    value = value,
-    plist = {
-      ["source-file"]            = source,
-      ["variable-documentation"] = doc:chomp (),
-    }
-  }
-
-  lisp.define (mangle (name),
-    setmetatable (symbol, {
-      __index    = symbol.plist,
-      __newindex = setter,
-      __tostring = namer,
-    })
-  )
+  local symbol = intern (name)
+  symbol.name  = name	-- unmangled name
+  symbol.value = value
+  symbol["source-file"]            = source
+  symbol["variable-documentation"] = (doc or ""):chomp ()
+  return symbol
 end
 
 
@@ -195,7 +199,7 @@ end
 -- @tparam bool bool `true` to mark buffer-local, `false` to unmark.
 -- @treturn bool the new buffer-local status
 local function set_variable_buffer_local (name, bool)
-  local symbol = fetch (name)
+  local symbol = intern (name)
   symbol["buffer-local-variable"] = not not bool or nil
 end
 
@@ -205,9 +209,8 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the value of `name` from buffer `bp`
 local function fetch_variable (name, bp)
-  name = mangle (name)
   local obarray = (bp or cur_bp or {}).obarray
-  return obarray and obarray[name] or lisp.fetch (name)
+  return obarray and fetch (name, obarray) or fetch (name)
 end
 
 
@@ -246,20 +249,13 @@ end
 local function set_variable (name, value, bp)
   local found = fetch (name)
   if found and found["buffer-local-variable"] then
-    local symbol = {
-      name  = name,
-      value = value,
-      plist = found.plist,
-    }
-    setmetatable (symbol, {
-      __index    = symbol.plist,
-      __newindex = setter,
-      __tostring = namer,
-    })
-
     bp = bp or cur_bp
     bp.obarray = bp.obarray or {}
-    rawset (bp.obarray, mangle (name), symbol)
+
+    local symbol = intern (name, bp.obarray)
+    symbol.name  = name		-- unmangled name
+    symbol.value = value
+    getmetatable (symbol).__index = found.plist
 
   elseif found then
     found.value = value
@@ -390,16 +386,6 @@ local function eval_file (file)
 end
 
 
-------
--- Call a function on every symbol in obarray.
--- If `func` returns `true`, mapatoms returns immediately.
--- @function mapatoms
--- @func func a function that takes a symbol as its argument
--- @tparam[opt=obarray] table symtab a table with symbol values
--- @return `true` if `func` signalled early exit by returning `true`,
---   otherwise `nil`
-
-
 --- @export
 return {
   Defun               = Defun,
@@ -414,7 +400,7 @@ return {
   get_variable        = get_variable,
   get_variable_bool   = get_variable_bool,
   get_variable_number = get_variable_number,
-  mapatoms            = lisp.mapatoms,
+  mapatoms            = mapatoms,
   set_variable        = set_variable,
   set_variable_buffer_local = set_variable_buffer_local,
 }

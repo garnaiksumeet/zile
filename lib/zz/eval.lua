@@ -29,13 +29,53 @@
 
 
 
+--[[ ======== ]]--
+--[[ Imports. ]]--
+--[[ ======== ]]--
+
+
+local Symbol = require "zile.Symbol"
+
+
+--- Defun and Defvar defined symbols.
+-- @table symtab
+local symtab = setmetatable ({}, {__mode = "k"})
+
+
+--- Call a function on every symbol in @{symtab}
+-- If `func` returns `true`, mapatoms returns immediately.
+-- @func func a function that takes a symbol as its argument
+-- @tparam[opt=symtab] table symbols a table of symbols
+-- @return `true` if `func` signalled early exit by returning `true`,
+--   otherwise `nil`
+local function mapatoms (func, symbols)
+  return Symbol.mapatoms (func, symbols or symtab)
+end
+
+
+--- Return a new interned @{symbol} initialised from the given arguments.
+-- @string name symbol name
+-- @tparam[opt=symtab] table symbols a table of symbols
+-- @treturn symbol interned symbol
+local function intern (name, symbols)
+  return Symbol.intern (name, symbols or symtab)
+end
+
+
+--- Fetch a defined symbol by name.
+-- @string name the symbol name
+-- @tparam[opt=symtab] table symbols a table of symbols
+-- @treturn symbol symbol previously interned with `name`, else `nil`
+local function fetch (name, symbols)
+  return Symbol.intern_soft (name, symbols or symtab)
+end
+
+
+
 --[[ ======================== ]]--
 --[[ Symbol Table Management. ]]--
 --[[ ======================== ]]--
 
-
---- Defun and Defvar defined symbols.
-local symdef = setmetatable ({}, {__mode = "k"})
 
 --- Sandboxed evaluation environment.
 -- A mapping of symbol-names to symbol-values.
@@ -51,12 +91,12 @@ local sandbox = setmetatable ({
   type     = type,
 }, {
   __index = function (self, name)
-    if symdef[name] then return symdef[name].value end
+    if symtab[name] then return symtab[name].value end
   end,
 
   __newindex = function (self, name, value)
-    if symdef[name] then
-      symdef[name].value = value
+    if symtab[name] then
+      symtab[name].value = value
     else
       rawset (self, name, value)
     end
@@ -64,24 +104,10 @@ local sandbox = setmetatable ({
 })
 
 
-local Defun, marshaller, namer, setter -- forward declarations
-
-
-------
--- A named symbol and associated data.
--- @table symbol
--- @string name command name
--- @tfield table a list of type strings that arguments must match
--- @string doc docstring
--- @bool interactive `true` if this command can be called interactively
--- @param value symbol value
-
-
-
 --- Turn texinfo markup into plain text
 -- @string s a string with a subset of texinfo markup.
 -- @treturn a copy of `s` with markup expanded as plain text
-function texi (s)
+local function texi (s)
   s = string.gsub (s, "@i{([^}]+)}", function (s) return string.upper (s) end)
   s = string.gsub (s, "@kbd{([^}]+)}", "%1")
   s = string.gsub (s, "@samp{([^}]+)}", "%1")
@@ -90,30 +116,35 @@ function texi (s)
   return s
 end
 
+local Defun, marshaller -- forward declarations
+
+
+------
+-- A named symbol and associated metadata.
+-- Zz symbols are _lisp-1_ style, where a symbol can hold only one value
+-- at a time; like scheme.
+-- Property list keys can be any string - some internally used keys are:
+-- `documentation`, `interactive-form` and `buffer-local`.
+-- @table symbol
+-- @string name symbol name
+-- @field[opt=nil] value symbol value
+-- @tfield[opt={}] table plist property list
+
+
 --- Define a command in the execution environment for the evaluator.
 -- @string name command name
 -- @tparam table argtypes a list of type strings that arguments must match
 -- @string doc docstring
 -- @bool interactive `true` if this command can be called interactively
 -- @func func function to call after marshalling arguments
+-- @treturn symbol newly interned symbol
 function Defun (name, argtypes, doc, interactive, func)
-  local symbol = {
-    name  = name,
-    value = func,
-    plist = {
-      ["documentation"]     = texi (doc:chomp ()),
-      ["interactive-form"]  = interactive,
-      ["marshall-argtypes"] = argtypes,
-    },
-  }
-
-  symdef[name] = setmetatable (symbol, {
-    __call     = marshaller,
-    __index    = symbol.plist,
-    __newindex = setter,
-    __tostring = namer,
-  })
-
+  local symbol = intern (name, symtab)
+  symbol.value = func
+  symbol["documentation"]      = texi (doc:chomp ())
+  symbol["interactive-form"]   = interactive
+  symbol["marshall-argtypes"]  = argtypes
+  getmetatable (symbol).__call = marshaller
   return symbol
 end
 
@@ -153,50 +184,6 @@ function marshaller (symbol, ...)
 end
 
 
---- Easy symbol name access with @{tostring}.
--- Used as the `__tostring` method of symbols.
--- @local
--- @tparam symbol symbol a symbol
--- @treturn string name of this symbol
-function namer (symbol)
-  return symbol.name
-end
-
-
---- Set a property on a symbol.
--- Used as the `__newindex` metamethod of symbols.
--- @local
--- @tparam symbol symbol a symbol
--- @string propname name of property to set
--- @param value value to store in property `propname`
--- @return the new `value`
-function setter (symbol, propname, value)
-  return rawset (symbol.plist, propname, value)
-end
-
-
---- Fetch a defined symbol by name.
--- @string name the symbol name
--- @return the associated symbol value if any, else `nil`
-local function fetch (name)
-  return symdef[name]
-end
-
-
---- Call a function on every @{Defun}ed and @{Defvar}ed symbol.
--- If `func` returns `true`, mapatoms returns immediately.
--- @func func a function that takes a symbol as its argument
--- @tparam[opt=sandbox] table symtab a table with symbol values
--- @return `true` if `func` signaled early exit by returning `true`,
---   otherwise `nil`.
-local function mapatoms (func, symtab)
-  for _, symbol in pairs (symtab or symdef) do
-    if func (symbol) then return true end
-  end
-end
-
-
-
 
 --[[ ==================== ]]--
 --[[ Variable Management. ]]--
@@ -209,20 +196,9 @@ end
 -- @param value value to store in variable `name`
 -- @string doc variable's docstring
 local function Defvar (name, value, doc)
-  local symbol = {
-    name  = name,
-    value = value,
-    plist = {
-      ["documentation"] = texi (doc:chomp ()),
-    },
-  }
-
-  symdef[name] = setmetatable (symbol, {
-    __index    = symbol.plist,
-    __newindex = setter,
-    __tostring = namer,
-  })
-
+  local symbol = intern (name, symtab)
+  symbol.value = value
+  symbol["documentation"] = texi (doc:chomp ())
   return symbol
 end
 
@@ -234,7 +210,8 @@ end
 -- @tparam bool bool `true` to mark buffer-local, `false` to unmark.
 -- @treturn bool the new buffer-local status
 local function set_variable_buffer_local (name, bool)
-  return rawset (symdef[name], "buffer-local", bool or nil)
+  local symbol = intern (name, symtab)
+  symbol["buffer-local"] = bool or nil
 end
 
 
@@ -244,7 +221,7 @@ end
 -- @return the value of `name` from buffer `bp`
 local function fetch_variable (name, bp)
   local obarray = (bp or cur_bp or {}).obarray
-  return obarray and obarray[name] or symdef[name]
+  return obarray and fetch (name, obarray) or fetch (name, symtab)
 end
 
 
@@ -281,22 +258,14 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the new value of `name` from buffer `bp`
 local function set_variable (name, value, bp)
-  local found = symdef[name]
+  local found = fetch (name, symtab)
   if found and found["buffer-local"] then
-    local symbol = {
-      name  = name,
-      value = value,
-      plist = found.plist,
-    }
-    setmetatable (symbol, {
-      __index    = symbol.plist,
-      __newindex = setter,
-      __tostring = namer,
-    })
-
     bp = bp or cur_bp
     bp.obarray = bp.obarray or {}
-    rawset (bp.obarray, name, value)
+
+    local symbol = intern (name, bp.obarray)
+    symbol.value = value
+    getmetatable (symbol).__index = found.plist
 
   elseif found then
     found.value = value
@@ -310,7 +279,7 @@ end
 
 
 --[[ ================== ]]--
---[[ Command Evaluator. ]]--
+--[[ Sandbox Evaluator. ]]--
 --[[ ================== ]]--
 
 

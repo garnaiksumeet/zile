@@ -37,9 +37,13 @@
  @module zile.zlisp
 ]]
 
-local Cons = require "zile.Cons"
-local Set  = require "zile.Set"
-local io   = require "std.io_ext"
+local Cons   = require "zile.Cons"
+local Set    = require "zile.Set"
+local Symbol = require "zile.Symbol"
+local io     = require "std.io_ext"
+
+local define, intern, intern_soft, mapatoms =
+      Symbol.define, Symbol.intern, Symbol.intern_soft, Symbol.mapatoms
 
 
 
@@ -194,80 +198,20 @@ end
 
 
 
---[[ ======================== ]]--
---[[ Symbol Table Management. ]]--
---[[ ======================== ]]--
-
-
---- ZLisp symbols.
--- A mapping of symbol-names to symbol-values.
--- @table obarray
-local obarray = {}
-
-
---- Deep merge one table into another.
--- Metatable is preserved, but ignored during merge operations.
--- @tparam table t destination table
--- @tparam table u additional fields to merge
-local function deepmerge (t, u)
-  for k, v in pairs (u) do
-    if type (v) == "table" then
-      rawset (t, k, rawget (t, k) or {})
-      deepmerge (rawget (t, k), v)
-    else
-      rawset (t, k, v)
-    end
-  end
-end
-
-
---- Define a new symbol, or update slots in an existing symbol.
--- @string name the symbol name
--- @param value the value to store in symbol `name`
-local function define (name, value)
-  if not obarray[name] then
-    obarray[name] = value
-  else
-    deepmerge (obarray[name], value)
-  end
-  return obarray[name]
-end
-
-
---- Fetch the value of a previously defined symbol name.
--- @string name the symbol name
--- @return the associated symbol value if any, else `nil`
-local function fetch (name)
-  return obarray[name]
-end
-
-
---- Call a function on every symbol in obarray.
--- If `func` returns `true`, mapatoms returns immediately.
--- @func func a function that takes a symbol as its argument
--- @tparam[opt=obarray] table symtab a table with symbol values
--- @return `true` if `func` signalled early exit by returning `true`,
---   otherwise `nil`
-local function mapatoms (func, symtab)
-  for _, symbol in pairs (symtab or obarray) do
-    if func (symbol) then return true end
-  end
-end
-
-
-
 --[[ ================ ]]--
 --[[ ZLisp Evaluator. ]]--
 --[[ ================ ]]--
 
 
 --- Call a named zlisp command with arguments.
--- @string name a function @{define}d in @{obarray}
+-- @string name a function defined in obarray
 -- @tparam zile.Cons arglist arguments for `name`
 -- @return the result of calling `name` with `arglist`, or else `nil`
 local function call_command (name, arglist)
-  local value = obarray[name]
-  return value and type (value) == "function" and value (arglist) or nil
+  local symbol = intern_soft (name)
+  if symbol and type (symbol.value) == "function" then
+    return symbol.value (arglist)
+  end
 end
 
 
@@ -311,21 +255,66 @@ end
 
 
 ------
---- Return a new Cons cell with supplied car and cdr.
+-- Return a new Cons cell with supplied car and cdr.
 -- @function Cons
 -- @param car first element
 -- @param cdr last element
--- @treturn Cons a new cell containing those elements
+-- @treturn zile.Cons a new cell containing those elements
+
+
+------
+-- Return a new uninterned Symbol initialised from the given arguments.
+-- @function Symbol
+-- @string name name of the symbol
+-- @param value the value of the symbol
+-- @treturn zile.Symbol a new _uninterned_ symbol
+
+
+------
+-- Define a new symbol, or update slots in an existing symbol.
+-- @function define
+-- @string name the symbol name
+-- @tparam zile.Symbol symbol the value to store in symbol `name`
+-- @return updated `symbol`
+
+
+------
+-- Intern a symbol.
+-- @function intern
+-- @string name symbol name
+-- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
+--   interned
+-- @treturn zile.Symbol interned symbol
+
+
+------
+-- Check whether `name` was previously interned.
+-- @function intern_soft
+-- @string name possibly interned name
+-- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
+-- @return symbol previously interned with `name`, or `nil`
+
+
+------
+-- Call a function on every symbol in `symtab`.
+-- If `func` returns `true`, mapatoms returns immediately.
+-- @function mapatoms
+-- @func func a function that takes a symbol as its argument
+-- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
+-- @return `true` if `func` signalled early exit by returning `true`,
+--   otherwise `nil`
 
 
 --- @export
 return {
-  Cons            = Cons,
-  call_command    = call_command,
-  define          = define,
-  eval_file       = eval_file,
-  eval_string     = eval_string,
-  fetch           = fetch,
-  mapatoms        = mapatoms,
-  parse           = parse,
+  Cons         = Cons,
+  Symbol       = Symbol,
+  call_command = call_command,
+  define       = define,
+  eval_file    = eval_file,
+  eval_string  = eval_string,
+  intern       = intern,
+  intern_soft  = intern_soft,
+  mapatoms     = mapatoms,
+  parse        = parse,
 }
