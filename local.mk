@@ -116,9 +116,3 @@ dist_modules_DATA +=				\
 
 $(dist_doc_DATA) $(dist_classes_DATA) $(dist_modules_DATA): $(ldoc_DEPS)
 	cd $(srcdir) && $(LDOC) -c doc/config.ld .
-
-## ------------ ##
-## Maintenance. ##
-## ------------ ##
-
-FORCE:
