@@ -22,7 +22,6 @@ local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("find_file",
-  {"string"},
 [[
 Edit file @i{filename}.
 Switch to a buffer visiting file @i{filename},
@@ -48,7 +47,6 @@ creating one if none already exists.
 
 
 Defun ("find_file_read_only",
-  {"string"},
 [[
 Edit file @i{filename} but don't allow changes.
 Like `find_file' but marks buffer as read-only.
@@ -65,7 +63,6 @@ Use @kbd{M-x toggle_read_only} to permit editing.
 
 
 Defun ("find_alternate_file",
-  {},
 [[
 Find the file specified by the user, select its buffer, kill previous buffer.
 If the current buffer now contains an empty file that you just visited
@@ -97,7 +94,6 @@ If the current buffer now contains an empty file that you just visited
 
 
 Defun ("insert_file",
-  {"string"},
 [[
 Insert contents of file FILENAME into buffer after point.
 Set mark after the inserted text.
@@ -137,7 +133,6 @@ Set mark after the inserted text.
 
 
 Defun ("save_buffer",
-  {},
 [[
 Save current buffer in visited file if modified.  By default, makes the
 previous version into a backup file if this is the first save.
@@ -150,7 +145,6 @@ previous version into a backup file if this is the first save.
 
 
 Defun ("write_file",
-  {"string"},
 [[
 Write current buffer into file @i{filename}.
 This makes the buffer visit that file, and marks it as not modified.
@@ -167,7 +161,6 @@ Interactively, confirmation is required unless you supply a prefix argument.
 
 
 Defun ("save_some_buffers",
-  {},
 [[
 Save some modified file-visiting buffers.  Asks user about each one.
 ]],
@@ -179,7 +172,6 @@ Save some modified file-visiting buffers.  Asks user about each one.
 
 
 Defun ("save_buffers_kill_zz",
-  {},
 [[
 Offer to save each buffer, then kill this process.
 ]],
@@ -209,7 +201,6 @@ Offer to save each buffer, then kill this process.
 
 
 Defun ("cd",
-  {"string"},
 [[
 Make DIR become the current buffer's default directory.
 ]],
@@ -239,7 +230,6 @@ Make DIR become the current buffer's default directory.
 
 
 Defun ("insert_buffer",
-  {"string"},
 [[
 Insert after point the contents of BUFFER.
 Puts mark after the inserted text.

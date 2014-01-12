@@ -38,7 +38,6 @@ local function insert_register ()
 end
 
 Defun ("copy_to_register",
-  {"number"},
 [[
 Copy region into register @i{register}.
 ]],
@@ -67,7 +66,6 @@ Copy region into register @i{register}.
 
 
 Defun ("insert_register",
-  {"number"},
 [[
 Insert contents of the user specified register.
 Puts point before and mark after the inserted text.
@@ -126,7 +124,6 @@ end
 
 
 Defun ("list_registers",
-  {},
 [[
 List defined registers.
 ]],

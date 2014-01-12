@@ -39,7 +39,6 @@ end
 
 
 Defun ("describe_function",
-  {"string"},
 [[
 Display the full documentation of a function.
 ]],
@@ -67,7 +66,6 @@ end
 
 
 Defun ("describe_key",
-  {"string"},
 [[
 Display documentation of the command invoked by a key sequence.
 ]],
@@ -110,7 +108,6 @@ end
 
 
 Defun ("describe_variable",
-  {"string"},
 [[
 Display the full documentation of a variable.
 ]],
@@ -141,7 +138,6 @@ end
 
 
 Defun ("describe_copying",
-  {},
 [[
 Display info on how you may redistribute copies of GNU Zz.
 ]],
@@ -153,7 +149,6 @@ Display info on how you may redistribute copies of GNU Zz.
 
 
 Defun ("describe_no_warranty",
-  {},
 [[
 Display info on all the kinds of warranty Zz does NOT have.
 ]],
@@ -167,7 +162,6 @@ Display info on all the kinds of warranty Zz does NOT have.
 
 
 Defun ("view_zz_FAQ",
-  {},
 [[
 Display the Zz Frequently Asked Questions (FAQ) file.
 ]],
@@ -179,7 +173,6 @@ Display the Zz Frequently Asked Questions (FAQ) file.
 
 
 Defun ("view_zz_news",
-  {},
 [[
 Display info on recent changes to Zz.
 ]],

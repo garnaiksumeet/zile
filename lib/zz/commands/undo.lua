@@ -22,7 +22,6 @@ local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("undo",
-  {},
 [[
 Undo some previous changes.
 Repeat this command to undo more changes.
@@ -53,7 +52,6 @@ Repeat this command to undo more changes.
 
 
 Defun ("revert_buffer",
-  {},
 [[
 Undo until buffer is unmodified.
 ]],

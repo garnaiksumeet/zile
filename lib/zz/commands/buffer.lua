@@ -22,7 +22,6 @@ local Defun = eval.Defun
 
 
 Defun ("kill_buffer",
-  {"string"},
 [[
 Kill buffer BUFFER.
 With a nil argument, kill the current buffer.
@@ -65,7 +64,6 @@ With a nil argument, kill the current buffer.
 
 
 Defun ("switch_to_buffer",
-  {"string"},
 [[
 Select buffer @i{buffer} in the current window.
 ]],
@@ -104,7 +102,6 @@ Select buffer @i{buffer} in the current window.
 
 
 Defun ("toggle_read_only",
-  {},
 [[
 Change whether this buffer is visiting its file read-only.
 ]],
@@ -116,7 +113,6 @@ Change whether this buffer is visiting its file read-only.
 
 
 Defun ("auto_fill_mode",
-  {},
 [[
 Toggle Auto Fill mode.
 In Auto Fill mode, inserting a space at a column beyond `fill-column'
@@ -162,7 +158,6 @@ end
 
 
 Defun ("list_buffers",
-  {},
 [[
 Display a list of names of existing buffers.
 The list is displayed in a buffer named `*Buffer List*'.

@@ -22,7 +22,6 @@ local Defun = eval.Defun
 
 
 Defun ("message",
-  {"string"},
 [[
 Write to the minibuffer.
 ]],

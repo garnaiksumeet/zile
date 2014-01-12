@@ -125,7 +125,6 @@ This value is used only when `make_backup_files' is @samp{true}.
 
 
 Defun ("set_variable",
-  {"string", "string"},
 [[
 Set a variable value to the user-specified value.
 ]],

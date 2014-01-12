@@ -41,7 +41,6 @@ end
 
 
 Defun ("kill_word",
-  {"number"},
 [[
 Kill characters forward until encountering the end of a word.
 With argument @i{arg}, do this that many times.
@@ -54,7 +53,6 @@ With argument @i{arg}, do this that many times.
 
 
 Defun ("backward_kill_word",
-  {"number"},
 [[
 Kill characters backward until encountering the end of a word.
 With argument @i{arg}, do this that many times.
@@ -67,7 +65,6 @@ With argument @i{arg}, do this that many times.
 
 
 Defun ("kill_sexp",
-  {"number"},
 [[
 Kill the sexp (balanced expression) following the cursor.
 With @i{arg}, kill that many sexps after the cursor.
@@ -81,7 +78,6 @@ Negative arg -N means kill N sexps before the cursor.
 
 
 Defun ("yank",
-  {},
 [[
 Reinsert the last stretch of killed text.
 More precisely, reinsert the stretch of killed text most recently
@@ -106,7 +102,6 @@ killed @i{or} yanked.  Put point at end, and set mark at beginning.
 
 
 Defun ("kill_region",
-  {},
 [[
 Kill between point and mark.
 The text is deleted but saved in the kill ring.
@@ -133,7 +128,6 @@ text killed last time to make one entry in the kill ring.
 
 
 Defun ("copy_region_as_kill",
-  {},
 [[
 Save the region as if killed, but don't kill it.
 ]],
@@ -153,7 +147,6 @@ Save the region as if killed, but don't kill it.
 
 
 Defun ("kill_line",
-  {"number"},
 [[
 Kill the rest of the current line; if no nonblanks there, kill thru newline.
 With prefix argument @i{arg}, kill that many lines from point.

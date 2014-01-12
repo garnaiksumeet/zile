@@ -22,7 +22,6 @@ local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("load",
-  {"string"},
 [[
 Execute a file of Lua code named FILE.
 ]],
@@ -36,7 +35,6 @@ Execute a file of Lua code named FILE.
 
 
 Defun ("execute_extended_command",
-  {"number"},
 [[
 Read function name, then read its arguments and call it.
 ]],
@@ -60,7 +58,6 @@ Read function name, then read its arguments and call it.
 
 
 Defun ("eval_buffer",
-  {"string"},
 [[
 Execute the current buffer as Lua code.
 
@@ -80,7 +77,6 @@ local exprs_history = history_new ()
 
 
 Defun ("eval_expression",
-  {"string"},
 [[
 Evaluate a lua expression and print result in the minibuffer.
 ]],

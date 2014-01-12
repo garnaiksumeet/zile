@@ -22,7 +22,6 @@ local Defun = eval.Defun
 
 
 Defun ("beginning_of_line",
-  {},
 [[
 Move point to beginning of current line.
 ]],
@@ -32,7 +31,6 @@ Move point to beginning of current line.
 
 
 Defun ("end_of_line",
-  {},
 [[
 Move point to end of current line.
 ]],
@@ -42,7 +40,6 @@ Move point to end of current line.
 
 
 Defun ("backward_char",
-  {"number"},
 [[
 Move point left N characters (right if N is negative).
 On attempt to pass beginning or end of buffer, stop and signal error.
@@ -59,7 +56,6 @@ On attempt to pass beginning or end of buffer, stop and signal error.
 
 
 Defun ("forward_char",
-  {"number"},
 [[
 Move point right N characters (left if N is negative).
 On reaching end of buffer, stop and signal error.
@@ -76,7 +72,6 @@ On reaching end of buffer, stop and signal error.
 
 
 Defun ("goto_char",
-  {"number"},
 [[
 Set point to @i{position}, a number.
 Beginning of buffer is position 1.
@@ -93,7 +88,6 @@ Beginning of buffer is position 1.
 
 
 Defun ("goto_line",
-  {"number"},
 [[
 Goto @i{line}, counting from line 1 at beginning of buffer.
 ]],
@@ -115,7 +109,6 @@ Goto @i{line}, counting from line 1 at beginning of buffer.
 
 
 Defun ("previous_line",
-  {"number"},
 [[
 Move cursor vertically up one line.
 If there is no character in the target line exactly over the current column,
@@ -130,7 +123,6 @@ column, or at the end of the line if it is not long enough.
 
 
 Defun ("next_line",
-  {"number"},
 [[
 Move cursor vertically down one line.
 If there is no character in the target line exactly under the current column,
@@ -145,7 +137,6 @@ column, or at the end of the line if it is not long enough.
 
 
 Defun ("beginning_of_buffer",
-  {},
 [[
 Move point to the beginning of the buffer; leave mark at previous position.
 ]],
@@ -157,7 +148,6 @@ Move point to the beginning of the buffer; leave mark at previous position.
 
 
 Defun ("end_of_buffer",
-  {},
 [[
 Move point to the end of the buffer; leave mark at previous position.
 ]],
@@ -169,7 +159,6 @@ Move point to the end of the buffer; leave mark at previous position.
 
 
 Defun ("scroll_down",
-  {"number"},
 [[
 Scroll text of current window downward near full screen.
 ]],
@@ -181,7 +170,6 @@ Scroll text of current window downward near full screen.
 
 
 Defun ("scroll_up",
-  {"number"},
 [[
 Scroll text of current window upward near full screen.
 ]],
@@ -193,7 +181,6 @@ Scroll text of current window upward near full screen.
 
 
 Defun ("forward_line",
-  {"number"},
 [[
 Move N lines forward (backward if N is negative).
 Precisely, if point is on line I, move to the start of line I + N.
@@ -231,7 +218,6 @@ end
 
 
 Defun ("backward_paragraph",
-  {"number"},
 [[
 Move backward to start of paragraph.  With argument N, do it N times.
 ]],
@@ -243,7 +229,6 @@ Move backward to start of paragraph.  With argument N, do it N times.
 
 
 Defun ("forward_paragraph",
-  {"number"},
 [[
 Move forward to end of paragraph.  With argument N, do it N times.
 ]],
@@ -255,7 +240,6 @@ Move forward to end of paragraph.  With argument N, do it N times.
 
 
 Defun ("forward_sexp",
-  {"number"},
 [[
 Move forward across one balanced expression (sexp).
 With argument, do it that many times.  Negative arg -N means
@@ -269,7 +253,6 @@ move backward across N balanced expressions.
 
 
 Defun ("backward_sexp",
-  {"number"},
 [[
 Move backward across one balanced expression (sexp).
 With argument, do it that many times.  Negative arg -N means
@@ -283,7 +266,6 @@ move forward across N balanced expressions.
 
 
 Defun ("back_to_indentation",
-  {},
 [[
 Move point to the first non-whitespace character on this line.
 ]],
@@ -298,7 +280,6 @@ Move point to the first non-whitespace character on this line.
 
 
 Defun ("forward_word",
-  {"number"},
 [[
 Move point forward one word (backward if the argument is negative).
 With argument, do this that many times.
@@ -311,7 +292,6 @@ With argument, do this that many times.
 
 
 Defun ("backward_word",
-  {"number"},
 [[
 Move backward until encountering the end of a word (forward if the
 argument is negative).

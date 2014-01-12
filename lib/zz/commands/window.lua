@@ -22,7 +22,6 @@ local Defun = eval.Defun
 
 
 Defun ("delete_window",
-  {},
 [[
 Remove the current window from the screen.
 ]],
@@ -39,7 +38,6 @@ Remove the current window from the screen.
 
 
 Defun ("enlarge_window",
-  {},
 [[
 Make current window one line bigger.
 ]],
@@ -77,7 +75,6 @@ Make current window one line bigger.
 
 
 Defun ("shrink_window",
-  {},
 [[
 Make current window one line smaller.
 ]],
@@ -100,7 +97,6 @@ Make current window one line smaller.
 
 
 Defun ("delete_other_windows",
-  {},
 [[
 Make the selected window fill the screen.
 ]],
@@ -116,7 +112,6 @@ Make the selected window fill the screen.
 
 
 Defun ("other_window",
-  {},
 [[
 Select the first different window on the screen.
 All windows are arranged in a cyclic order.
@@ -130,7 +125,6 @@ This command selects the window one step away in that order.
 
 
 Defun ("split_window",
-  {},
 [[
 Split current window into two windows, one above the other.
 Both windows display the same buffer now current.
@@ -141,7 +135,6 @@ Both windows display the same buffer now current.
 
 
 Defun ("recenter",
-  {},
 [[
 Center point in selected window and redisplay frame.
 ]],
@@ -151,7 +144,6 @@ Center point in selected window and redisplay frame.
 
 
 Defun ("screen_height",
-  {},
 [[
 The total number of lines available for display on the screen.
 ]],
@@ -163,7 +155,6 @@ The total number of lines available for display on the screen.
 
 
 Defun ("screen_width",
-  {},
 [[
 The total number of lines available for display on the screen.
 ]],
@@ -175,7 +166,6 @@ The total number of lines available for display on the screen.
 
 
 Defun ("set_screen_height",
-  {"number"},
 [[
 Set the usable number of lines for display on the screen.
 ]],
@@ -192,7 +182,6 @@ Set the usable number of lines for display on the screen.
 
 
 Defun ("set_screen_size",
-  {"number", "number"},
 [[
 Set the number of usable lines and columns for display on the screen.
 ]],
@@ -210,7 +199,6 @@ Set the number of usable lines and columns for display on the screen.
 
 
 Defun ("set_screen_width",
-  {"number"},
 [[
 Set the usable number of columns for display on the screen.
 ]],

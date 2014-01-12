@@ -22,7 +22,6 @@ local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("set_fill_column",
-  {"number"},
 [[
 Set `fill_column' to specified argument.
 Use C-u followed by a number to specify a column.
@@ -57,7 +56,6 @@ Just C-u as argument means to use the current column.
 
 
 Defun ("quoted_insert",
-  {},
 [[
 Read next input character and insert it.
 This is useful for inserting control characters.
@@ -72,7 +70,6 @@ This is useful for inserting control characters.
 
 
 Defun ("fill_paragraph",
-  {},
 [[
 Fill paragraph at or after point.
 ]],
@@ -112,7 +109,6 @@ Fill paragraph at or after point.
 
 
 Defun ("shell_command",
-  {"string", "boolean"},
 [[
 Execute string @i{command} in inferior shell; display output, if any.
 With prefix argument, insert the command's output at point.
@@ -151,7 +147,6 @@ inserted after point (leaving mark after it).
 
 
 Defun ("shell_command_on_region",
-  {"string", "string", "string", "boolean", "boolean"},
 [[
 Execute string @i{command} in inferior shell with region as input.
 Normally display output (if any) in temp buffer `*Shell Command Output*'
@@ -195,7 +190,6 @@ around it.
 
 
 Defun ("delete_region",
-  {},
 [[
 Delete the text between point and mark.
 ]],
@@ -207,7 +201,6 @@ Delete the text between point and mark.
 
 
 Defun ("delete_blank_lines",
-  {},
 [[
 On blank line, delete all surrounding blank lines, leaving just one.
 On isolated blank line, delete that one.
@@ -273,7 +266,6 @@ On nonblank line, delete any immediately following blank lines.
 
 
 Defun ("downcase_word",
-  {"number"},
 [[
 Convert following word (or @i{arg} words) to lower case, moving over.
 ]],
@@ -285,7 +277,6 @@ Convert following word (or @i{arg} words) to lower case, moving over.
 
 
 Defun ("upcase_word",
-  {"number"},
 [[
 Convert following word (or @i{arg} words) to upper case, moving over.
 ]],
@@ -297,7 +288,6 @@ Convert following word (or @i{arg} words) to upper case, moving over.
 
 
 Defun ("capitalize_word",
-  {"number"},
 [[
 Capitalize the following word (or @i{arg} words), moving over.
 This gives the word(s) a first character in upper case
@@ -311,7 +301,6 @@ and the rest lower case.
 
 
 Defun ("upcase_region",
-  {},
 [[
 Convert the region to upper case.
 ]],
@@ -323,7 +312,6 @@ Convert the region to upper case.
 
 
 Defun ("downcase_region",
-  {},
 [[
 Convert the region to lower case.
 ]],
@@ -335,7 +323,6 @@ Convert the region to lower case.
 
 
 Defun ("transpose_chars",
-  {"number"},
 [[
 Interchange characters around point, moving forward one character.
 With prefix arg ARG, effect is to take character before point
@@ -350,7 +337,6 @@ If no argument and at end of line, the previous two chars are exchanged.
 
 
 Defun ("transpose_words",
-  {"number"},
 [[
 Interchange words around point, leaving point at end of them.
 With prefix arg ARG, effect is to take word before or around point
@@ -366,7 +352,6 @@ are interchanged.
 
 
 Defun ("transpose_sexps",
-  {"number"},
 [[
 Like @kbd{M-x transpose_words} but applies to sexps.
 ]],
@@ -378,7 +363,6 @@ Like @kbd{M-x transpose_words} but applies to sexps.
 
 
 Defun ("transpose_lines",
-  {"number"},
 [[
 Exchange current line and previous line, leaving point after both.
 With argument ARG, takes previous line and moves it past ARG lines.

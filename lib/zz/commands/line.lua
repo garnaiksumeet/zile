@@ -22,7 +22,6 @@ local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("indent_for_tab_command",
-  {},
 [[
 Indent line or insert a tab.
 Depending on `tab_always_indent', either insert a tab or indent.
@@ -41,7 +40,6 @@ the indentation.  Else stay at same point in text.
 
 
 Defun ("indent_relative",
-  {},
 [[
 Space out to under next indent point in previous nonblank line.
 An indent point is a non-whitespace character following whitespace.
@@ -123,7 +121,6 @@ does nothing.
 
 
 Defun ("newline_and_indent",
-  {},
 [[
 Insert a newline, then indent.
 Indentation is done using the `indent_for_tab_command' function.
@@ -164,7 +161,6 @@ Indentation is done using the `indent_for_tab_command' function.
 
 
 Defun ("delete_char",
-  {"number"},
 [[
 Delete the following @i{n} characters (previous if @i{n} is negative).
 ]],
@@ -176,7 +172,6 @@ Delete the following @i{n} characters (previous if @i{n} is negative).
 
 
 Defun ("backward_delete_char",
-  {"number"},
 [[
 Delete the previous @i{n} characters (following if @i{n} is negative).
 ]],
@@ -188,7 +183,6 @@ Delete the previous @i{n} characters (following if @i{n} is negative).
 
 
 Defun ("delete_horizontal_space",
-  {},
 [[
 Delete all spaces and tabs around point.
 ]],
@@ -198,7 +192,6 @@ Delete all spaces and tabs around point.
 
 
 Defun ("just_one_space",
-  {},
 [[
 Delete all spaces and tabs around point, leaving one space.
 ]],
@@ -213,7 +206,6 @@ Delete all spaces and tabs around point, leaving one space.
 
 
 Defun ("tab_to_tab_stop",
-  {"number"},
 [[
 Insert a tabulation at the current point position into the current
 buffer.
@@ -236,7 +228,6 @@ end
 
 
 Defun ("newline",
-  {"number"},
 [[
 Insert a newline at the current point position into
 the current buffer.
@@ -249,7 +240,6 @@ the current buffer.
 
 
 Defun ("open_line",
-  {"number"},
 [[
 Insert a newline and leave point before it.
 ]],
@@ -261,7 +251,6 @@ Insert a newline and leave point before it.
 
 
 Defun ("insert",
-  {"string"},
 [[
 Insert the argument at point.
 ]],

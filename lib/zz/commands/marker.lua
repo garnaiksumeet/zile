@@ -22,7 +22,6 @@ local Defun, zz = eval.Defun, eval.sandbox
 
 
 Defun ("exchange_point_and_mark",
-  {},
 [[
 Put the mark where point is now, and point where the mark is now.
 ]],
@@ -42,7 +41,6 @@ Put the mark where point is now, and point where the mark is now.
 
 
 Defun ("set_mark",
-  {},
 [[
 Set this buffer's mark to point.
 ]],
@@ -55,7 +53,6 @@ Set this buffer's mark to point.
 
 
 Defun ("set_mark_command",
-  {},
 [[
 Set the mark where point is.
 ]],
@@ -78,7 +75,6 @@ end
 
 
 Defun ("mark_word",
-  {"number"},
 [[
 Set mark argument words away from point.
 ]],
@@ -90,7 +86,6 @@ Set mark argument words away from point.
 
 
 Defun ("mark_sexp",
-  {"number"},
 [[
 Set mark @i{arg} sexps from point.
 The place mark goes is the same place @kbd{C-M-f} would
@@ -104,7 +99,6 @@ move to with the same argument.
 
 
 Defun ("mark_paragraph",
-  {},
 [[
 Put point at beginning of this paragraph, mark at end.
 The paragraph marked is the one that contains point or follows point.
@@ -127,7 +121,6 @@ The paragraph marked is the one that contains point or follows point.
 
 
 Defun ("mark_whole_buffer",
-  {},
 [[
 Put point at beginning and mark at end of buffer.
 ]],

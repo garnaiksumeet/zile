@@ -22,7 +22,6 @@ local Defun = eval.Defun
 
 
 Defun ("search_forward",
-  {"string"},
 [[
 Search forward from point for the user specified text.
 ]],
@@ -34,7 +33,6 @@ Search forward from point for the user specified text.
 
 
 Defun ("search_backward",
-  {"string"},
 [[
 Search backward from point for the user specified text.
 ]],
@@ -46,7 +44,6 @@ Search backward from point for the user specified text.
 
 
 Defun ("search_forward_regexp",
-  {"string"},
 [[
 Search forward from point for regular expression REGEXP.
 ]],
@@ -58,7 +55,6 @@ Search forward from point for regular expression REGEXP.
 
 
 Defun ("search_backward_regexp",
-  {"string"},
 [[
 Search backward from point for match for regular expression REGEXP.
 ]],
@@ -70,7 +66,6 @@ Search backward from point for match for regular expression REGEXP.
 
 
 Defun ("isearch_forward",
-  {},
 [[
 Do incremental search forward.
 With a prefix argument, do an incremental regular expression search instead.
@@ -87,7 +82,6 @@ Type @kbd{C-s} to search again forward, @kbd{C-r} to search again backward.
 
 
 Defun ("isearch_backward",
-  {},
 [[
 Do incremental search backward.
 With a prefix argument, do a regular expression search instead.
@@ -104,7 +98,6 @@ Type @kbd{C-r} to search again backward, @kbd{C-s} to search again forward.
 
 
 Defun ("isearch_forward_regexp",
-  {},
 [[
 Do incremental search forward for regular expression.
 With a prefix argument, do a regular string search instead.
@@ -119,7 +112,6 @@ is treated as a regexp.  See @kbd{M-x isearch_forward} for more info.
 
 
 Defun ("isearch_backward_regexp",
-  {},
 [[
 Do incremental search backward for regular expression.
 With a prefix argument, do a regular string search instead.
@@ -146,7 +138,6 @@ end
 
 
 Defun ("query_replace",
-  {},
 [[
 Replace occurrences of a string with other text.
 As each match is found, the user must type a character saying

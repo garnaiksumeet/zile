@@ -22,7 +22,6 @@ local Defun = eval.Defun
 
 
 Defun ("start_kbd_macro",
-  {},
 [[
 Record subsequent keyboard input, defining a keyboard macro.
 The commands are recorded even as they are executed.
@@ -48,7 +47,6 @@ Use @kbd{C-x )} to finish recording and make the macro available.
 
 
 Defun ("end_kbd_macro",
-  {},
 [[
 Finish defining a keyboard macro.
 The definition was started by @kbd{C-x (}.
@@ -67,7 +65,6 @@ The macro is now available for use via @kbd{C-x e}.
 
 
 Defun ("call_last_kbd_macro",
-  {},
 [[
 Call the last keyboard macro that you defined with @kbd{C-x (}.
 A prefix argument serves as a repeat count.
@@ -87,7 +84,6 @@ A prefix argument serves as a repeat count.
 
 
 Defun ("execute_kbd_macro",
-  {"string"},
 [[
 Execute macro as string of editor command characters.
 ]],

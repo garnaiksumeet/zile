@@ -116,8 +116,6 @@ local function texi (s)
   return s
 end
 
-local Defun, marshaller -- forward declarations
-
 
 ------
 -- A named symbol and associated metadata.
@@ -133,56 +131,18 @@ local Defun, marshaller -- forward declarations
 
 --- Define a command in the execution environment for the evaluator.
 -- @string name command name
--- @tparam table argtypes a list of type strings that arguments must match
 -- @string doc docstring
 -- @bool interactive `true` if this command can be called interactively
 -- @func func function to call after marshalling arguments
 -- @treturn symbol newly interned symbol
-function Defun (name, argtypes, doc, interactive, func)
+local function Defun (name, doc, interactive, func)
   local symbol = intern (name, symtab)
   symbol.value = func
   symbol["documentation"]      = texi (doc:chomp ())
   symbol["interactive-form"]   = interactive
-  symbol["marshall-argtypes"]  = argtypes
-  getmetatable (symbol).__call = marshaller
+  getmetatable (symbol).__call = func
   return symbol
 end
-
-
---- Argument marshalling and type-checking for function symbols.
--- Used as the `__call` metamethod for function symbols.
--- @local
--- @tparam symbal symbol a symbol
--- @param ... arguments for calling this function symbol
--- @return result of calling this function symbol
-function marshaller (symbol, ...)
-  local args, argtypes = {...}, symbol["marshall-argtypes"]
-
-  for i, v in ipairs (args) do
-    -- When given, argtypes must match, though "function" can match
-    -- anything callable.
-    if argtypes
-       and not (argtypes[i] == type (v)
-                or argtypes[i] == "function" and iscallable (v))
-    then
-      -- Undo mangled prefix_arg when called from minibuf.
-      if i == 1 and args[1] == prefix_arg then
-        args[1] = nil
-      else
-        return minibuf_error (
-          string.format (
-            "bad argument #%d to '%s' (%s expected, got %s): %s",
-            i, symbol.name, argtypes[i], type (v), tostring (v))
-        )
-      end
-    end
-  end
-
-  current_prefix_arg, prefix_arg = prefix_arg, false
-
-  return symbol.value (...) or true
-end
-
 
 
 --[[ ==================== ]]--

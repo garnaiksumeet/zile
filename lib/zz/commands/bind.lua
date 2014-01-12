@@ -24,7 +24,6 @@ local Defun = eval.Defun
 
 
 Defun ("self_insert_command",
-  {},
 [[
 Insert the character you type.
 Whichever character you type to run this command is inserted.
@@ -37,7 +36,6 @@ Whichever character you type to run this command is inserted.
 
 
 Defun ("where_is",
-  {},
 [[
 Print message listing key sequences that invoke the command DEFINITION.
 Argument is a command name.
@@ -75,7 +73,6 @@ end
 
 
 Defun ("describe_bindings",
-  {},
 [[
 Show a list of all defined keys, and their definitions.
 ]],
@@ -88,7 +85,6 @@ Show a list of all defined keys, and their definitions.
 
 
 Defun ("global_set_key",
-  {"string", "function"},
 [[
 Bind a command to a key sequence.
 Read key sequence and function name, and bind the function to the key
@@ -121,7 +117,6 @@ sequence.
 
 
 Defun ("global_unset_key",
-  {"string"},
 [[
 Remove global binding of a key sequence.
 Read key sequence and unbind any function already bound to that sequence.
@@ -142,7 +137,6 @@ Read key sequence and unbind any function already bound to that sequence.
 
 
 Defun ("universal_argument",
-  {},
 [[
 Begin a numeric argument for the following command.
 Digits or minus sign following @kbd{C-u} make up the numeric argument.
@@ -225,7 +219,6 @@ by 4 each time.
 
 
 Defun ("keyboard_quit",
-  {},
 [[
 Cancel current command.
 ]],
@@ -235,7 +228,6 @@ Cancel current command.
 
 
 Defun ("suspend_zz",
-  {},
 [[
 Stop and return to superior process.
 ]],
