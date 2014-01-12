@@ -100,7 +100,7 @@ function self_insert_command ()
   end
 
   if string.char (key):match ("%s") and cur_bp.autofill and
-    get_goalc () > eval.get_variable_number ("fill_column")
+    get_goalc () > eval.get_variable ("fill_column")
   then
     fill_break_line ()
   end

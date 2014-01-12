@@ -30,7 +30,7 @@ the indentation.  Else stay at same point in text.
 ]],
   true,
   function ()
-    if eval.get_variable_bool ('tab_always_indent') then
+    if eval.get_variable ('tab_always_indent') then
       return insert_tab ()
     elseif (get_goalc () < previous_line_indent ()) then
       return zz.indent_relative ()
@@ -219,7 +219,7 @@ buffer.
 
 local function newline ()
   if cur_bp.autofill and
-    get_goalc () > eval.get_variable_number ('fill_column')
+    get_goalc () > eval.get_variable ('fill_column')
   then
     fill_break_line ()
   end

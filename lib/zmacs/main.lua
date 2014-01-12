@@ -239,7 +239,7 @@ function main ()
   -- Create the splash buffer & message only if no files, function or
   -- load file is specified on the command line, and there has been no
   -- error.
-  if #zarg == 0 and not minibuf_contents and not eval.get_variable_bool ("inhibit-splash-screen") then
+  if #zarg == 0 and not minibuf_contents and not eval.get_variable ("inhibit-splash-screen") then
     local bp = create_auto_buffer ("*GNU " .. prog.Name .. "*")
     switch_to_buffer (bp)
     insert_string (splash_str)

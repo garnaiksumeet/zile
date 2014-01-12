@@ -47,7 +47,7 @@ Just C-u as argument means to use the current column."
     end
 
     minibuf_echo (string.format ('Fill column set to %d (was %d)', arg,
-                                 lisp.get_variable_number ('fill-column')))
+                                 lisp.get_variable ('fill-column')))
     lisp.set_variable ('fill-column', arg)
     return true"))
 
@@ -91,7 +91,7 @@ The variable `fill-column' controls the width for filling."
     unchain_marker (m_end)
 
     end_of_line ()
-    while get_goalc () > lisp.get_variable_number ('fill-column') + 1 and fill_break_line () do end
+    while get_goalc () > lisp.get_variable ('fill-column') + 1 and fill_break_line () do end
 
     goto_offset (m.o)
     unchain_marker (m)

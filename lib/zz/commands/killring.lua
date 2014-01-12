@@ -164,7 +164,7 @@ with no argument.
     maybe_free_kill_ring ()
 
     if not arg then
-      ok = kill_line (bolp () and eval.get_variable_bool ('kill_whole_line'))
+      ok = kill_line (bolp () and eval.get_variable ('kill_whole_line'))
     else
       undo_start_sequence ()
       if arg <= 0 then

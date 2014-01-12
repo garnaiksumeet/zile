@@ -188,7 +188,7 @@ what to do with it.
         count = count + 1
         local case_repl = repl
         local r = region_new (get_buffer_pt (cur_bp) - #find, get_buffer_pt (cur_bp))
-        if find_no_upper and eval.get_variable_bool ('case_replace') then
+        if find_no_upper and eval.get_variable ('case_replace') then
           local case_type = check_case (tostring (get_buffer_region (cur_bp, r))) -- FIXME
           if case_type then
             case_repl = recase (repl, case_type)

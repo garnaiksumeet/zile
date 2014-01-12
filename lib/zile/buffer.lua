@@ -232,7 +232,7 @@ end
 
 -- Initialize buffer local variables.
 function init_buffer (bp)
-  if eval.get_variable_bool ("auto_fill_mode", bp) then
+  if eval.get_variable ("auto_fill_mode", bp) then
     bp.autofill = true
   end
 end
@@ -413,7 +413,7 @@ end
 
 -- Return a safe tab width for the given buffer.
 function tab_width (bp)
-  return math.max (eval.get_variable_number ("tab_width", bp), 1)
+  return math.max (eval.get_variable ("tab_width", bp), 1)
 end
 
 function create_auto_buffer (name)

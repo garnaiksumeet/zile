@@ -245,24 +245,6 @@ local function get_variable (name, bp)
 end
 
 
---- Coerce a variable value to a number.
--- @string name variable name
--- @tparam[opt=current buffer] buffer bp buffer to select
--- @treturn number the number value of `name` from buffer `bp`
-local function get_variable_number (name, bp)
-  return get_variable (name, bp)
-end
-
-
---- Coerce a variable value to a boolean.
--- @string name variable name
--- @tparam[opt=current buffer] buffer bp buffer to select
--- @treturn bool the bool value of `name` from buffer `bp`
-local function get_variable_bool (name, bp)
-  return get_variable (name, bp)
-end
-
-
 --- Assign a value to variable in a given buffer.
 -- @string symbol_or_name an interned symbol, or name of a symbol
 -- @param value value to assign to `symbol_or_name`
@@ -420,8 +402,6 @@ return {
   execute_function    = execute_function,
   fetch_variable      = fetch_variable,
   get_variable        = get_variable,
-  get_variable_bool   = get_variable_bool,
-  get_variable_number = get_variable_number,
   intern_soft         = intern_soft,
   mapatoms            = mapatoms,
   set_variable        = set_variable,

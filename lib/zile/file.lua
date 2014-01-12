@@ -198,13 +198,13 @@ end
 -- Create a backup file if specified by the user variables.
 local function backup_and_write (bp, filename)
   -- Make backup of original file.
-  local backup = eval.get_variable_bool ("make_backup_files")
+  local backup = eval.get_variable ("make_backup_files")
   if not bp.backup and backup then
     local h = io.open (filename, "r+")
     if h then
       h:close ()
 
-      local backupdir = eval.get_variable_bool ("backup_directory") and eval.get_variable ("backup_directory")
+      local backupdir = eval.get_variable ("backup_directory") and eval.get_variable ("backup_directory")
       local bfilename = create_backup_filename (filename, backupdir)
       if bfilename and copy_file (filename, bfilename) then
         bp.backup = true
