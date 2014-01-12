@@ -172,7 +172,7 @@ function get_key_sequence ()
   return keys
 end
 
-function get_function_by_keys (keys, fetch)
+function get_function_by_keys (keys)
   local func = root_bindings[keys]
   return iscallable (func) and func or nil
 end

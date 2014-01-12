@@ -18,15 +18,15 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 local eval = require "zz.eval"
-local call_command, intern_soft, mapatoms =
-      eval.call_command, eval.intern_soft, eval.mapatoms
+
+local call_command, mapatoms = eval.call_command, eval.mapatoms
 
 -- Used to process keyboard macros, and to maintain identical behaviour
 -- between the user typing and a keyboard macro sending keys, also used
 -- for the main loop after initialization.
 function get_and_run_command ()
   local keys = get_key_sequence ()
-  local func = get_function_by_keys (keys, intern_soft)
+  local func = get_function_by_keys (keys)
 
   minibuf_clear ()
 

@@ -79,12 +79,12 @@ Display documentation of the command invoked by a key sequence.
       if not keys then
         return false
       end
-      command = get_function_by_keys (keys, intern_soft)
+      command = get_function_by_keys (keys)
       binding = tostring (keys)
     else
       minibuf_write ('Describe key:')
       local keys = get_key_sequence ()
-      command = get_function_by_keys (keys, intern_soft)
+      command = get_function_by_keys (keys)
       binding = tostring (keys)
 
       if not command then
