@@ -152,12 +152,8 @@ function marshaller (symbol, arglist)
 
   while arglist and arglist.car do
     local val, ty = arglist.car, argtypes[i]
-    if ty == "number" then
-      val = tonumber (val.value, 10)
-    elseif ty == "boolean" then
-      val = val.value ~= "nil"
-    elseif ty == "string" then
-      val = tostring (val.value)
+    if ty == "string" then
+      val = tostring (val)
     end
     table.insert (args, val)
     arglist = arglist.cdr
@@ -175,6 +171,31 @@ end
 --[[ ==================== ]]--
 
 
+-- FIXME: changing the stringification function when setting the
+-- variable slot on a _lisp-2_ symbol will cause problems later in code
+-- that assumes stringification will return the name because of the
+-- value in the function slot.  Find a way to always use the same
+-- stringification metamethod on symbols, and use `symbol.name` instead
+-- of `tostring (symbol)` whenever the name is needed.
+
+
+--- Return a string representation of the value of a variable.
+-- @tparam symbol symbol a symbol
+-- @treturn string string representation, suitable for display
+local function display_variable_value (symbol)
+  local value = symbol.value
+  if value == true then
+    return "t"
+  elseif value == false then
+    return "nil"
+  elseif type (value) == "string" then
+    return '"' .. value .. '"'
+  else
+    return tostring (value)
+  end
+end
+
+
 --- Define a new variable.
 -- Store the value and docstring for a variable for later retrieval.
 -- @string name variable name
@@ -188,6 +209,7 @@ local function Defvar (name, value, source, doc)
   symbol.value = value
   symbol["source-file"]            = source
   symbol["variable-documentation"] = (doc or ""):chomp ()
+  getmetatable (symbol).__tostring = display_variable_value
   return symbol
 end
 
@@ -228,7 +250,7 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @treturn number the number value of `name` from buffer `bp`
 local function get_variable_number (name, bp)
-  return tonumber (get_variable (name, bp), 10)
+  return get_variable (name, bp)
 end
 
 
@@ -237,30 +259,33 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @treturn bool the bool value of `name` from buffer `bp`
 local function get_variable_bool (name, bp)
-  return get_variable (name, bp) ~= "nil"
+  return get_variable (name, bp)
 end
 
 
 --- Assign a value to variable in a given buffer.
--- @string name variable name
--- @param value value to assign to `name`
+-- @string symbol_or_name an interned symbol, or name of a symbol
+-- @param value value to assign to `symbol_or_name`
 -- @tparam[opt=current buffer] buffer bp buffer to select
--- @return the new value of `name` from buffer `bp`
-local function set_variable (name, value, bp)
-  local found = intern_soft (name)
-  if found and found["buffer-local-variable"] then
+-- @return the new value of `symbol_or_name` in buffer `bp`
+local function set_variable (symbol_or_name, value, bp)
+  local symbol = symbol_or_name
+  if type (symbol) == "string" then
+    symbol = intern (symbol_or_name)
+  end
+
+  if symbol and symbol["buffer-local-variable"] then
     bp = bp or cur_bp
     bp.obarray = bp.obarray or {}
 
-    local symbol = intern (name, bp.obarray)
-    symbol.name  = name		-- unmangled name
-    symbol.value = value
-    getmetatable (symbol).__index = found.plist
+    local bufferlocal = intern (symbol.name, bp.obarray)
+    bufferlocal.name  = symbol.name	-- unmangled name
+    bufferlocal.value = value
+    getmetatable (bufferlocal).__index = symbol.plist
+    getmetatable (bufferlocal).__tostring = display_variable_value
 
-  elseif found then
-    found.value = value
-  else
-    Defvar (name, value, "")
+  elseif symbol then
+    symbol.value = value
   end
 
   return value
@@ -285,7 +310,7 @@ local function execute_function (symbol_or_name, uniarg)
   end
 
   if uniarg ~= nil and type (uniarg) ~= "table" then
-    uniarg = Cons ({value = uniarg and tostring (uniarg) or nil})
+    uniarg = Cons (uniarg)
   end
 
   command.attach_label (nil)
@@ -329,31 +354,29 @@ end
 --   command name.
 -- @return the result of evaluating `list`, or else `nil`
 local function eval_command (list)
-  return list and list.car and call_command (list.car.value, list.cdr) or nil
+  return list and list.car and call_command (list.car, list.cdr) or nil
 end
 
 
 --- Evaluate one arbitrary expression.
 -- This function is required to implement ZLisp special forms, such as
 -- `setq`, where some nodes of the AST are evaluated and others are not.
--- @tparam zile.Cons node a node of the AST from @{zile.zlisp.parse}.
--- @treturn zile.Cons the result of evaluating `node`
-local function eval_expression (node)
-  if node.kind == "literal" or node.quoted then
-    -- literals: t or 123 or 'symbol
-    return node
-  elseif node.kind == "word" then
-    -- variable name: tab-width
-    local value = get_variable (node.value)
-    if value then return {value = value, kind = "literal"} end
-  elseif node.value and node.value.car and node.value.car.value then
-    -- function call: (point-min)
-    local symbol = intern_soft (node.value.car.value)
-    if symbol.func then
-      return eval_command (node.value)
+-- @tparam zile.Cons expr a lisp object or Cons list expression
+-- @treturn zile.Cons the result of evaluating `expr`
+local function eval_expression (expr)
+  if type (expr) ~= "table" then
+    return expr
+  elseif expr.name and expr.value == "t" or expr.value == "nil" then
+    return expr.value ~= "nil"
+  elseif expr.name and expr.value then
+    local value = get_variable (expr.name)
+    if value then return value end
+  elseif expr.car and expr.car.name then
+    if expr.car.func then
+      return eval_command (expr)
     end
   end
-  return Cons (node)
+  return Cons (expr)
 end
 
 
@@ -361,11 +384,11 @@ end
 -- @string s zlisp source
 -- @return `true` for success, or else `nil` plus an error string
 local function eval_string (s)
-  local ok, list = pcall (lisp.parse, s)
+  local ok, list = pcall (lisp.parse, s, mangle)
   if not ok then return nil, list end
 
   while list do
-    eval_command (list.car.value)
+    eval_command (list.car)
     list = list.cdr
   end
   return true

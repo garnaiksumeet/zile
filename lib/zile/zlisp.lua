@@ -83,11 +83,13 @@ end
 -- Comments and whitespace are silently skipped over.
 -- @string s zlisp source
 -- @int    i index of last character scanned so far
--- @treturn string text of just scanned `token`, or "" for an operator
--- @treturn string `kind` of token: one of `eof`, `literal`, `word` or
---   a character from the `isoperator` set above
+-- @func[opt=nil] mangle if given, use it to mangle symbol names before
+--   lookup
+-- @return value of just scanned `token`, or nil for an operator
+-- @treturn string `kind` of token: one of `eof`, `literal`, `symbol`
+--   or a character from the `isoperator` set above
 -- @treturn int    the index of the next unscanned character in `s`
-local function lex (s, i)
+local function lex (s, i, mangle)
   -- Skip initial whitespace and comments.
   local c
   repeat
@@ -130,16 +132,19 @@ local function lex (s, i)
     return token, "literal", i
   end
 
-  -- Anything else is a `word' - up to the next whitespace or delimiter.
+  -- Anything else is a `symbol' - up to the next whitespace or delimiter.
   repeat
     token = token .. c
     c, i = nextch (s, i)
     if isdelimiter[c] or c == nil then
-      -- Except strings of decimal digits, t, and nil which are literals.
-      if token == "t" or token == "nil" or token:match "^%d+$" then
-	return token, "literal", i - 1
+      -- Except strings of decimal digits which are literals.
+      if token:match "^%-?%d+$" then
+	return tonumber (token), "literal", i - 1
+      elseif token == "t" or token == "nil" then
+        return token ~= "nil", "literal", i -1
       end
-      return token, "word", i - 1
+      local name = mangle and mangle (token) or token
+      return intern (name), "symbol", i - 1
     end
   until false
 end
@@ -147,31 +152,34 @@ end
 
 --- Parse a string of zlisp code into an abstract syntax tree.
 -- @string s zlisp source
+-- @func[opt=nil] mangle if given, use it to mangle symbol names before
+--   lookup
 -- @treturn zile.Cons the AST as a list of _S-Expressions_; in case of
 --   error it returns `nil` plus an error message that contains the line
 --   number of `s` where parsing failed.
-local function parse (s)
+local function parse (s, mangle)
   local i = 0
 
   -- New nodes are pushed onto the front of the list for speed...
-  local function push (ast, value, kind, quoted)
-    return Cons ({value = value, kind = kind, quoted = quoted}, ast)
+  local function push (ast, value, quoted)
+    local node = Cons (value, ast)
+    return quoted and Cons (intern ("quote"), node) or node
   end
 
   local function read (nested, openparen)
     local ast, token, kind, quoted
     repeat
-      token, kind, i = lex (s, i)
+      token, kind, i = lex (s, i, mangle)
       if kind == "'" then
         quoted = kind
       else
         if kind == "(" then
 	  local subtree, errmsg = read (true, i)
 	  if errmsg ~= nil then return ok, errmsg end
-          ast = push (ast, subtree, nil, quoted)
+          ast = push (ast, subtree, quoted)
 
-        elseif kind == "word" or kind == "literal" then
-          ast = push (ast, token, kind, quoted)
+        elseif kind == "symbol" or kind == "literal" then
+          ast = push (ast, token, quoted)
 
 	elseif kind == ")" then
           if not nested then
@@ -204,11 +212,10 @@ end
 
 
 --- Call a named zlisp command with arguments.
--- @string name a function defined in obarray
+-- @tparam symbol symbol a function symbol
 -- @tparam zile.Cons arglist arguments for `name`
 -- @return the result of calling `name` with `arglist`, or else `nil`
-local function call_command (name, arglist)
-  local symbol = intern_soft (name)
+local function call_command (symbol, arglist)
   if symbol and type (symbol.value) == "function" then
     return symbol.value (arglist)
   end
@@ -220,7 +227,7 @@ end
 --   command name.
 -- @return the result of evaluating `list`, or else `nil`
 local function eval_command (list)
-  return list and list.car and call_command (list.car.value, list.cdr) or nil
+  return list and list.car and call_command (list.car, list.cdr) or nil
 end
 
 
@@ -233,7 +240,7 @@ local function eval_string (s)
   if not ok then return nil, list end
 
   while list do
-    eval_command (list.car.value)
+    eval_command (list.car)
     list = list.cdr
   end
   return true
@@ -263,11 +270,11 @@ end
 
 
 ------
--- Return a new uninterned Symbol initialised from the given arguments.
+-- Return a new interned Symbol initialised from the given arguments.
 -- @function Symbol
 -- @string name name of the symbol
 -- @param value the value of the symbol
--- @treturn zile.Symbol a new _uninterned_ symbol
+-- @treturn zile.Symbol a new symbol
 
 
 ------

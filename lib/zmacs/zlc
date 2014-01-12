@@ -36,19 +36,22 @@ local cur_file
 local function writef (...) io.write (string.format (...)) end
 
 
--- (defvar NAME INITVALUE DOCSTRING)
+-- (defvar NAME INITVALUE [DOCSTRING])
 -- A special form for describing Zmacs variables.  Each time it is called
 -- by Zlisp, output a lua variable declaration for loading into Zmacs.
 zz.define ("defvar",
   function (arglist)
-    local initvalue = arglist:nth (2).value
-    if type (initvalue) ~= "string" then
-      initvalue = zz.call_command (initvalue.car.value, initvalue.cdr)
+    local initvalue = arglist:nth (2)
+
+    if type (initvalue) == "string" then
+      initvalue = '"' .. initvalue .. '"'
+    elseif type (initvalue) == "table" and initvalue.name == "t" then
+      initvalue = "true"
     end
 
-    writef ('\n\nDefvar ("%s", "%s",\n  "%s",\n[[\n%s\n]])\n',
-            arglist:nth (1).value, tostring (initvalue),
-	    cur_file:gsub ("^.*/", ""), arglist:nth (3).value or "")
+    writef ('\n\nDefvar ("%s", %s,\n  "%s",\n[[\n%s\n]])\n',
+            arglist:nth (1).name, tostring (initvalue),
+	    cur_file:gsub ("^.*/", ""), arglist:nth (3) or "")
   end
 )
 
@@ -58,13 +61,14 @@ zz.define ("defvar",
 -- which it is set.
 zz.define ("make-variable-buffer-local",
   function (arglist)
-    writef ('lisp.set_variable_buffer_local ("%s", true)\n', arglist:nth (1).value)
+    writef ('lisp.set_variable_buffer_local ("%s", true)\n', arglist:nth (1).name)
   end
 )
 
 
 -- Return true if VALUE is a valid parameter name.
 local function isname (value)
+  value = type (value) == "string" and value or tostring (value)
   return value == "..." or value:match "^[%w_]" ~= nil
 end
 
@@ -74,14 +78,14 @@ end
 -- by Zlisp, output a lua command declaration for binding into Zmacs.
 zz.define ("defun",
   function (arglist)
-    local name        = arglist:nth (1).value
-    local typelist    = arglist:nth (2).value
-    local docstring   = arglist:nth (3).value
-    local interactive = arglist:nth (4).value
+    local name        = arglist:nth (1).name
+    local typelist    = arglist:nth (2)
+    local docstring   = arglist:nth (3)
+    local interactive = arglist:nth (4)
 
     local impl
-    if interactive.car and interactive.car.value == "interactive" then
-      impl = arglist:nth (5).value
+    if interactive.car and interactive.car.name == "interactive" then
+      impl = arglist:nth (5)
       interactive = true
     else
       impl = interactive
@@ -99,12 +103,13 @@ zz.define ("defun",
       local arglist = impl.cdr.car and impl.cdr.car.value or nil
       if arglist then
         signature = name .. " " ..
-	  arglist:mapconcat (function (value)
-		               return isname (value) and value:upper () or value
+	  arglist:mapconcat (function (symbol)
+		               local name = symbol.name
+		               return isname (symbol) and name:upper () or name
 			     end, " ")
       end
 
-      impl = zz.call_command (impl.car.value, impl.cdr)
+      impl = zz.call_command (impl.car, impl.cdr)
     end
 
     -- Don't re-add a function signature if docstring has one already.
@@ -122,22 +127,22 @@ zz.define ("defun",
 
 zz.define ("lambda",
   function (arglist)
-    local params = arglist:nth (1).value
+    local params = arglist:nth (1)
 
     if params and params.car then
       params = params:filter (isname)
     end
 
     if params and params.car then
-      params = params:mapconcat (function (value)
-                                   return value:gsub ("[^%w%d%.]", "_")
+      params = params:mapconcat (function (symbol)
+                                   return symbol.name:gsub ("[^%w%d%.]", "_")
                                  end, ", ")
     else
       params = ""
     end
 
     return string.format ("function (%s)\n    %s\n  end",
-      params, arglist:nth (2).value)
+      params, arglist:nth (2))
   end
 )
 
@@ -145,8 +150,8 @@ zz.define ("lambda",
 -- (localfun NAME (PARAM...) [DOCSTRING] "IMPLEMENTATION")
 zz.define ("localfun",
   function (arglist)
-    local params = arglist:nth (2).value
-    local impl = arglist:nth (3).value
+    local params = arglist:nth (2)
+    local impl = arglist:nth (3)
 
     if params and params.car then
       params = params:concat (", ")
@@ -157,11 +162,11 @@ zz.define ("localfun",
     io.write ("\n\n")
     if arglist:nth (4) ~= nil then
       io.write ("-- " .. impl:gsub ("\n", "\n-- ") .. "\n")
-      impl = arglist:nth (4).value
+      impl = arglist:nth (4)
     end
 
     writef ("local function %s (%s)\n  %s\nend\n",
-            arglist:nth (1).value, params, impl)
+            arglist:nth (1).name, params, impl)
   end
 )
 
@@ -169,15 +174,15 @@ zz.define ("localfun",
 -- (localvar NAME [DOCSTRING] "INITIAL-VALUE")
 zz.define ("localvar",
   function (arglist)
-    local init = arglist:nth (2).value
+    local init = arglist:nth (2)
 
     io.write ("\n\n")
     if arglist:nth (3) ~= nil then
       io.write ("-- " .. init:gsub ("\n", "\n-- ") .. "\n")
-      init = arglist:nth (3).value
+      init = arglist:nth (3)
     end
 
-    writef ("local %s = %s\n", arglist:nth (1).value, init)
+    writef ("local %s = %s\n", arglist:nth (1).name, tostring (init))
   end
 )
 

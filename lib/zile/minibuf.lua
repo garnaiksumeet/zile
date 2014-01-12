@@ -71,7 +71,7 @@ local function trim_messages (bp)
   bp.lines = (bp.lines or 0) + 1
 
   local max = eval.get_variable ("message_log_max")
-  if max:match "^%d+$" then
+  if type (max) == "number" then
     local kill_lines = bp.lines - tonumber (max)
     if kill_lines > 0 then
       goto_offset (1, bp)

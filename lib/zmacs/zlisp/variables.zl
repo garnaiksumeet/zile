@@ -18,25 +18,40 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+(localvar parse "(require 'zile.zlisp').parse")
+
+
 (defvar inhibit-splash-screen nil
   "Non-nil inhibits the startup screen.
 It also inhibits display of the initial message in the `*scratch*'
 buffer.")
 
 
-(defun set-variable (string string)
+(defun set-variable ()
   "Set VARIABLE to VALUE.  VALUE is a Lisp object.
 VARIABLE should be a user option variable name, a Lisp variable
 meant to be customized by users.  You should enter VALUE in Lisp syntax,
 so if you want VALUE to be a string, you must surround it with doublequotes.
 VALUE is used literally, not evaluated."
   (interactive)
-  (lambda (variable value)
-    "variable = variable or minibuf_read_variable_name ('Set variable: ')
-    if not variable then return false end
+  (lambda (symbol value)
+    "-- non-interactively, symbol should be `(quote symbol)`
+    if type (symbol) == 'table' and symbol.cdr then
+      symbol = symbol.cdr.car
+    end
+    -- interactively, read a symbol name and lookup associated variable
+    if not symbol then
+      local name = minibuf_read_variable_name ('Set variable: ')
+      symbol = lisp.fetch_variable (name)
+    end
+    if not symbol then return false end
 
-    value = value or minibuf_read (string.format ('Set %s to value: ', variable), '')
+    if not value then
+      local list = parse (minibuf_read (
+                            string.format ('Set %s to value: ', symbol.name), ''))
+      if list then value = list.car end
+    end
     if not value then return keyboard_quit () end
 
-    lisp.set_variable (variable, value)
+    lisp.set_variable (symbol, value)
     return true"))

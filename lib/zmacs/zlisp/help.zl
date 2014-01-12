@@ -114,9 +114,9 @@
   "insert_string (string.format (
     '%s is a variable defined in ' .. [[`%s']] .. '.\n' ..
     'Its value is %s\n',
-    tostring (symbol),
+    tostring (symbol.name),
     symbol['source-file'] or 'Lua source code',
-    symbol.value))
+    tostring (symbol)))
   if symbol['buffer-local-variable'] then
     local original = lisp.intern_soft (symbol.name)
     if original.value ~= symbol.value then
@@ -129,12 +129,19 @@
     expand_kbd_refs (symbol['variable-documentation']) .. '\n')")
 
 
-(defun describe-variable (string)
+(defun describe-variable (symbol)
   "Display the full documentation of VARIABLE (a symbol)."
   (interactive)
-  (lambda (name)
-    "name = name or minibuf_read_variable_name ('Describe variable: ')
-    local symbol = lisp.fetch_variable (name)
+  (lambda (symbol)
+    "-- non-interactively, symbol should be `(quote symbol)`
+    if type (symbol) == 'table' and symbol.cdr then
+      symbol = symbol.cdr.car
+    end
+    -- interactively, read a symbol name and lookup associated variable
+    if not symbol then
+      local name = minibuf_read_variable_name ('Describe variable: ')
+      symbol = lisp.fetch_variable (name)
+    end
     if not symbol or not symbol['variable-documentation'] then return false end
     write_temp_buffer ('*Help*', true, write_variable_description, symbol)
     return true"))
