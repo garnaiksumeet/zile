@@ -19,7 +19,8 @@
 
 local bind = require "zz.bind"
 local eval = require "zz.eval"
-local Defun, fetch = eval.Defun, eval.fetch
+
+local Defun = eval.Defun
 
 
 Defun ("self_insert_command",

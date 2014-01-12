@@ -61,7 +61,7 @@ The values val are expressions; they are evaluated."
     msg = msg .. 'M-x '
 
     local name = minibuf_read_function_name (msg)
-    local command = name and lisp.fetch (name)
+    local command = name and lisp.intern_soft (name)
     return command and lisp.execute_function (command, prefixarg) or nil"))
 
 

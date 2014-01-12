@@ -19,7 +19,7 @@
 
 local bind = require "zz.bind"
 local eval = require "zz.eval"
-local Defun, fetch, zz = eval.Defun, eval.fetch, eval.sandbox
+local Defun, intern_soft, zz = eval.Defun, eval.intern_soft, eval.sandbox
 
 
 local function write_function_description (command)
@@ -46,7 +46,7 @@ Display the full documentation of a function.
   true,
   function (name)
     name = name or minibuf_read_function_name ('Describe function: ')
-    local func = eval.fetch (name)
+    local func = eval.intern_soft (name)
     if not func or not func['documentation'] then return false end
 
     write_temp_buffer ('*Help*', true, write_function_description, func)
@@ -79,12 +79,12 @@ Display documentation of the command invoked by a key sequence.
       if not keys then
         return false
       end
-      command = get_function_by_keys (keys, fetch)
+      command = get_function_by_keys (keys, intern_soft)
       binding = tostring (keys)
     else
       minibuf_write ('Describe key:')
       local keys = get_key_sequence ()
-      command = get_function_by_keys (keys, fetch)
+      command = get_function_by_keys (keys, intern_soft)
       binding = tostring (keys)
 
       if not command then
@@ -117,7 +117,7 @@ Display the full documentation of a variable.
   true,
   function (name)
     name = name or minibuf_read_variable_name ('Describe variable: ')
-    local symbol = eval.fetch (name)
+    local symbol = eval.intern_soft (name)
     if not symbol or not symbol['documentation'] then return false end
     write_temp_buffer ('*Help*', true, write_variable_description, symbol)
     return true

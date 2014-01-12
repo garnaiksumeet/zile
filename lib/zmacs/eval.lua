@@ -96,7 +96,7 @@ end
 -- @string name possibly interned name
 -- @tparam[opt=obarray] table symtab a table of @{symbol}s
 -- @treturn symbol symbol previously interned with `name`, else `nil`
-local function fetch (name, ...)
+local function intern_soft (name, ...)
   return lisp.intern_soft (mangle (name), ...)
 end
 
@@ -210,7 +210,7 @@ end
 -- @return the value of `name` from buffer `bp`
 local function fetch_variable (name, bp)
   local obarray = (bp or cur_bp or {}).obarray
-  return obarray and fetch (name, obarray) or fetch (name)
+  return obarray and intern_soft (name, obarray) or intern_soft (name)
 end
 
 
@@ -247,7 +247,7 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the new value of `name` from buffer `bp`
 local function set_variable (name, value, bp)
-  local found = fetch (name)
+  local found = intern_soft (name)
   if found and found["buffer-local-variable"] then
     bp = bp or cur_bp
     bp.obarray = bp.obarray or {}
@@ -281,7 +281,7 @@ local function execute_function (symbol_or_name, uniarg)
   local symbol, ok = symbol_or_name, false
 
   if type (symbol_or_name) ~= "table" then
-    symbol = fetch (symbol_or_name)
+    symbol = intern_soft (symbol_or_name)
   end
 
   if uniarg ~= nil and type (uniarg) ~= "table" then
@@ -348,7 +348,7 @@ local function eval_expression (node)
     if value then return {value = value, kind = "literal"} end
   elseif node.value and node.value.car and node.value.car.value then
     -- function call: (point-min)
-    local symbol = fetch (node.value.car.value)
+    local symbol = intern_soft (node.value.car.value)
     if symbol.func then
       return eval_command (node.value)
     end
@@ -395,11 +395,11 @@ return {
   eval_file           = eval_file,
   eval_string         = eval_string,
   execute_function    = execute_function,
-  fetch               = fetch,
   fetch_variable      = fetch_variable,
   get_variable        = get_variable,
   get_variable_bool   = get_variable_bool,
   get_variable_number = get_variable_number,
+  intern_soft         = intern_soft,
   mapatoms            = mapatoms,
   set_variable        = set_variable,
   set_variable_buffer_local = set_variable_buffer_local,

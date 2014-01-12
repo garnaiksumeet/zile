@@ -61,7 +61,7 @@
       if not name then return false end
     end
 
-    local func = lisp.fetch (name)
+    local func = lisp.intern_soft (name)
     if not func or not func['function-documentation'] then return false end
 
     write_temp_buffer ('*Help*', true, write_function_description, func)
@@ -90,12 +90,12 @@
       if not keys then
         return false
       end
-      command = get_function_by_keys (keys, lisp.fetch)
+      command = get_function_by_keys (keys, lisp.intern_soft)
       binding = tostring (keys)
     else
       minibuf_write ('Describe key:')
       local keys = get_key_sequence ()
-      command = get_function_by_keys (keys, lisp.fetch)
+      command = get_function_by_keys (keys, lisp.intern_soft)
       binding = tostring (keys)
 
       if not command then
@@ -118,10 +118,10 @@
     symbol['source-file'] or 'Lua source code',
     symbol.value))
   if symbol['buffer-local-variable'] then
-    local original = lisp.fetch (symbol.name)
+    local original = lisp.intern_soft (symbol.name)
     if original.value ~= symbol.value then
       insert_string (string.format ('Original value was %s\n',
-        lisp.fetch (symbol.name).value))
+        lisp.intern_soft (symbol.name).value))
     end
     insert_string '\n  Automatically becomes buffer-local when set.\n'
   end

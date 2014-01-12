@@ -34,8 +34,8 @@ end
 -- @string name name of a command
 -- @treturn table a table of key bindings for `name`, or nil.
 local function where_is (name)
-  if name and eval.fetch (name) then
-    local g = { f = eval.fetch (name).value, bindings = {} }
+  if name and eval.intern_soft (name) then
+    local g = { f = eval.intern_soft (name).value, bindings = {} }
     walk_bindings (root_bindings, gather_bindings, g)
     return g.bindings
   end

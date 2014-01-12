@@ -84,7 +84,7 @@ sequence."
       command = minibuf_read_function_name (string.format ('Set key %s to command: ', key))
       if not command then return false end
     end
-    local func = lisp.fetch (command)
+    local func = lisp.intern_soft (command)
 
     if not func then -- Possible if called non-interactively
       return minibuf_error (string.format ([[No such function `%s']], command))

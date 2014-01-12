@@ -19,8 +19,8 @@
 
 local posix = require "posix"
 
-local lisp  = require "zmacs.eval"
-local fetch = lisp.fetch
+local lisp = require "zmacs.eval"
+local intern_soft = lisp.intern_soft
 
 root_bindings = tree.new ()
 
@@ -28,13 +28,13 @@ function init_default_bindings ()
   -- Bind all printing keys to self-insert-command
   for i = 0, 0xff do
     if posix.isprint (string.char (i)) then
-      root_bindings[{keycode (string.char (i))}] = fetch "self-insert-command"
+      root_bindings[{keycode (string.char (i))}] = intern_soft "self-insert-command"
     end
   end
 
   -- Bind special key names to self-insert-command
   list.map (function (e)
-              root_bindings[{keycode (e)}] = fetch "self-insert-command"
+              root_bindings[{keycode (e)}] = intern_soft "self-insert-command"
             end,
             {"\\SPC", "\\TAB", "\\RET", "\\\\"})
 

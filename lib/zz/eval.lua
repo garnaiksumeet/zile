@@ -66,7 +66,7 @@ end
 -- @string name the symbol name
 -- @tparam[opt=symtab] table symbols a table of symbols
 -- @treturn symbol symbol previously interned with `name`, else `nil`
-local function fetch (name, symbols)
+local function intern_soft (name, symbols)
   return Symbol.intern_soft (name, symbols or symtab)
 end
 
@@ -221,7 +221,7 @@ end
 -- @return the value of `name` from buffer `bp`
 local function fetch_variable (name, bp)
   local obarray = (bp or cur_bp or {}).obarray
-  return obarray and fetch (name, obarray) or fetch (name, symtab)
+  return obarray and intern_soft (name, obarray) or intern_soft (name, symtab)
 end
 
 
@@ -258,7 +258,7 @@ end
 -- @tparam[opt=current buffer] buffer bp buffer to select
 -- @return the new value of `name` from buffer `bp`
 local function set_variable (name, value, bp)
-  local found = fetch (name, symtab)
+  local found = intern_soft (name, symtab)
   if found and found["buffer-local"] then
     bp = bp or cur_bp
     bp.obarray = bp.obarray or {}
@@ -350,10 +350,10 @@ return {
   Defun               = Defun,
   Defvar              = Defvar,
   call_command        = call_command,
-  fetch               = fetch,
   get_variable        = get_variable,
   get_variable_bool   = get_variable_bool,
   get_variable_number = get_variable_number,
+  intern_soft         = intern_soft,
   loadstring          = eval_string,
   loadfile            = eval_file,
   mapatoms            = mapatoms,
