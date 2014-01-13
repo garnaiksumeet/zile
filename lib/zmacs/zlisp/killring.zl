@@ -36,7 +36,7 @@
   return true")
 
 
-(defun kill-word (number)
+(defsubr kill-word (number)
   "Kill characters forward until encountering the end of a word.
 With argument ARG, do this that many times."
   (interactive)
@@ -44,7 +44,7 @@ With argument ARG, do this that many times."
     "return kill_text (arg, 'mark-word')"))
 
 
-(defun backward-kill-word (number)
+(defsubr backward-kill-word (number)
   "Kill characters backward until encountering the end of a word.
 With argument ARG, do this that many times."
   (interactive)
@@ -52,7 +52,7 @@ With argument ARG, do this that many times."
     "return kill_text (-(arg or 1), 'mark-word')"))
 
 
-(defun kill-sexp (number)
+(defsubr kill-sexp (number)
   "Kill the sexp (balanced expression) following the cursor.
 With ARG, kill that many sexps after the cursor.
 Negative arg -N means kill N sexps before the cursor."
@@ -61,7 +61,7 @@ Negative arg -N means kill N sexps before the cursor."
     "return kill_text (arg, 'mark-sexp')"))
 
 
-(defun yank ()
+(defsubr yank ()
   "Reinsert the last stretch of killed text.
 More precisely, reinsert the most recent kill, which is the
 stretch of killed text most recently killed OR yanked.  Put point
@@ -82,7 +82,7 @@ at the end, and set mark at beginning without activating it."
     deactivate_mark ()"))
 
 
-(defun kill-region ()
+(defsubr kill-region ()
   "Kill between point and mark.
 The text is deleted but saved in the kill ring.
 The command \\[yank] can retrieve it from there.
@@ -104,7 +104,7 @@ text killed last time to make one entry in the kill ring."
     return false"))
 
 
-(defun copy-region-as-kill ()
+(defsubr copy-region-as-kill ()
   "Save the region as if killed, but don't kill it."
   (interactive)
   (lambda ()
@@ -123,7 +123,7 @@ text killed last time to make one entry in the kill ring."
   "If non-nil, `kill-line' with no arg at beg of line kills the whole line.")
 
 
-(defun kill-line (number)
+(defsubr kill-line (number)
   "Kill the rest of the current line; if no nonblanks there, kill thru newline.
 With prefix argument ARG, kill that many lines from point.
 Negative arguments kill lines backward.

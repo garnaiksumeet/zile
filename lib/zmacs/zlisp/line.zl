@@ -43,7 +43,7 @@ left margin or in the line's indentation, otherwise it inserts a
   "Default number of columns for margin-changing functions to indent.")
 
 
-(defun indent-for-tab-command ()
+(defsubr indent-for-tab-command ()
   "Indent line or insert a tab.
 Depending on `tab-always-indent', either insert a tab or indent.
 If initial point was within line's indentation, position after
@@ -57,7 +57,7 @@ the indentation.  Else stay at same point in text."
     end"))
 
 
-(defun indent-relative ()
+(defsubr indent-relative ()
   "Space out to under next indent point in previous nonblank line.
 An indent point is a non-whitespace character following whitespace.
 The following line shows the indentation points in this line.
@@ -134,7 +134,7 @@ does nothing."
     return ok"))
 
 
-(defun newline-and-indent ()
+(defsubr newline-and-indent ()
   "Insert a newline, then indent.
 Indentation is done using the `indent-for-tab-command' function."
   (interactive)
@@ -171,27 +171,27 @@ Indentation is done using the `indent-for-tab-command' function."
 
 
 
-(defun delete-char (number)
+(defsubr delete-char (number)
   "Delete the following N characters (previous if N is negative)."
   (interactive)
   (lambda (n)
     "return execute_with_uniarg (true, n, delete_char, backward_delete_char)"))
 
 
-(defun backward-delete-char (number)
+(defsubr backward-delete-char (number)
   "Delete the previous N characters (following if N is negative)."
   (interactive)
   (lambda (n)
     "return execute_with_uniarg (true, n, backward_delete_char, delete_char)"))
 
 
-(defun delete-horizontal-space ()
+(defsubr delete-horizontal-space ()
   "Delete all spaces and tabs around point."
   (interactive)
   "delete_horizontal_space")
 
 
-(defun just-one-space ()
+(defsubr just-one-space ()
   "Delete all spaces and tabs around point, leaving one space."
   (interactive)
   (lambda ()
@@ -201,7 +201,7 @@ Indentation is done using the `indent-for-tab-command' function."
     undo_end_sequence ()"))
 
 
-(defun tab-to-tab-stop (number)
+(defsubr tab-to-tab-stop (number)
   "Insert a tabulation at the current point position into the current
 buffer."
   (interactive)
@@ -224,7 +224,7 @@ Automatically becomes buffer-local when set in any fashion.")
   return insert_newline ()")
 
 
-(defun newline (number)
+(defsubr newline (number)
   "Insert a newline at the current point position into
 the current buffer.
 With ARG insert that many newlines."
@@ -233,7 +233,7 @@ With ARG insert that many newlines."
     "return execute_with_uniarg (true, arg, newline)"))
 
 
-(defun open-line (number)
+(defsubr open-line (number)
   "Insert a newline and leave point before it.
 with arg N, insert N newlines."
   (interactive)
@@ -241,7 +241,7 @@ with arg N, insert N newlines."
     "return execute_with_uniarg (true, n, intercalate_newline)"))
 
 
-(defun insert (string)
+(defsubr insert (string)
   "Insert the argument at point."
   (lambda (arg)
     "insert_string (arg)"))

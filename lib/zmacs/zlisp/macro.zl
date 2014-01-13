@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun start-kbd-macro ()
+(defsubr start-kbd-macro ()
   "Record subsequent keyboard input, defining a keyboard macro.
 The commands are recorded even as they are executed.
 Use \\[end-kbd-macro] to finish recording and make the macro available."
@@ -39,7 +39,7 @@ Use \\[end-kbd-macro] to finish recording and make the macro available."
     cur_mp = {}"))
 
 
-(defun end-kbd-macro ()
+(defsubr end-kbd-macro ()
   "Finish defining a keyboard macro.
 The definition was started by \\[start-kbd-macro].
 The macro is now available for use via \\[execute-kbd-macro]."
@@ -53,7 +53,7 @@ The macro is now available for use via \\[execute-kbd-macro]."
     thisflag.defining_macro = false"))
 
 
-(defun call-last-kbd-macro ()
+(defsubr call-last-kbd-macro ()
   "Call the last keyboard macro that you defined with \\[start-kbd-macro].
 A prefix argument serves as a repeat count."
   (interactive)
@@ -68,7 +68,7 @@ A prefix argument serves as a repeat count."
     execute_with_uniarg (true, current_prefix_arg, call_macro)"))
 
 
-(defun execute-kbd-macro (string)
+(defsubr execute-kbd-macro (string)
   "Execute macro as string of editor command characters."
   (lambda (keystr)
     "local keys = keystrtovec (keystr)

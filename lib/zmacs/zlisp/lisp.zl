@@ -20,7 +20,7 @@
 ;; MA 02111-1301, USA.
 
 
-(defun load (string)
+(defsubr load (string)
   "Execute a file of Lisp code named FILE."
   (interactive)
   (lambda (file)
@@ -29,7 +29,7 @@
     end"))
 
 
-(defun setq ()
+(defsubr setq ()
   "(setq [sym val]...)
 
 Set each sym to the value of its val.
@@ -45,7 +45,7 @@ The values val are expressions; they are evaluated."
     return ret"))
 
 
-(defun execute-extended-command (number)
+(defsubr execute-extended-command (number)
   "Read function name, then read its arguments and call it."
   (interactive)
   (lambda (prefixarg)
@@ -65,7 +65,7 @@ The values val are expressions; they are evaluated."
     return command and lisp.execute_function (command, prefixarg) or nil"))
 
 
-(defun eval-buffer (string)
+(defsubr eval-buffer (string)
   "Execute the current buffer as Lisp code.
 When called from a Lisp program (i.e., not interactively), this
 function accepts an optional argument, the BUFFER to evaluate (nil
@@ -79,7 +79,7 @@ means use current buffer)."
 (localvar exprs_history
   "history_new ()")
 
-(defun eval-expression (string)
+(defsubr eval-expression (string)
   "Evaluate EXP and print result in the echo area.
 When called interactively, read a ZLisp expression and
 evaluate it."

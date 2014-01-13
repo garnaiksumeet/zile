@@ -21,7 +21,7 @@
 (localvar bind "require 'zmacs.bind'")
 
 
-(defun self-insert-command ()
+(defsubr self-insert-command ()
   "Insert the character you type.
 Whichever character you type to run this command is inserted."
   (interactive)
@@ -29,7 +29,7 @@ Whichever character you type to run this command is inserted."
     "return execute_with_uniarg (true, current_prefix_arg, self_insert_command)"))
 
 
-(defun where-is ()
+(defsubr where-is ()
   "Print message listing key sequences that invoke the command DEFINITION.
 Argument is a command name."
   (interactive)
@@ -60,7 +60,7 @@ Argument is a command name."
   walk_bindings (root_bindings, print_binding)")
 
 
-(defun describe-bindings ()
+(defsubr describe-bindings ()
   "Show a list of all defined keys, and their definitions."
   (interactive)
   (lambda ()
@@ -68,7 +68,7 @@ Argument is a command name."
     return true"))
 
 
-(defun global-set-key (string string)
+(defsubr global-set-key (string string)
   "Bind a COMMAND to a KEY sequence.
 Read key sequence and function name, and bind the function to the key
 sequence."
@@ -95,7 +95,7 @@ sequence."
     return true"))
 
 
-(defun global-unset-key (string)
+(defsubr global-unset-key (string)
   "Remove global binding of KEY.
 KEY is a string representing a sequence of keystrokes."
   (interactive)
@@ -111,7 +111,7 @@ KEY is a string representing a sequence of keystrokes."
     return true"))
 
 
-(defun universal-argument ()
+(defsubr universal-argument ()
   "Begin a numeric argument for the following command.
 Digits or minus sign following @kbd{C-u} make up the numeric argument.
 @kbd{C-u} following the digits or minus sign ends the argument.
@@ -189,7 +189,7 @@ by 4 each time."
     return ok"))
 
 
-(defun keyboard-quit ()
+(defsubr keyboard-quit ()
   "Signal a `quit' condition.
 During execution of Lisp code, this character causes a quit directly.
 At top-level, as an editor command, this simply beeps."
@@ -197,7 +197,7 @@ At top-level, as an editor command, this simply beeps."
   "keyboard_quit")
 
 
-(defun suspend-emacs ()
+(defsubr suspend-emacs ()
   "Stop and return to superior process."
   (interactive)
   "suspend")

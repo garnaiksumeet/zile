@@ -27,7 +27,7 @@ It also inhibits display of the initial message in the `*scratch*'
 buffer.")
 
 
-(defun set-variable ()
+(defsubr set-variable ()
   "Set VARIABLE to VALUE.  VALUE is a Lisp object.
 VARIABLE should be a user option variable name, a Lisp variable
 meant to be customized by users.  You should enter VALUE in Lisp syntax,

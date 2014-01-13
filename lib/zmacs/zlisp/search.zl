@@ -18,14 +18,14 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun search-forward (string)
+(defsubr search-forward (string)
   "Search forward from point for STRING."
   (interactive)
   (lambda (string)
     "return do_search (true, false, string)"))
 
 
-(defun search-backward (string)
+(defsubr search-backward (string)
   "Search backward from point for STRING."
   (interactive)
   (lambda (string)
@@ -37,7 +37,7 @@
 (make-variable-buffer-local 'case-fold-search)
 
 
-(defun search-forward-regexp (string)
+(defsubr search-forward-regexp (string)
   "Search forward from point for regular expression REGEXP.
 
 Search case-sensitivity is determined by the value of the variable
@@ -47,7 +47,7 @@ Search case-sensitivity is determined by the value of the variable
     "return do_search (true, true, regexp)"))
 
 
-(defun search-backward-regexp (string)
+(defsubr search-backward-regexp (string)
   "Search backward from point for match for regular expression REGEXP.
 
 Search case-sensitivity is determined by the value of the variable
@@ -57,7 +57,7 @@ Search case-sensitivity is determined by the value of the variable
     "return do_search (false, true, regexp)"))
 
 
-(defun isearch-forward ()
+(defsubr isearch-forward ()
   "Do incremental search forward.
 With a prefix argument, do an incremental regular expression search instead.
 As you type characters, they add to the search string and are found.
@@ -69,7 +69,7 @@ Type @kbd{C-s} to search again forward, @kbd{C-r} to search again backward.
     "return isearch (true, lastflag.set_uniarg)"))
 
 
-(defun isearch-backward ()
+(defsubr isearch-backward ()
   "Do incremental search backward.
 With a prefix argument, do a regular expression search instead.
 As you type characters, they add to the search string and are found.
@@ -81,7 +81,7 @@ Type @kbd{C-r} to search again backward, @kbd{C-s} to search again forward.
     "return isearch (false, lastflag.set_uniarg)"))
 
 
-(defun isearch-forward-regexp ()
+(defsubr isearch-forward-regexp ()
   "Do incremental search forward for regular expression.
 With a prefix argument, do a regular string search instead.
 Like ordinary incremental search except that your input is treated
@@ -91,7 +91,7 @@ as a regexp.  See the command `isearch-forward' for more information."
     "return isearch (true, not lastflag.set_uniarg)"))
 
 
-(defun isearch-backward-regexp ()
+(defsubr isearch-backward-regexp ()
   "Do incremental search backward for regular expression.
 With a prefix argument, do a regular string search instead.
 Like ordinary incremental search except that your input is treated
@@ -116,7 +116,7 @@ the first letter is, and nil otherwise."
   "Non-nil means `query-replace' should preserve case in replacements.")
 
 
-(defun query-replace ()
+(defsubr query-replace ()
   "Replace occurrences of a string with other text.
 As each match is found, the user must type a character saying
 what to do with it."

@@ -101,7 +101,7 @@ local function intern_soft (name, ...)
 end
 
 
-local Defun, marshaller -- forward declarations
+local defsubr, marshaller -- forward declarations
 
 
 ------
@@ -127,7 +127,7 @@ local Defun, marshaller -- forward declarations
 -- @bool interactive `true` if this command can be called interactively
 -- @func func function to call after marshalling arguments
 -- @treturn symbol newly interned symbol
-function Defun (name, argtypes, source, doc, interactive, func)
+function defsubr (name, argtypes, source, doc, interactive, func)
   local symbol = intern (name)
   symbol.name  = name	-- unmangled name
   rawset (symbol, "func", func)
@@ -196,7 +196,7 @@ end
 -- @string source name of the file `name` was compiled from, or nil
 -- @string doc variable's docstring
 -- @treturn symbol newly interned symbol
-local function Defvar (name, value, source, doc)
+local function defvar (name, value, source, doc)
   local symbol = intern (name)
   symbol.name  = name	-- unmangled name
   symbol.value = value
@@ -297,7 +297,7 @@ end
 
 
 --- Call a zlisp command with arguments, interactively.
--- @tparam symbol symbol a value already passed to @{Defun}
+-- @tparam symbol symbol a value already passed to @{defsubr}
 -- @tparam zile.Cons arglist arguments for `name`
 -- @return the result of calling `name` with `arglist`, or else `nil`
 local function call_command (symbol, arglist)
@@ -386,17 +386,17 @@ end
 
 --- @export
 return {
-  Defun               = Defun,
-  Defvar              = Defvar,
-  call_command        = call_command,
-  eval_expression     = eval_expression,
-  eval_file           = eval_file,
-  eval_string         = eval_string,
-  execute_function    = execute_function,
-  fetch_variable      = fetch_variable,
-  get_variable        = get_variable,
-  intern_soft         = intern_soft,
-  mapatoms            = mapatoms,
-  set_variable        = set_variable,
+  call_command     = call_command,
+  defsubr          = defsubr,
+  defvar           = defvar,
+  eval_expression  = eval_expression,
+  eval_file        = eval_file,
+  eval_string      = eval_string,
+  execute_function = execute_function,
+  fetch_variable   = fetch_variable,
+  get_variable     = get_variable,
+  intern_soft      = intern_soft,
+  mapatoms         = mapatoms,
+  set_variable     = set_variable,
   set_variable_buffer_local = set_variable_buffer_local,
 }

@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun find-file (string)
+(defsubr find-file (string)
   "Edit file FILENAME.
 Switch to a buffer visiting file FILENAME,
 creating one if none already exists."
@@ -39,7 +39,7 @@ creating one if none already exists."
     return ok"))
 
 
-(defun find-file-read-only (string)
+(defsubr find-file-read-only (string)
   "Edit file FILENAME but don't allow changes.
 Like \\[find-file] but marks buffer as read-only.
 Use \\[toggle-read-only] to permit editing."
@@ -51,7 +51,7 @@ Use \\[toggle-read-only] to permit editing."
     end"))
 
 
-(defun find-alternate-file ()
+(defsubr find-alternate-file ()
   "Find the file specified by the user, select its buffer, kill previous buffer.
 If the current buffer now contains an empty file that you just visited
 (presumably by mistake), use this command to visit the file you really want."
@@ -78,7 +78,7 @@ If the current buffer now contains an empty file that you just visited
     return ok"))
 
 
-(defun insert-file (string)
+(defsubr insert-file (string)
   "Insert contents of file FILENAME into buffer after point.
 Set mark after the inserted text."
   (interactive)
@@ -125,7 +125,7 @@ directory.
 This value is used only when `make-backup-files' is @samp{t}.")
 
 
-(defun save-buffer ()
+(defsubr save-buffer ()
   "Save current buffer in visited file if modified.  By default, makes the
 previous version into a backup file if this is the first save."
   (interactive)
@@ -133,7 +133,7 @@ previous version into a backup file if this is the first save."
     "return save_buffer (cur_bp)"))
 
 
-(defun write-file (string)
+(defsubr write-file (string)
   "Write current buffer into file FILENAME.
 This makes the buffer visit that file, and marks it as not modified.
 
@@ -145,14 +145,14 @@ Interactively, confirmation is required unless you supply a prefix argument."
                          filename, 'Write file: ')"))
 
 
-(defun save-some-buffers ()
+(defsubr save-some-buffers ()
   "Save some modified file-visiting buffers.  Asks user about each one."
   (interactive)
   (lambda ()
     "return save_some_buffers ()"))
 
 
-(defun save-buffers-kill-emacs ()
+(defsubr save-buffers-kill-emacs ()
   "Offer to save each buffer, then kill this process."
   (interactive)
   (lambda ()
@@ -177,7 +177,7 @@ Interactively, confirmation is required unless you supply a prefix argument."
     thisflag.quit = true"))
 
 
-(defun cd (string)
+(defsubr cd (string)
   "Make DIR become the current buffer's default directory."
   (interactive)
   (lambda (dir)
@@ -202,7 +202,7 @@ Interactively, confirmation is required unless you supply a prefix argument."
     end"))
 
 
-(defun insert-buffer (string)
+(defsubr insert-buffer (string)
   "Insert after point the contents of BUFFER.
 Puts mark after the inserted text."
   (interactive)

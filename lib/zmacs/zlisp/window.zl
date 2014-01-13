@@ -29,7 +29,7 @@ The variable `highlight-nonselected-windows' controls whether to
 highlight all windows or just the selected window.")
 
 
-(defun delete-window ()
+(defsubr delete-window ()
   "Remove the current window from the screen."
   (interactive)
   (lambda ()
@@ -41,7 +41,7 @@ highlight all windows or just the selected window.")
     delete_window (cur_wp)"))
 
 
-(defun enlarge-window ()
+(defsubr enlarge-window ()
   "Make current window one line bigger."
   (interactive)
   (lambda ()
@@ -74,7 +74,7 @@ highlight all windows or just the selected window.")
     end"))
 
 
-(defun shrink-window ()
+(defsubr shrink-window ()
   "Make current window one line smaller."
   (interactive)
   (lambda ()
@@ -92,7 +92,7 @@ highlight all windows or just the selected window.")
     end"))
 
 
-(defun delete-other-windows ()
+(defsubr delete-other-windows ()
   "Make the selected window fill the screen."
   (interactive)
   (lambda ()
@@ -103,7 +103,7 @@ highlight all windows or just the selected window.")
     end"))
 
 
-(defun other-window ()
+(defsubr other-window ()
   "Select the first different window on the screen.
 All windows are arranged in a cyclic order.
 This command selects the window one step away in that order."
@@ -112,34 +112,34 @@ This command selects the window one step away in that order."
     "set_current_window (window_next (cur_wp))"))
 
 
-(defun split-window ()
+(defsubr split-window ()
   "Split current window into two windows, one above the other.
 Both windows display the same buffer now current."
   (interactive)
   "split_window")
 
 
-(defun recenter ()
+(defsubr recenter ()
   "Center point in selected window and redisplay frame."
   (interactive)
   "interactive_recenter")
 
 
-(defun screen-height ()
+(defsubr screen-height ()
   "The total number of lines available for display on the screen."
   (interactive)
   (lambda ()
     "minibuf_echo (tostring (term_height ()))"))
 
 
-(defun screen-width ()
+(defsubr screen-width ()
   "The total number of lines available for display on the screen."
   (interactive)
   (lambda ()
     "minibuf_echo (tostring (term_width ()))"))
 
 
-(defun set-screen-height (number)
+(defsubr set-screen-height (number)
   "Set the usable number of LINES for display on the screen."
   (interactive)
   (lambda (lines)
@@ -151,7 +151,7 @@ Both windows display the same buffer now current."
     return ok"))
 
 
-(defun set-screen-size (number number)
+(defsubr set-screen-size (number number)
   "Set the number of usable LINES and COLUMNS for display on the screen."
   (interactive)
   (lambda (lines columns)
@@ -164,7 +164,7 @@ Both windows display the same buffer now current."
     return ok"))
 
 
-(defun set-screen-width (number)
+(defsubr set-screen-width (number)
   "Set the usable number of COLUMNS for display on the screen."
   (interactive)
   (lambda (columns)

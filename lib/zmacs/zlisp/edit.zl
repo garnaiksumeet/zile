@@ -22,7 +22,7 @@
   "Non-nil means ring the terminal bell on any error.")
 
 
-(defun set-fill-column (number)
+(defsubr set-fill-column (number)
   "Set `fill-column' to specified argument.
 Use C-u followed by a number to specify a column.
 Just C-u as argument means to use the current column."
@@ -52,7 +52,7 @@ Just C-u as argument means to use the current column."
     return true"))
 
 
-(defun quoted-insert ()
+(defsubr quoted-insert ()
   "Read next input character and insert it.
 This is useful for inserting control characters."
   (interactive)
@@ -62,7 +62,7 @@ This is useful for inserting control characters."
     minibuf_clear ()"))
 
 
-(defun fill-paragraph ()
+(defsubr fill-paragraph ()
   "Fill paragraph at or after point.
 
 The variable `fill-column' controls the width for filling."
@@ -99,7 +99,7 @@ The variable `fill-column' controls the width for filling."
     undo_end_sequence ()"))
 
 
-(defun shell-command (string string)
+(defsubr shell-command (string string)
   "Execute string COMMAND in inferior shell; display output, if any.
 With prefix argument, insert the COMMAND's output at point.
 
@@ -135,7 +135,7 @@ inserted after point (leaving mark after it)."
 
 -- The `start' and `finish' arguments are fake, hence their string type,
 -- so they can be ignored.
-(defun shell-command-on-region (string string string boolean boolean)
+(defsubr shell-command-on-region (string string string boolean boolean)
   "Execute string COMMAND in inferior shell with region as input.
 Normally display output (if any) in temp buffer `*Shell Command Output*'
 Prefix arg means replace the region with it.  Return the exit code of
@@ -174,14 +174,14 @@ around it."
     return true"))
 
 
-(defun delete-region ()
+(defsubr delete-region ()
   "Delete the text between point and mark."
   (interactive)
   (lambda ()
     "return delete_region (calculate_the_region ())"))
 
 
-(defun delete-blank-lines ()
+(defsubr delete-blank-lines ()
   "On blank line, delete all surrounding blank lines, leaving just one.
 On isolated blank line, delete that one.
 On nonblank line, delete any immediately following blank lines."
@@ -242,21 +242,21 @@ On nonblank line, delete any immediately following blank lines."
     deactivate_mark ()"))
 
 
-(defun downcase-word (number)
+(defsubr downcase-word (number)
   "Convert following word (or ARG words) to lower case, moving over."
   (interactive)
   (lambda (arg)
     "return execute_with_uniarg (true, arg, function () return setcase_word ('lower') end)"))
 
 
-(defun upcase-word (number)
+(defsubr upcase-word (number)
   "Convert following word (or ARG words) to upper case, moving over."
   (interactive)
   (lambda (arg)
     "return execute_with_uniarg (true, arg, function () return setcase_word ('upper') end)"))
 
 
-(defun capitalize-word (number)
+(defsubr capitalize-word (number)
   "Capitalize the following word (or ARG words), moving over.
 This gives the word(s) a first character in upper case
 and the rest lower case."
@@ -265,21 +265,21 @@ and the rest lower case."
     "return execute_with_uniarg (true, arg, function () return setcase_word ('capitalized') end)"))
 
 
-(defun upcase-region ()
+(defsubr upcase-region ()
   "Convert the region to upper case."
   (interactive)
   (lambda ()
     "return setcase_region (string.upper)"))
 
 
-(defun downcase-region ()
+(defsubr downcase-region ()
   "Convert the region to lower case."
   (interactive)
   (lambda ()
     "return setcase_region (string.lower)"))
 
 
-(defun transpose-chars (number)
+(defsubr transpose-chars (number)
   "Interchange characters around point, moving forward one character.
 With prefix arg ARG, effect is to take character before point
 and drag it forward past ARG other characters (backward if ARG negative).
@@ -289,7 +289,7 @@ If no argument and at end of line, the previous two chars are exchanged."
     "return transpose (arg or 1, move_char)"))
 
 
-(defun transpose-words (number)
+(defsubr transpose-words (number)
   "Interchange words around point, leaving point at end of them.
 With prefix arg ARG, effect is to take word before or around point
 and drag it forward past ARG other words (backward if ARG negative).
@@ -300,14 +300,14 @@ are interchanged."
     "return transpose (arg or 1, move_word)"))
 
 
-(defun transpose-sexps (number)
+(defsubr transpose-sexps (number)
   "Like \\[transpose-words] but applies to sexps."
   (interactive)
   (lambda (n)
     "return transpose (n or 1, move_sexp)"))
 
 
-(defun transpose-lines (number)
+(defsubr transpose-lines (number)
   "Exchange current line and previous line, leaving point after both.
 With argument ARG, takes previous line and moves it past ARG lines.
 With argument 0, interchanges line point is in with line mark is in."

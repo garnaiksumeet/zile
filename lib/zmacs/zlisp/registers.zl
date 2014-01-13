@@ -28,7 +28,7 @@
 (localfun register_store (reg data)
   "regs[term_bytetokey (reg)] = data")
 
-(defun copy-to-register (number)
+(defsubr copy-to-register (number)
   "Copy region into register REGISTER."
   (interactive)
   (lambda (register)
@@ -60,7 +60,7 @@
   "insert_estr (regs[term_bytetokey (regnum)])
   return true")
 
-(defun insert-register (number)
+(defsubr insert-register (number)
   "Insert contents of REGISTER. (REGISTER is a character.)
 Puts point before and mark after the inserted text."
   (interactive)
@@ -113,7 +113,7 @@ Puts point before and mark after the inserted text."
   end")
 
 
-(defun list-registers ()
+(defsubr list-registers ()
   "Display a list of nonempty registers saying briefly what they contain."
   (interactive)
   (lambda ()

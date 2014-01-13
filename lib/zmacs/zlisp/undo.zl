@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun undo ()
+(defsubr undo ()
   "Undo some previous changes.
 Repeat this command to undo more changes."
   (interactive)
@@ -44,7 +44,7 @@ Repeat this command to undo more changes."
     command.attach_label ':undo'"))
 
 
-(defun revert-buffer ()
+(defsubr revert-buffer ()
   "Undo until buffer is unmodified."
   (interactive)
   (lambda ()

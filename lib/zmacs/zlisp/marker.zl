@@ -18,7 +18,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defun exchange-point-and-mark ()
+(defsubr exchange-point-and-mark ()
   "Put the mark where point is now, and point where the mark is now."
   (interactive)
   (lambda ()
@@ -33,14 +33,14 @@
     thisflag.need_resync = true"))
 
 
-(defun set-mark ()
+(defsubr set-mark ()
   "Set this buffer's mark to point."
   (lambda ()
     "set_mark ()
     activate_mark ()"))
 
 
-(defun set-mark-command ()
+(defsubr set-mark-command ()
   "Set the mark where point is."
   (interactive)
   (lambda ()
@@ -57,7 +57,7 @@
   return ret")
 
 
-(defun mark-word (number)
+(defsubr mark-word (number)
   "Set mark ARG words away from point.
 The place mark goes is the same place \\[forward-word] would
 move to with the same argument."
@@ -66,7 +66,7 @@ move to with the same argument."
     "return mark (arg, 'forward-word')"))
 
 
-(defun mark-sexp (number)
+(defsubr mark-sexp (number)
   "Set mark ARG sexps from point.
 The place mark goes is the same place \\[forward-sexp] would
 move to with the same argument."
@@ -75,7 +75,7 @@ move to with the same argument."
     "return mark (arg, 'forward-sexp')"))
 
 
-(defun mark-paragraph ()
+(defsubr mark-paragraph ()
   "Put point at beginning of this paragraph, mark at end.
 The paragraph marked is the one that contains point or follows point."
   (interactive)
@@ -93,7 +93,7 @@ The paragraph marked is the one that contains point or follows point."
     command.attach_label ':mark-paragraph'"))
 
 
-(defun mark-whole-buffer ()
+(defsubr mark-whole-buffer ()
   "Put point at beginning and mark at end of buffer."
   (interactive)
   (lambda ()

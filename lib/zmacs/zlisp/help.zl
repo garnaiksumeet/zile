@@ -52,7 +52,7 @@
      insert_string (expand_kbd_refs (command['function-documentation']))")
 
 
-(defun describe-function (symbol)
+(defsubr describe-function (symbol)
   "Display the full documentation of FUNCTION (a symbol)."
   (interactive)
   (lambda (symbol)
@@ -80,7 +80,7 @@
     expand_kbd_refs (command['function-documentation'])))")
 
 
-(defun describe-key (string)
+(defsubr describe-key (string)
   "Display documentation of the function invoked by KEY."
   (interactive)
   (lambda (key)
@@ -129,7 +129,7 @@
     expand_kbd_refs (symbol['variable-documentation']) .. '\n')")
 
 
-(defun describe-variable (symbol)
+(defsubr describe-variable (symbol)
   "Display the full documentation of VARIABLE (a symbol)."
   (interactive)
   (lambda (symbol)
@@ -161,14 +161,14 @@
   goto_offset (1)")
 
 
-(defun describe-copying ()
+(defsubr describe-copying ()
   "Display info on how you may redistribute copies of GNU Zmacs."
   (interactive)
   (lambda ()
     "find_or_create_buffer_from_module ('COPYING')"))
 
 
-(defun describe-no-warranty ()
+(defsubr describe-no-warranty ()
   "Display info on all the kinds of warranty Zmacs does NOT have."
   (interactive)
   (lambda ()
@@ -177,14 +177,14 @@
     beginning_of_line ()"))
 
 
-(defun view-emacs-FAQ ()
+(defsubr view-emacs-FAQ ()
   "Display the Zmacs Frequently Asked Questions (FAQ) file."
   (interactive)
   (lambda ()
     "find_or_create_buffer_from_module ('FAQ')"))
 
 
-(defun view-emacs-news ()
+(defsubr view-emacs-news ()
   "Display info on recent changes to Zmacs."
   (interactive)
   (lambda ()
