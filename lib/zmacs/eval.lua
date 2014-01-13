@@ -166,17 +166,10 @@ function marshaller (symbol, arglist)
 end
 
 
+
 --[[ ==================== ]]--
 --[[ Variable Management. ]]--
 --[[ ==================== ]]--
-
-
--- FIXME: changing the stringification function when setting the
--- variable slot on a _lisp-2_ symbol will cause problems later in code
--- that assumes stringification will return the name because of the
--- value in the function slot.  Find a way to always use the same
--- stringification metamethod on symbols, and use `symbol.name` instead
--- of `tostring (symbol)` whenever the name is needed.
 
 
 --- Return a string representation of the value of a variable.

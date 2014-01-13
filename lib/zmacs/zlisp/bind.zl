@@ -81,16 +81,17 @@ sequence."
     end
 
     if not command then
-      command = minibuf_read_function_name (string.format ('Set key %s to command: ', key))
+      local name = minibuf_read_function_name (
+                     string.format ('Set key %s to command: ', key))
+      command = lisp.intern_soft (name)
       if not command then return false end
     end
-    local func = lisp.intern_soft (command)
 
-    if not func then -- Possible if called non-interactively
-      return minibuf_error (string.format ([[No such function `%s']], command))
+    if not command then -- Possible if called non-interactively
+      return minibuf_error (string.format ([[No such function `%s']], command.name))
     end
 
-    root_bindings[keys] = func
+    root_bindings[keys] = command
     return true"))
 
 

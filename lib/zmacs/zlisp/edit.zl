@@ -121,7 +121,7 @@ inserted after point (leaving mark after it)."
     "if not output_buffer then
       output_buffer = lastflag.set_uniarg
       -- Undo mangled interactive args when called from \C-u\M-!cmd\r.
-      if output_buffer and command == tostring(current_prefix_arg) then command = nil end
+      if output_buffer and command == current_prefix_arg then command = nil end
     end
     if not command then
       command = minibuf_read_shell_command ()

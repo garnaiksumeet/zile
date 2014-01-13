@@ -87,10 +87,9 @@ define ("make-variable-buffer-local",
 )
 
 
--- Return true if VALUE is a valid parameter name.
-local function isname (value)
-  value = type (value) == "string" and value or tostring (value)
-  return value == "..." or value:match "^[%w_]" ~= nil
+-- Return true if SYMBOL is a valid parameter name.
+local function isname (symbol)
+  return symbol.name == "..." or symbol.name:match "^[%w_]" ~= nil
 end
 
 
@@ -175,7 +174,8 @@ define ("localfun",
     local impl = arglist:nth (3)
 
     if params and params.car then
-      params = params:concat (", ")
+      params = params:mapconcat (
+                 function (symbol) return symbol.name end, ", ")
     else
       params = ""
     end

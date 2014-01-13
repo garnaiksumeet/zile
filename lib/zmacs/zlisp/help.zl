@@ -38,12 +38,12 @@
 (localfun write_function_description (command)
   "insert_string (string.format (
      '%s is %s %s function in ' .. [[`%s']].. '.\n\n',
-     tostring (command),
+     command.name,
      command['interactive-form'] and 'an interactive' or 'a',
      command['source-file'] and 'compiled Lisp' or 'built-in',
      command['source-file'] or 'Lua source code'))
 
-     local bindings = bind.where_is (tostring (command))
+     local bindings = bind.where_is (command.command)
      if bindings and #bindings > 0 then
        insert_string (string.format (
          'It is bound to %s.\n\n', table.concat (bindings, ', ')))
@@ -52,19 +52,19 @@
      insert_string (expand_kbd_refs (command['function-documentation']))")
 
 
-(defun describe-function (string)
+(defun describe-function (symbol)
   "Display the full documentation of FUNCTION (a symbol)."
   (interactive)
-  (lambda (name)
-    "if not name then
-      name = minibuf_read_function_name ('Describe function: ')
-      if not name then return false end
+  (lambda (symbol)
+    "if not symbol then
+      local name = minibuf_read_function_name ('Describe function: ')
+      symbol = lisp.intern_soft (name)
+      if not symbol then return false end
     end
 
-    local func = lisp.intern_soft (name)
-    if not func or not func['function-documentation'] then return false end
+    if not symbol or not symbol['function-documentation'] then return false end
 
-    write_temp_buffer ('*Help*', true, write_function_description, func)
+    write_temp_buffer ('*Help*', true, write_function_description, symbol)
     return true"))
 
 
@@ -73,7 +73,7 @@
     '%s runs the command %s, which is %s %s\n' ..
     'function in ' .. [[`%s']] .. '.\n\n%s',
     binding,
-    tostring (command),
+    command.name,
     command['interactive-form'] and 'an interactive' or 'a',
     command['source-file'] and 'compiled Lisp' or 'built-in',
     command['source-file'] or 'Lua source code',
@@ -103,7 +103,7 @@
       end
     end
 
-    minibuf_echo (string.format ([[%s runs the command `%s']], binding, tostring (command)))
+    minibuf_echo (string.format ([[%s runs the command `%s']], binding, command.name))
     if not command['function-documentation'] then return false end
 
     write_temp_buffer ('*Help*', true, write_key_description, command, binding)
@@ -114,14 +114,14 @@
   "insert_string (string.format (
     '%s is a variable defined in ' .. [[`%s']] .. '.\n' ..
     'Its value is %s\n',
-    tostring (symbol.name),
+    symbol.name,
     symbol['source-file'] or 'Lua source code',
     tostring (symbol)))
   if symbol['buffer-local-variable'] then
     local original = lisp.intern_soft (symbol.name)
     if original.value ~= symbol.value then
       insert_string (string.format ('Original value was %s\n',
-        lisp.intern_soft (symbol.name).value))
+        original.value))
     end
     insert_string '\n  Automatically becomes buffer-local when set.\n'
   end

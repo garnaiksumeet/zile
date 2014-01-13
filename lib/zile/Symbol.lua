@@ -89,6 +89,18 @@ local obarray = {}
 -- @tfield[opt={}] table plist property list
 
 
+--- Return a string representation of the value of a variable.
+-- @tparam symbol symbol a symbol
+-- @treturn string string representation, suitable for display
+local function display_variable_value (symbol)
+  local value = symbol.value
+  if type (value) == "string" then
+    return '"' .. value:gsub ('"', '\\"') .. '"'
+  end
+  return tostring (value)
+end
+
+
 --- Make a new, uninterned, symbol.
 -- @string name symbol name
 -- @param[opt=nil] value value to store in new symbol
@@ -109,7 +121,7 @@ local function make_symbol (name, value, plist)
 		   end
                    return rawset (self.plist, propname, value)
 		 end,
-    __tostring = function (self) return self.name end,
+    __tostring = display_variable_value,
   })
 end
 
