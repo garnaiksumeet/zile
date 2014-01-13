@@ -96,20 +96,6 @@ local function make_symbol (name, value, plist)
 end
 
 
---- Make a new symbol and intern to `symtab`.
--- Overwrites any previous definition of symbol `name` in `symtab`.
--- @string name symbol name
--- @param[opt=nil] value value to store in new symbol
--- @tparam[opt=obarray] table symtab symbol table into which new symbol is
---   interned
--- @treturn zile.Symbol newly initialised symbol.
-local function define (name, value, symtab)
-  symtab = symtab or obarray
-  symtab[name] = make_symbol (name, value)
-  return symtab[name]
-end
-
-
 --- Intern a symbol.
 -- @string name symbol name
 -- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
@@ -148,7 +134,6 @@ end
 
 --- @export
 local methods = {
-  define      = define,
   intern      = intern,
   intern_soft = intern_soft,
   make_symbol = make_symbol,

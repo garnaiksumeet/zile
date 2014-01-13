@@ -26,6 +26,27 @@ local zz   = require "zile.zlisp"
 local prog = require "zile.version"
 
 
+
+--[[ ======================== ]]--
+--[[ Symbol Table Management. ]]--
+--[[ ======================== ]]--
+
+
+--- Make a new symbol and intern to `symtab`.
+-- Overwrites any previous definition of symbol `name` in `symtab`.
+-- @string name symbol name
+-- @param[opt=nil] value value to store in new symbol
+-- @tparam[opt=obarray] table symtab symbol table into which new symbol is
+--   interned
+-- @treturn zile.Symbol newly initialised symbol.
+local function define (name, value, symtab)
+  local symbol = zz.intern (name, symtab)
+  symbol.value = value
+  return symbol
+end
+
+
+
 --[[ ======================= ]]--
 --[[ ZLisp Command Handlers. ]]--
 --[[ ======================= ]]--
@@ -39,7 +60,7 @@ local function writef (...) io.write (string.format (...)) end
 -- (defvar NAME INITVALUE [DOCSTRING])
 -- A special form for describing Zmacs variables.  Each time it is called
 -- by Zlisp, output a lua variable declaration for loading into Zmacs.
-zz.define ("defvar",
+define ("defvar",
   function (arglist)
     local initvalue = arglist:nth (2)
 
@@ -59,7 +80,7 @@ zz.define ("defvar",
 -- (make-variable-buffer-local NAME)
 -- Declare that NAME will maintain separate values for each buffer in
 -- which it is set.
-zz.define ("make-variable-buffer-local",
+define ("make-variable-buffer-local",
   function (arglist)
     writef ('lisp.set_variable_buffer_local ("%s", true)\n', arglist:nth (1).name)
   end
@@ -76,7 +97,7 @@ end
 -- (defun NAME (PARAM...) DOCSTRING [(interactive)] (lambda "IMPLEMENTATION"))
 -- A special form for describing Zmacs commands.  Each time it is called
 -- by Zlisp, output a lua command declaration for binding into Zmacs.
-zz.define ("defun",
+define ("defun",
   function (arglist)
     local name        = arglist:nth (1).name
     local typelist    = arglist:nth (2)
@@ -125,7 +146,7 @@ zz.define ("defun",
 )
 
 
-zz.define ("lambda",
+define ("lambda",
   function (arglist)
     local params = arglist:nth (1)
 
@@ -148,7 +169,7 @@ zz.define ("lambda",
 
 
 -- (localfun NAME (PARAM...) [DOCSTRING] "IMPLEMENTATION")
-zz.define ("localfun",
+define ("localfun",
   function (arglist)
     local params = arglist:nth (2)
     local impl = arglist:nth (3)
@@ -172,7 +193,7 @@ zz.define ("localfun",
 
 
 -- (localvar NAME [DOCSTRING] "INITIAL-VALUE")
-zz.define ("localvar",
+define ("localvar",
   function (arglist)
     local init = arglist:nth (2)
 
