@@ -132,7 +132,7 @@ local function create_backup_filename (filename, backupdir)
     local buf = backupdir
     if buf[-1] ~= '/' then
       buf = buf .. '/'
-      filename = gsub (filename, "/", "!")
+      filename = string.gsub (filename, "/", "!")
 
       if not canonicalize_filename (buf) then
         buf = nil
