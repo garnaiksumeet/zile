@@ -122,17 +122,15 @@ local defsubr, marshaller -- forward declarations
 --- Define a command in the execution environment for the evaluator.
 -- @string name command name
 -- @tparam table argtypes a list of type strings that arguments must match
--- @string source name of the file `name` was compiled from, or nil
 -- @string doc docstring
 -- @bool interactive `true` if this command can be called interactively
 -- @func func function to call after marshalling arguments
 -- @treturn symbol newly interned symbol
-function defsubr (name, argtypes, source, doc, interactive, func)
+function defsubr (name, argtypes, doc, interactive, func)
   local symbol = intern (name)
   symbol.name  = name	-- unmangled name
   rawset (symbol, "func", func)
   symbol["marshall-argtypes"]      = argtypes
-  symbol["source-file"]            = source
   symbol["function-documentation"] = doc:chomp ()
   symbol["interactive-form"]       = interactive
   getmetatable (symbol).__call = marshaller
@@ -193,14 +191,12 @@ end
 -- Store the value and docstring for a variable for later retrieval.
 -- @string name variable name
 -- @param value value to store in variable `name`
--- @string source name of the file `name` was compiled from, or nil
 -- @string doc variable's docstring
 -- @treturn symbol newly interned symbol
-local function defvar (name, value, source, doc)
+local function defvar (name, value, doc)
   local symbol = intern (name)
   symbol.name  = name	-- unmangled name
   symbol.value = value
-  symbol["source-file"]            = source
   symbol["variable-documentation"] = (doc or ""):chomp ()
   getmetatable (symbol).__tostring = display_variable_value
   return symbol
