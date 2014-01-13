@@ -19,34 +19,16 @@
  ZLisp Symbol.
 
  A symbol has a name, a value and a property list. It is usually stored
- in the global symbol table `obarray`, in which it is _interned_.  It's
- not necessary to intern a symbol using it's own name, though it is
- certainly easier to understand what's going on if you do.
+ in the global symbol table `obarray`, and is then considered _interned_.
 
  Symbols can also be interned into some other symbol table, by passing
- a different Lua table reference to the appropropriate parameter of the
+ a different Lua table reference to the appropriate parameter of the
  functions in this module.
 
  Create a new uninterned symbol with:
 
      > Symbol = require "zile.Symbol"
      > sym = Symbol.make_symbol ("answer", 42)
-
- Access the name and value with the dot operator:
-
-     > =sym.name
-     answer
-     > =sym.value
-     42
-
- Symbols also have a property list; an association of property names
- and values.  Use the `[]` operator to access the property list.
-
-     > =sym["prop-name"]
-     nil
-     > sym["prop-name"] = "some value"
-     > =sym["prop-name"]
-     some value
 
  Alternatively, create an interned symbol with:
 
@@ -58,24 +40,60 @@
      > =(bol == Symbol.intern_soft "question")
      true
 
- There is no way to access the contents of the default symbol table,
- except to use the @{mapatoms} function.
-
  @classmod zile.Symbol
 ]]
 
 
---- ZLisp symbols.
--- A mapping of symbol-names to symbol-values.
+
+--- Default symbol table.
+-- A mapping of symbol-names to symbol-values.  _Interned_ symbols are
+-- stored here.
+--
+-- There is no way to access the contents of the default symbol table,
+-- except to use the @{mapatoms} function.
 -- @table obarray
 local obarray = {}
+
+
+------
+-- A symbol.
+--
+-- This is not an actual interface element you can access in this module,
+-- but serves to document the layout of the symbols produced by this
+-- module.
+--
+-- Access the name and value with the dot operator:
+--
+--     > =sym.name
+--     answer
+--     > =sym.value
+--     42
+--     > sym.value = "a string"
+--     > =sym.value
+--     a string
+--
+-- Symbols also have a property list; a mapping of property names to
+-- property to values.  Use the `[]` operator to access the property
+-- list.
+--
+--     > =sym["prop-name"]
+--     nil
+--     > sym["prop-name"] = "some value"
+--     > =sym["prop-name"]
+--     some value
+--
+-- `tostring(symbol)` returns `symbol.name`.
+-- @table symbol
+-- @string name symbol name
+-- @field[opt=nil] value symbol value
+-- @tfield[opt={}] table plist property list
 
 
 --- Make a new, uninterned, symbol.
 -- @string name symbol name
 -- @param[opt=nil] value value to store in new symbol
 -- @tparam[opt={}] table plist property list for new symbol
--- @treturn zile.Symbol newly initialised symbol
+-- @treturn symbol newly initialised symbol
 local function make_symbol (name, value, plist)
   local symbol = {
     name  = name,
@@ -98,9 +116,9 @@ end
 
 --- Intern a symbol.
 -- @string name symbol name
--- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
+-- @tparam[opt=obarray] table symtab a table of @{symbol}s
 --   interned
--- @treturn zile.Symbol interned symbol
+-- @treturn symbol interned symbol
 local function intern (name, symtab)
   symtab = symtab or obarray
   if not symtab[name] then
@@ -112,7 +130,7 @@ end
 
 --- Check whether `name` was previously interned.
 -- @string name possibly interned name
--- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
+-- @tparam[opt=obarray] table symtab a table of @{symbol}s
 -- @return symbol previously interned with `name`, or `nil`
 local function intern_soft (name, symtab)
   return (symtab or obarray)[name]
@@ -122,7 +140,7 @@ end
 --- Call a function on every symbol in `symtab`.
 -- If `func` returns `true`, mapatoms returns immediately.
 -- @func func a function that takes a symbol as its argument
--- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
+-- @tparam[opt=obarray] table symtab a table of @{symbol}s
 -- @return `true` if `func` signalled early exit by returning `true`,
 --   otherwise `nil`
 local function mapatoms (func, symtab)
@@ -145,9 +163,9 @@ return setmetatable (methods, {
   --- Return a new uninterned Symbol initialised from the given arguments.
   -- @function __call
   -- @string name symbol name
-  -- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
+  -- @tparam[opt=obarray] table symtab a table of @{symbol}s
   --   interned
-  -- @treturn zile.Symbol interned symbol
+  -- @treturn symbol interned symbol
   __call = function (_, ...)
     return intern (...)
   end,
