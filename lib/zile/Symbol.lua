@@ -114,6 +114,7 @@ local function make_symbol (name, value, plist)
   }
 
   return setmetatable (symbol, {
+    _type      = "Symbol",
     __index    = symbol.plist,
     __newindex = function (self, propname, value)
 	           if propname == 'name' or propname == 'value' then
@@ -123,6 +124,14 @@ local function make_symbol (name, value, plist)
 		 end,
     __tostring = display_variable_value,
   })
+end
+
+
+--- Is `x` a Symbol object?
+-- @param x a Lua object
+-- @return `true` if `x` is a Symbol object, or else `false`
+local function symbolp (x)
+  return (getmetatable (x) or {})._type == "Symbol"
 end
 
 
@@ -168,6 +177,7 @@ local methods = {
   intern_soft = intern_soft,
   make_symbol = make_symbol,
   mapatoms    = mapatoms,
+  symbolp     = symbolp,
 }
 
 

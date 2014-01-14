@@ -69,6 +69,13 @@ local consp = Cons.consp
 local Symbol = require "zile.Symbol"
 
 
+--- Is `x` a Symbol object?
+-- @function symbolp
+-- @param x a Lua object
+-- @return `true` if `x` is a Symbol object, or else `false`
+local symbolp = Symbol.symbolp
+
+
 --- Intern a symbol.
 -- @function intern
 -- @string name symbol name
@@ -323,4 +330,5 @@ return {
   intern_soft  = intern_soft,
   mapatoms     = mapatoms,
   parse        = parse,
+  symbolp      = symbolp,
 }
