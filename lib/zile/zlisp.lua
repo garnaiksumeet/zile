@@ -42,8 +42,8 @@ local Set    = require "zile.Set"
 local Symbol = require "zile.Symbol"
 local io     = require "std.io_ext"
 
-local define, intern, intern_soft, mapatoms =
-      Symbol.define, Symbol.intern, Symbol.intern_soft, Symbol.mapatoms
+local intern, intern_soft, mapatoms =
+      Symbol.intern, Symbol.intern_soft, Symbol.mapatoms
 
 
 
@@ -278,14 +278,6 @@ end
 
 
 ------
--- Define a new symbol, or update slots in an existing symbol.
--- @function define
--- @string name the symbol name
--- @tparam zile.Symbol symbol the value to store in symbol `name`
--- @return updated `symbol`
-
-
-------
 -- Intern a symbol.
 -- @function intern
 -- @string name symbol name
@@ -317,7 +309,6 @@ return {
   Cons         = Cons,
   Symbol       = Symbol,
   call_command = call_command,
-  define       = define,
   eval_file    = eval_file,
   eval_string  = eval_string,
   intern       = intern,
