@@ -37,13 +37,56 @@
  @module zile.zlisp
 ]]
 
-local Cons   = require "zile.Cons"
 local Set    = require "zile.Set"
-local Symbol = require "zile.Symbol"
 local io     = require "std.io_ext"
 
-local intern, intern_soft, mapatoms =
-      Symbol.intern, Symbol.intern_soft, Symbol.mapatoms
+
+--[[ ======== ]]--
+--[[ Imports. ]]--
+--[[ ======== ]]--
+
+
+--- Return a new Cons cell with supplied car and cdr.
+-- @function Cons
+-- @param car first element
+-- @param cdr last element
+-- @treturn zile.Cons a new cell containing those elements
+local Cons   = require "zile.Cons"
+
+
+--- Return a new interned Symbol initialised from the given arguments.
+-- @function Symbol
+-- @string name name of the symbol
+-- @param value the value of the symbol
+-- @treturn zile.Symbol a new symbol
+local Symbol = require "zile.Symbol"
+
+
+--- Intern a symbol.
+-- @function intern
+-- @string name symbol name
+-- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
+--   interned
+-- @treturn zile.Symbol interned symbol
+local intern = Symbol.intern
+
+
+--- Check whether `name` was previously interned.
+-- @function intern_soft
+-- @string name possibly interned name
+-- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
+-- @return symbol previously interned with `name`, or `nil`
+local intern_soft = Symbol.intern_soft
+
+
+--- Call a function on every symbol in `symtab`.
+-- If `func` returns `true`, mapatoms returns immediately.
+-- @function mapatoms
+-- @func func a function that takes a symbol as its argument
+-- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
+-- @return `true` if `func` signalled early exit by returning `true`,
+--   otherwise `nil`
+local mapatoms = Symbol.mapatoms
 
 
 
@@ -259,49 +302,6 @@ local function eval_file (file)
 
   return s, errmsg
 end
-
-
-------
--- Return a new Cons cell with supplied car and cdr.
--- @function Cons
--- @param car first element
--- @param cdr last element
--- @treturn zile.Cons a new cell containing those elements
-
-
-------
--- Return a new interned Symbol initialised from the given arguments.
--- @function Symbol
--- @string name name of the symbol
--- @param value the value of the symbol
--- @treturn zile.Symbol a new symbol
-
-
-------
--- Intern a symbol.
--- @function intern
--- @string name symbol name
--- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
---   interned
--- @treturn zile.Symbol interned symbol
-
-
-------
--- Check whether `name` was previously interned.
--- @function intern_soft
--- @string name possibly interned name
--- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
--- @return symbol previously interned with `name`, or `nil`
-
-
-------
--- Call a function on every symbol in `symtab`.
--- If `func` returns `true`, mapatoms returns immediately.
--- @function mapatoms
--- @func func a function that takes a symbol as its argument
--- @tparam[opt=obarray] table symtab a table of @{zile.Symbol}s
--- @return `true` if `func` signalled early exit by returning `true`,
---   otherwise `nil`
 
 
 --- @export
