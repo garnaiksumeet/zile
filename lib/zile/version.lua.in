@@ -31,7 +31,7 @@ M.program = M.Name .. " (GNU " .. M.PACKAGE_NAME .. ")"
 M.version = M.program .. " " .. M.VERSION
 
 -- Copyright messages.
-M.COPYRIGHT_STRING  = "Copyright (C) 2013 Free Software Foundation, Inc."
+M.COPYRIGHT_STRING  = "Copyright (C) 2014 Free Software Foundation, Inc."
 M.COPYRIGHT_NOTICE  = "GNU " .. M.Name .. " comes with ABSOLUTELY NO WARRANTY.\n" ..
   "You may redistribute copies of " .. M.Name .. "\n" ..
   "under the terms of the GNU General Public License.\n" ..
