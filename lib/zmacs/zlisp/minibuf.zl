@@ -29,4 +29,4 @@ the buffer when it becomes large.")
 
 In batch mode, the message is printed to the standard error stream,
 followed by a newline."
-   "minibuf_echo (msg)")
+   "minibuf_echo (tostring (msg))")
