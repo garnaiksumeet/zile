@@ -63,6 +63,10 @@ GNU Zile NEWS                                    -*- outline -*-
     number of retained messages is limited according to new variable,
     `message-log-max`.  \C-h v message-log-max RET for details.
 
+*** Zlisp
+
+  - Support for `point` and `mark`.  \C-h f ... RET for details.
+
 *** Zz
 
   - A new editor, currently heavily based on Zmacs, but with the zlisp

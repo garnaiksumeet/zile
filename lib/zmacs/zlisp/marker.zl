@@ -18,6 +18,12 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+(defsubr mark ()
+  "Return this buffer's mark value as an integer, or nil if never set."
+    "if not cur_bp.mark then return nil end
+    return cur_bp.mark.o")
+
+
 (defsubr exchange-point-and-mark ()
   "Put the mark where point is now, and point where the mark is now."
   (interactive)

@@ -18,6 +18,12 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+(defsubr point ()
+  "Return value of point, as an integer.
+Beginning of buffer is position (point-min)."
+    "return get_buffer_pt (cur_bp)")
+
+
 (defsubr kill-buffer (&optional buffer)
   "Kill buffer BUFFER.
 With a nil argument, kill the current buffer."
