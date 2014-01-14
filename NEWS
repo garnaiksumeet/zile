@@ -69,7 +69,12 @@ GNU Zile NEWS                                    -*- outline -*-
     example, calling functions with arguments that are themselves
     function calls or variables works as expected.
 
-  - Support for `point` and `mark`.  \C-h f ... RET for details.
+  - `copy-region-as-kill` understands it's parameters now, and copies
+    the described region correctly.
+
+  - New functions: `buffer-size`, `mark`, `point`, `point-max`,
+    `point-min`.
+    \C-h f ... RET for details.
 
 *** Zz
 

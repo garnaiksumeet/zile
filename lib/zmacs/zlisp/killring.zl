@@ -99,10 +99,15 @@ text killed last time to make one entry in the kill ring."
     return false")
 
 
-(defsubr copy-region-as-kill ()
+(defsubr copy-region-as-kill (start finish)
   "Save the region as if killed, but don't kill it."
   (interactive)
-    "local rp = calculate_the_region ()
+    "local rp
+    if start ~= nil and finish ~= nil then
+      rp = region_new (start, finish)
+    else
+      rp = calculate_the_region ()
+    end
 
     if rp then
       maybe_free_kill_ring ()

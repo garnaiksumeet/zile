@@ -24,6 +24,18 @@ Beginning of buffer is position (point-min)."
     "return get_buffer_pt (cur_bp)")
 
 
+(defsubr point-max ()
+  "Return the maximum permissible value of point in the current buffer.
+This is (1+ (buffer-size))."
+    "return get_buffer_size (cur_bp) + 1")
+
+
+(defsubr point-min ()
+  "Return the minimum permissible value of point in the current buffer.
+This is 1."
+    "return 1")
+
+
 (defsubr kill-buffer (&optional buffer)
   "Kill buffer BUFFER.
 With a nil argument, kill the current buffer."
@@ -171,3 +183,19 @@ After this come the buffer name, its size in characters,
 its major mode, and the visited file name (if any)."
   (interactive)
     "write_temp_buffer ('*Buffer List*', true, write_buffers_list, cur_wp)")
+
+
+(defsubr buffer-size (&optional buffer)
+  "Return the number of characters in the current buffer.
+if BUFFER, return the number of characters in that buffer instead."
+    "local ok = true
+    local bp = cur_bp
+
+    if buffer and buffer ~= '' then
+      bp = get_buffer (buffer)
+      if not bp then
+        return nil
+      end
+    end
+
+    return get_buffer_size (bp)")
