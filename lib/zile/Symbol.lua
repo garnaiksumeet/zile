@@ -45,6 +45,9 @@
 
 
 
+local Set = require "zile.Set"
+
+
 --- Default symbol table.
 -- A mapping of symbol-names to symbol-values.  _Interned_ symbols are
 -- stored here.
@@ -101,29 +104,49 @@ local function display_variable_value (symbol)
 end
 
 
+local keynames = Set { "name", "value" }
+
+--- Shared metatable for Symbol objects.
+-- @table metatable
+-- @string _type used by symbolp to recognise Symbol objects
+-- @func __index fetch unknown keys from object property list
+-- @func __newindex set unknown keys in object property list
+-- @func __tostring show variable value
+-- @local
+local metatable = {
+  _type = "Symbol",
+
+  __index    = function (self, propname)
+                 if rawget (self, "plist") then
+                   return rawget (self.plist, propname)
+                 end
+               end,
+
+  __newindex = function (self, propname, value)
+                 if keynames[propname] then
+                   return rawset (self, propname, value)
+                 end
+                 if not rawget (self, "plist") then
+                   rawset (self, "plist", {})
+		 end
+                 return rawset (self.plist, propname, value)
+               end,
+
+  __tostring = display_variable_value,
+}
+
+
 --- Make a new, uninterned, symbol.
 -- @string name symbol name
 -- @param[opt=nil] value value to store in new symbol
 -- @tparam[opt={}] table plist property list for new symbol
 -- @treturn symbol newly initialised symbol
 local function make_symbol (name, value, plist)
-  local symbol = {
+  return setmetatable ({
     name  = name,
     value = value,
-    plist = plist or {},
-  }
-
-  return setmetatable (symbol, {
-    _type      = "Symbol",
-    __index    = symbol.plist,
-    __newindex = function (self, propname, value)
-	           if propname == 'name' or propname == 'value' then
-		     return rawset (self, propname, value)
-		   end
-                   return rawset (self.plist, propname, value)
-		 end,
-    __tostring = display_variable_value,
-  })
+    plist = plist,
+  }, metatable)
 end
 
 
