@@ -24,10 +24,9 @@ If nil, disable message logging.  If t, log messages but don't truncate
 the buffer when it becomes large.")
 
 
-(defsubr message (string)
+(defsubr message (msg)
   "Display a message at the bottom of the screen.
 
 In batch mode, the message is printed to the standard error stream,
 followed by a newline."
-  (lambda (msg)
-   "minibuf_echo (msg)"))
+   "minibuf_echo (msg)")

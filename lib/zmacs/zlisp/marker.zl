@@ -21,7 +21,6 @@
 (defsubr exchange-point-and-mark ()
   "Put the mark where point is now, and point where the mark is now."
   (interactive)
-  (lambda ()
     "if not cur_bp.mark then
       return minibuf_error ('No mark set in this buffer')
     end
@@ -30,22 +29,20 @@
     goto_offset (cur_bp.mark.o)
     cur_bp.mark.o = tmp
     activate_mark ()
-    thisflag.need_resync = true"))
+    thisflag.need_resync = true")
 
 
 (defsubr set-mark ()
   "Set this buffer's mark to point."
-  (lambda ()
     "set_mark ()
-    activate_mark ()"))
+    activate_mark ()")
 
 
 (defsubr set-mark-command ()
   "Set the mark where point is."
   (interactive)
-  (lambda ()
     "lisp.execute_function ('set-mark')
-    minibuf_echo ('Mark set')"))
+    minibuf_echo ('Mark set')")
 
 
 (localfun mark (uniarg func)
@@ -57,29 +54,26 @@
   return ret")
 
 
-(defsubr mark-word (number)
+(defsubr mark-word (arg)
   "Set mark ARG words away from point.
 The place mark goes is the same place \\[forward-word] would
 move to with the same argument."
   (interactive)
-  (lambda (arg)
-    "return mark (arg, 'forward-word')"))
+    "return mark (arg, 'forward-word')")
 
 
-(defsubr mark-sexp (number)
+(defsubr mark-sexp (arg)
   "Set mark ARG sexps from point.
 The place mark goes is the same place \\[forward-sexp] would
 move to with the same argument."
   (interactive)
-  (lambda (arg)
-    "return mark (arg, 'forward-sexp')"))
+    "return mark (arg, 'forward-sexp')")
 
 
 (defsubr mark-paragraph ()
   "Put point at beginning of this paragraph, mark at end.
 The paragraph marked is the one that contains point or follows point."
   (interactive)
-  (lambda ()
     "if command.was_labelled ':mark-paragraph' then
       lisp.execute_function ('exchange-point-and-mark')
       lisp.execute_function ('forward-paragraph')
@@ -90,13 +84,12 @@ The paragraph marked is the one that contains point or follows point."
       lisp.execute_function ('backward-paragraph')
     end
 
-    command.attach_label ':mark-paragraph'"))
+    command.attach_label ':mark-paragraph'")
 
 
 (defsubr mark-whole-buffer ()
   "Put point at beginning and mark at end of buffer."
   (interactive)
-  (lambda ()
     "goto_offset (get_buffer_size (cur_bp) + 1)
     lisp.execute_function ('set-mark-command')
-    goto_offset (1)"))
+    goto_offset (1)")

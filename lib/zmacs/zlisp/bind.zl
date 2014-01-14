@@ -21,19 +21,17 @@
 (localvar bind "require 'zmacs.bind'")
 
 
-(defsubr self-insert-command ()
+(defsubr self-insert-command (n)
   "Insert the character you type.
 Whichever character you type to run this command is inserted."
   (interactive)
-  (lambda (n)
-    "return execute_with_uniarg (true, current_prefix_arg, self_insert_command)"))
+    "return execute_with_uniarg (true, current_prefix_arg, self_insert_command)")
 
 
-(defsubr where-is ()
+(defsubr where-is (definition)
   "Print message listing key sequences that invoke the command DEFINITION.
 Argument is a command name."
   (interactive)
-  (lambda (definition)
     "definition = definition or minibuf_read_function_name ('Where is command: ')
 
     local bindings = bind.where_is (definition)
@@ -45,7 +43,7 @@ Argument is a command name."
                                      definition, table.concat (bindings, ', ')))
       end
       return true
-    end"))
+    end")
 
 
 (localfun print_binding (key func)
@@ -63,17 +61,15 @@ Argument is a command name."
 (defsubr describe-bindings ()
   "Show a list of all defined keys, and their definitions."
   (interactive)
-  (lambda ()
     "write_temp_buffer ('*Help*', true, write_bindings_list)
-    return true"))
+    return true")
 
 
-(defsubr global-set-key (string string)
+(defsubr global-set-key (key command)
   "Bind a COMMAND to a KEY sequence.
 Read key sequence and function name, and bind the function to the key
 sequence."
   (interactive)
-  (lambda (key command)
     "local keys = prompt_key_sequence ('Set key globally', key)
 
     if key == nil then
@@ -92,14 +88,13 @@ sequence."
     end
 
     root_bindings[keys] = command
-    return true"))
+    return true")
 
 
-(defsubr global-unset-key (string)
+(defsubr global-unset-key (key)
   "Remove global binding of KEY.
 KEY is a string representing a sequence of keystrokes."
   (interactive)
-  (lambda (key)
     "local keys = prompt_key_sequence ('Unset key globally', key)
 
     if key == nil then
@@ -108,7 +103,7 @@ KEY is a string representing a sequence of keystrokes."
 
     root_bindings[keys] = nil
 
-    return true"))
+    return true")
 
 
 (defsubr universal-argument ()
@@ -119,7 +114,6 @@ Digits or minus sign following @kbd{C-u} make up the numeric argument.
 Repeating @kbd{C-u} without digits or minus sign multiplies the argument
 by 4 each time."
   (interactive)
-  (lambda ()
     "local ok = true
 
     -- Need to process key used to invoke universal-argument.
@@ -186,7 +180,7 @@ by 4 each time."
       minibuf_clear ()
     end
 
-    return ok"))
+    return ok")
 
 
 (defsubr keyboard-quit ()
@@ -194,10 +188,10 @@ by 4 each time."
 During execution of Lisp code, this character causes a quit directly.
 At top-level, as an editor command, this simply beeps."
   (interactive)
-  "keyboard_quit")
+  "return keyboard_quit ()")
 
 
 (defsubr suspend-emacs ()
   "Stop and return to superior process."
   (interactive)
-  "suspend")
+  "return suspend ()")

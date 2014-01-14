@@ -18,12 +18,11 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defsubr find-file (string)
+(defsubr find-file (filename)
   "Edit file FILENAME.
 Switch to a buffer visiting file FILENAME,
 creating one if none already exists."
   (interactive)
-  (lambda (filename)
     "local ok = false
 
     if not filename then
@@ -36,19 +35,18 @@ creating one if none already exists."
       ok = find_file (filename)
     end
 
-    return ok"))
+    return ok")
 
 
-(defsubr find-file-read-only (string)
+(defsubr find-file-read-only (filename)
   "Edit file FILENAME but don't allow changes.
 Like \\[find-file] but marks buffer as read-only.
 Use \\[toggle-read-only] to permit editing."
   (interactive)
-  (lambda (filename)
     "local ok = lisp.execute_function ('find-file', filename)
     if ok then
       cur_bp.readonly = true
-    end"))
+    end")
 
 
 (defsubr find-alternate-file ()
@@ -56,7 +54,6 @@ Use \\[toggle-read-only] to permit editing."
 If the current buffer now contains an empty file that you just visited
 (presumably by mistake), use this command to visit the file you really want."
   (interactive)
-  (lambda ()
     "local buf = cur_bp.filename
     local base, ms, as
 
@@ -75,14 +72,13 @@ If the current buffer now contains an empty file that you just visited
       ok = find_file (ms)
     end
 
-    return ok"))
+    return ok")
 
 
-(defsubr insert-file (string)
+(defsubr insert-file (filename)
   "Insert contents of file FILENAME into buffer after point.
 Set mark after the inserted text."
   (interactive)
-  (lambda (filename)
     "local ok = true
 
     if warn_if_readonly_buffer () then
@@ -110,7 +106,7 @@ Set mark after the inserted text."
       end
     end
 
-    return ok"))
+    return ok")
 
 
 (defvar make-backup-files t
@@ -129,33 +125,29 @@ This value is used only when `make-backup-files' is @samp{t}.")
   "Save current buffer in visited file if modified.  By default, makes the
 previous version into a backup file if this is the first save."
   (interactive)
-  (lambda ()
-    "return save_buffer (cur_bp)"))
+    "return save_buffer (cur_bp)")
 
 
-(defsubr write-file (string)
+(defsubr write-file (filename)
   "Write current buffer into file FILENAME.
 This makes the buffer visit that file, and marks it as not modified.
 
 Interactively, confirmation is required unless you supply a prefix argument."
   (interactive)
-  (lambda (filename)
     "return write_buffer (cur_bp, filename == nil,
                          command.is_interactive () and not lastflag.set_uniarg,
-                         filename, 'Write file: ')"))
+                         filename, 'Write file: ')")
 
 
 (defsubr save-some-buffers ()
   "Save some modified file-visiting buffers.  Asks user about each one."
   (interactive)
-  (lambda ()
-    "return save_some_buffers ()"))
+    "return save_some_buffers ()")
 
 
 (defsubr save-buffers-kill-emacs ()
   "Offer to save each buffer, then kill this process."
   (interactive)
-  (lambda ()
     "if not save_some_buffers () then
       return false
     end
@@ -174,13 +166,12 @@ Interactively, confirmation is required unless you supply a prefix argument."
       end
     end
 
-    thisflag.quit = true"))
+    thisflag.quit = true")
 
 
-(defsubr cd (string)
+(defsubr cd (dir)
   "Make DIR become the current buffer's default directory."
   (interactive)
-  (lambda (dir)
     "if not dir and command.is_interactive () then
       dir = minibuf_read_filename ('Change default directory: ', cur_bp.dir)
     end
@@ -199,14 +190,13 @@ Interactively, confirmation is required unless you supply a prefix argument."
         cur_bp.dir = dir
         return true
       end
-    end"))
+    end")
 
 
-(defsubr insert-buffer (string)
+(defsubr insert-buffer (buffer)
   "Insert after point the contents of BUFFER.
 Puts mark after the inserted text."
   (interactive)
-  (lambda (buffer)
     "local ok = true
 
     local def_bp = buffers[#buffers]
@@ -248,4 +238,4 @@ Puts mark after the inserted text."
       end
     end
 
-    return ok"))
+    return ok")

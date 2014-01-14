@@ -22,7 +22,6 @@
   "Undo some previous changes.
 Repeat this command to undo more changes."
   (interactive)
-  (lambda ()
     "if cur_bp.noundo then
       minibuf_error ('Undo disabled in this buffer')
       return false
@@ -41,15 +40,14 @@ Repeat this command to undo more changes."
     cur_bp.next_undop = revert_action (cur_bp.next_undop)
     minibuf_echo ('Undo!')
 
-    command.attach_label ':undo'"))
+    command.attach_label ':undo'")
 
 
 (defsubr revert-buffer ()
   "Undo until buffer is unmodified."
   (interactive)
-  (lambda ()
     ;; FIXME: save pointer to current undo action and abort if we get
     ;; back to it.
     "while cur_bp.modified do
       lisp.execute_function ('undo')
-    end"))
+    end")

@@ -36,29 +36,26 @@
   return true")
 
 
-(defsubr kill-word (number)
+(defsubr kill-word (arg)
   "Kill characters forward until encountering the end of a word.
 With argument ARG, do this that many times."
   (interactive)
-  (lambda (arg)
-    "return kill_text (arg, 'mark-word')"))
+    "return kill_text (arg, 'mark-word')")
 
 
-(defsubr backward-kill-word (number)
+(defsubr backward-kill-word (arg)
   "Kill characters backward until encountering the end of a word.
 With argument ARG, do this that many times."
   (interactive)
-  (lambda (arg)
-    "return kill_text (-(arg or 1), 'mark-word')"))
+    "return kill_text (-(arg or 1), 'mark-word')")
 
 
-(defsubr kill-sexp (number)
+(defsubr kill-sexp (arg)
   "Kill the sexp (balanced expression) following the cursor.
 With ARG, kill that many sexps after the cursor.
 Negative arg -N means kill N sexps before the cursor."
   (interactive)
-  (lambda (arg)
-    "return kill_text (arg, 'mark-sexp')"))
+    "return kill_text (arg, 'mark-sexp')")
 
 
 (defsubr yank ()
@@ -67,7 +64,6 @@ More precisely, reinsert the most recent kill, which is the
 stretch of killed text most recently killed OR yanked.  Put point
 at the end, and set mark at beginning without activating it."
   (interactive)
-  (lambda ()
     "if killring_empty () then
       minibuf_error ('Kill ring is empty')
       return false
@@ -79,7 +75,7 @@ at the end, and set mark at beginning without activating it."
 
     lisp.execute_function ('set-mark-command')
     killring_yank ()
-    deactivate_mark ()"))
+    deactivate_mark ()")
 
 
 (defsubr kill-region ()
@@ -92,7 +88,6 @@ killing commands to copy text from a read-only buffer.  If the previous
 command was also a kill command, the text killed this time appends to the
 text killed last time to make one entry in the kill ring."
   (interactive)
-  (lambda ()
     "local rp = calculate_the_region ()
 
     if rp then
@@ -101,13 +96,12 @@ text killed last time to make one entry in the kill ring."
       return true
     end
 
-    return false"))
+    return false")
 
 
 (defsubr copy-region-as-kill ()
   "Save the region as if killed, but don't kill it."
   (interactive)
-  (lambda ()
     "local rp = calculate_the_region ()
 
     if rp then
@@ -116,14 +110,14 @@ text killed last time to make one entry in the kill ring."
       return true
     end
 
-    return false"))
+    return false")
 
 
 (defvar kill-whole-line nil
   "If non-nil, `kill-line' with no arg at beg of line kills the whole line.")
 
 
-(defsubr kill-line (number)
+(defsubr kill-line (arg)
   "Kill the rest of the current line; if no nonblanks there, kill thru newline.
 With prefix argument ARG, kill that many lines from point.
 Negative arguments kill lines backward.
@@ -133,7 +127,6 @@ If `kill-whole-line' is non-nil, then this command kills the whole line
 including its terminating newline, when used at the beginning of a line
 with no argument."
   (interactive)
-  (lambda (arg)
     "local ok = true
 
     maybe_free_kill_ring ()
@@ -152,4 +145,4 @@ with no argument."
     end
 
     deactivate_mark ()
-    return ok"))
+    return ok")

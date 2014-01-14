@@ -54,6 +54,13 @@ local io     = require "std.io_ext"
 local Cons   = require "zile.Cons"
 
 
+--- Is `x` a Cons object?
+-- @function consp
+-- @param x a Lua object
+-- @return `true` if `x` is a Cons object, or else `false`
+local consp = Cons.consp
+
+
 --- Return a new interned Symbol initialised from the given arguments.
 -- @function Symbol
 -- @string name name of the symbol
@@ -309,6 +316,7 @@ return {
   Cons         = Cons,
   Symbol       = Symbol,
   call_command = call_command,
+  consp        = consp,
   eval_file    = eval_file,
   eval_string  = eval_string,
   intern       = intern,

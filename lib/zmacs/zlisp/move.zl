@@ -21,63 +21,59 @@
 (defsubr beginning-of-line ()
   "Move point to beginning of current line."
   (interactive)
-  "beginning_of_line")
+  "return beginning_of_line ()")
 
 
 (defsubr end-of-line ()
   "Move point to end of current line."
   (interactive)
-  "end_of_line")
+  "return end_of_line ()")
 
 
-(defsubr backward-char (number)
+(defsubr backward-char (&optional n)
   "Move point N characters backward (forward if N is negative).
 On attempt to pass beginning or end of buffer, stop and signal error.
 Interactively, N is the numeric prefix argument.
 If N is omitted or nil, move point 1 character backward."
   (interactive)
-  (lambda (&optional n)
     "local ok = move_char (-(n or 1))
     if not ok then
       minibuf_error ('Beginning of buffer')
     end
-    return ok"))
+    return ok")
 
 
-(defsubr forward-char (number)
+(defsubr forward-char (&optional n)
   "Move point N characters forward (backward if N is negative).
 On attempt to pass beginning or end of buffer, stop and signal error.
 Interactively, N is the numeric prefix argument.
 If N is omitted or nil, move point 1 character forward."
   (interactive)
-  (lambda (&optional n)
     "local ok = move_char (n or 1)
     if not ok then
       minibuf_error ('End of buffer')
     end
-    return ok"))
+    return ok")
 
 
-(defsubr goto-char (number)
+(defsubr goto-char (position)
   "Set point to POSITION, a number.
 Beginning of buffer is position 1."
   (interactive)
-  (lambda (position)
     "if not position then
       position = minibuf_read_number ('Goto char: ')
     end
 
     return type (position) == 'number' and
-      goto_offset (math.min (get_buffer_size (cur_bp) + 1, math.max (position, 1)))"))
+      goto_offset (math.min (get_buffer_size (cur_bp) + 1, math.max (position, 1)))")
 
 
-(defsubr goto-line (number)
+(defsubr goto-line (line)
   "Goto LINE, counting from line 1 at beginning of buffer.
 If called interactively, a numeric prefix argument specifies
 LINE; without a numeric prefix argument, read LINE from the
 minibuffer."
   (interactive)
-  (lambda (line)
     "line = line or current_prefix_arg
     if not line and command.is_interactive () then
       line = minibuf_read_number ('Goto line: ')
@@ -88,10 +84,10 @@ minibuffer."
       beginning_of_line ()
     else
       return false
-    end"))
+    end")
 
 
-(defsubr previous-line (number)
+(defsubr previous-line (&optional arg)
   "Move cursor vertically up ARG lines.
 
 ARG defaults to 1.
@@ -100,11 +96,10 @@ If there is no character in the target line exactly over the current column,
 the cursor is positioned after the character in that line which spans this
 column, or at the end of the line if it is not long enough."
   (interactive)
-  (lambda (&optional arg)
-    "return move_line (-(arg or current_prefix_arg or 1))"))
+    "return move_line (-(arg or current_prefix_arg or 1))")
 
 
-(defsubr next-line (number)
+(defsubr next-line (&optional arg)
   "Move cursor vertically down ARG lines.
 
 ARG defaults to 1.
@@ -113,51 +108,45 @@ If there is no character in the target line exactly under the current column,
 the cursor is positioned after the character in that line which spans this
 column, or at the end of the line if it is not long enough."
   (interactive)
-  (lambda (&optional arg)
-    "return move_line (arg or current_prefix_arg or 1)"))
+    "return move_line (arg or current_prefix_arg or 1)")
 
 
 (defsubr beginning-of-buffer ()
   "Move point to the beginning of the buffer; leave mark at previous position."
   (interactive)
-  (lambda ()
-    "goto_offset (1)"))
+    "goto_offset (1)")
 
 
 (defsubr end-of-buffer ()
   "Move point to the end of the buffer; leave mark at previous position."
   (interactive)
-  (lambda ()
-    "goto_offset (get_buffer_size (cur_bp) + 1)"))
+    "goto_offset (get_buffer_size (cur_bp) + 1)")
 
 
-(defsubr scroll-down (number)
+(defsubr scroll-down (&optional arg)
   "Scroll text of current window downward near full screen."
   (interactive)
-  (lambda (&optional arg)
-    "return execute_with_uniarg (false, arg or 1, scroll_down, scroll_up)"))
+    "return execute_with_uniarg (false, arg or 1, scroll_down, scroll_up)")
 
 
-(defsubr scroll-up (number)
+(defsubr scroll-up (&optional arg)
   "Scroll text of current window upward near full screen."
   (interactive)
-  (lambda (&optional arg)
-    "return execute_with_uniarg (false, arg or 1, scroll_up, scroll_down)"))
+    "return execute_with_uniarg (false, arg or 1, scroll_up, scroll_down)")
 
 
-(defsubr forward-line (number)
+(defsubr forward-line (n)
   "Move N lines forward (backward if N is negative).
 Precisely, if point is on line I, move to the start of line I + N
 ('start of line' in the logical order).
 If there isn't room, go as far as possible (no error)."
   (interactive)
-  (lambda (&optional n)
     "n = n or current_prefix_arg or 1
     if n ~= 0 then
       beginning_of_line ()
       return move_line (n)
     end
-    return false"))
+    return false")
 
 
 (localfun move_paragraph (uniarg forward backward line_extremum)
@@ -179,64 +168,57 @@ If there isn't room, go as far as possible (no error)."
   return true")
 
 
-(defsubr backward-paragraph (number)
+(defsubr backward-paragraph (&optional arg)
   "Move backward to start of paragraph.
 With argument ARG, do it ARG times;
 a negative argument ARG = -N means move forward N paragraphs"
   (interactive)
-  (lambda (&optional arg)
-    "return move_paragraph (arg or 1, previous_line, next_line, beginning_of_line)"))
+    "return move_paragraph (arg or 1, previous_line, next_line, beginning_of_line)")
 
 
-(defsubr forward-paragraph (number)
+(defsubr forward-paragraph (&optional arg)
   "Move forward to end of paragraph.
 With argument ARG, do it ARG times;
 a negative argument ARG = -N means move backward N paragraphs"
   (interactive)
-  (lambda (&optional arg)
-    "return move_paragraph (arg or 1, next_line, previous_line, end_of_line)"))
+    "return move_paragraph (arg or 1, next_line, previous_line, end_of_line)")
 
 
-(defsubr forward-sexp (number)
+(defsubr forward-sexp (&optional arg)
   "Move forward across one balanced expression (sexp).
 With ARG, do it that many times.  Negative arg -N means
 move backward across N balanced expressions."
   (interactive)
-  (lambda (&optional arg)
-    "return move_with_uniarg (arg or 1, move_sexp)"))
+    "return move_with_uniarg (arg or 1, move_sexp)")
 
 
-(defsubr backward-sexp (number)
+(defsubr backward-sexp (&optional arg)
   "Move backward across one balanced expression (sexp).
 With ARG, do it that many times.  Negative arg -N means
 move forward across N balanced expressions."
   (interactive)
-  (lambda (&optional arg)
-    "return move_with_uniarg (-(arg or 1), move_sexp)"))
+    "return move_with_uniarg (-(arg or 1), move_sexp)")
 
 
 (defsubr back-to-indentation ()
   "Move point to the first non-whitespace character on this line."
   (interactive)
-  (lambda ()
     "goto_offset (get_buffer_line_o (cur_bp))
     while not eolp () and following_char ():match ('%s') do
       move_char (1)
-    end"))
+    end")
 
 
-(defsubr forward-word (number)
+(defsubr forward-word (&optional arg)
   "Move point forward ARG words (backward if ARG is negative).
 If ARG is omitted or nil, move point forward one word."
   (interactive)
-  (lambda (&optional arg)
-    "return move_with_uniarg (arg or 1, move_word)"))
+    "return move_with_uniarg (arg or 1, move_word)")
 
 
-(defsubr backward-word (number)
+(defsubr backward-word (&optional arg)
   "Move backward until encountering the beginning of a word.
 With argument ARG, do this that many times.
 if ARG is omtted or nil, move point backward one word."
   (interactive)
-  (lambda (&optional arg)
-    "return move_with_uniarg (-(arg or 1), move_word)"))
+    "return move_with_uniarg (-(arg or 1), move_word)")

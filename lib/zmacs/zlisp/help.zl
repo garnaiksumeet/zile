@@ -55,7 +55,6 @@
 (defsubr describe-function (symbol)
   "Display the full documentation of FUNCTION (a symbol)."
   (interactive)
-  (lambda (symbol)
     "if not symbol then
       local name = minibuf_read_function_name ('Describe function: ')
       symbol = lisp.intern_soft (name)
@@ -65,7 +64,7 @@
     if not symbol or not symbol['function-documentation'] then return false end
 
     write_temp_buffer ('*Help*', true, write_function_description, symbol)
-    return true"))
+    return true")
 
 
 (localfun write_key_description (command binding)
@@ -80,10 +79,9 @@
     expand_kbd_refs (command['function-documentation'])))")
 
 
-(defsubr describe-key (string)
+(defsubr describe-key (key)
   "Display documentation of the function invoked by KEY."
   (interactive)
-  (lambda (key)
     "local command, binding
     if key then
       local keys = keystrtovec (key)
@@ -107,7 +105,7 @@
     if not command['function-documentation'] then return false end
 
     write_temp_buffer ('*Help*', true, write_key_description, command, binding)
-    return true"))
+    return true")
 
 
 (localfun write_variable_description (symbol)
@@ -132,7 +130,6 @@
 (defsubr describe-variable (symbol)
   "Display the full documentation of VARIABLE (a symbol)."
   (interactive)
-  (lambda (symbol)
     "-- non-interactively, symbol should be `(quote symbol)`
     if type (symbol) == 'table' and symbol.cdr then
       symbol = symbol.cdr.car
@@ -144,7 +141,7 @@
     end
     if not symbol or not symbol['variable-documentation'] then return false end
     write_temp_buffer ('*Help*', true, write_variable_description, symbol)
-    return true"))
+    return true")
 
 
 (localfun find_or_create_buffer_from_module (name)
@@ -164,28 +161,24 @@
 (defsubr describe-copying ()
   "Display info on how you may redistribute copies of GNU Zmacs."
   (interactive)
-  (lambda ()
-    "find_or_create_buffer_from_module ('COPYING')"))
+    "find_or_create_buffer_from_module ('COPYING')")
 
 
 (defsubr describe-no-warranty ()
   "Display info on all the kinds of warranty Zmacs does NOT have."
   (interactive)
-  (lambda ()
     "find_or_create_buffer_from_module ('COPYING')
     lisp.execute_function ('search-forward', ' Disclaimer of Warranty.')
-    beginning_of_line ()"))
+    beginning_of_line ()")
 
 
 (defsubr view-emacs-FAQ ()
   "Display the Zmacs Frequently Asked Questions (FAQ) file."
   (interactive)
-  (lambda ()
-    "find_or_create_buffer_from_module ('FAQ')"))
+    "find_or_create_buffer_from_module ('FAQ')")
 
 
 (defsubr view-emacs-news ()
   "Display info on recent changes to Zmacs."
   (interactive)
-  (lambda ()
-    "find_or_create_buffer_from_module ('NEWS')"))
+    "find_or_create_buffer_from_module ('NEWS')")

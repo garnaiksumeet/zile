@@ -32,19 +32,17 @@ highlight all windows or just the selected window.")
 (defsubr delete-window ()
   "Remove the current window from the screen."
   (interactive)
-  (lambda ()
     "if #windows == 1 then
       minibuf_error ('Attempt to delete sole ordinary window')
       return false
     end
 
-    delete_window (cur_wp)"))
+    delete_window (cur_wp)")
 
 
 (defsubr enlarge-window ()
   "Make current window one line bigger."
   (interactive)
-  (lambda ()
     "if #windows == 1 then
       return false
     end
@@ -71,13 +69,12 @@ highlight all windows or just the selected window.")
       end
       cur_wp.fheight = cur_wp.fheight + 1
       cur_wp.eheight = cur_wp.eheight + 1
-    end"))
+    end")
 
 
 (defsubr shrink-window ()
   "Make current window one line smaller."
   (interactive)
-  (lambda ()
     "if #windows == 1 or cur_wp.fheight < 3 then
       return false
     end
@@ -89,18 +86,17 @@ highlight all windows or just the selected window.")
     cur_wp.eheight = cur_wp.eheight - 1
     if cur_wp.topdelta >= cur_wp.eheight then
       recenter (next_wp)
-    end"))
+    end")
 
 
 (defsubr delete-other-windows ()
   "Make the selected window fill the screen."
   (interactive)
-  (lambda ()
     "for _, wp in ipairs (table.clone (windows)) do
       if wp ~= cur_wp then
         delete_window (wp)
       end
-    end"))
+    end")
 
 
 (defsubr other-window ()
@@ -108,69 +104,63 @@ highlight all windows or just the selected window.")
 All windows are arranged in a cyclic order.
 This command selects the window one step away in that order."
   (interactive)
-  (lambda ()
-    "set_current_window (window_next (cur_wp))"))
+    "set_current_window (window_next (cur_wp))")
 
 
 (defsubr split-window ()
   "Split current window into two windows, one above the other.
 Both windows display the same buffer now current."
   (interactive)
-  "split_window")
+  "return split_window ()")
 
 
 (defsubr recenter ()
   "Center point in selected window and redisplay frame."
   (interactive)
-  "interactive_recenter")
+  "return interactive_recenter ()")
 
 
 (defsubr screen-height ()
   "The total number of lines available for display on the screen."
   (interactive)
-  (lambda ()
-    "minibuf_echo (tostring (term_height ()))"))
+    "minibuf_echo (tostring (term_height ()))")
 
 
 (defsubr screen-width ()
   "The total number of lines available for display on the screen."
   (interactive)
-  (lambda ()
-    "minibuf_echo (tostring (term_width ()))"))
+    "minibuf_echo (tostring (term_width ()))")
 
 
-(defsubr set-screen-height (number)
+(defsubr set-screen-height (lines)
   "Set the usable number of LINES for display on the screen."
   (interactive)
-  (lambda (lines)
     "local ok, errmsg = term_resize (lines or term_height (), term_width ())
 
     if not ok then
       minibuf_error (errmsg)
     end
-    return ok"))
+    return ok")
 
 
-(defsubr set-screen-size (number number)
+(defsubr set-screen-size (lines columns)
   "Set the number of usable LINES and COLUMNS for display on the screen."
   (interactive)
-  (lambda (lines columns)
     "local ok, errmsg = term_resize (lines or term_height (),
                                     columns or term_width ())
 
     if not ok then
       minibuf_error (errmsg)
     end
-    return ok"))
+    return ok")
 
 
-(defsubr set-screen-width (number)
+(defsubr set-screen-width (columns)
   "Set the usable number of COLUMNS for display on the screen."
   (interactive)
-  (lambda (columns)
     "local ok, errmsg = term_resize (term_height (), columns or term_width ())
 
     if not ok then
       minibuf_error (errmsg)
     end
-    return ok"))
+    return ok")

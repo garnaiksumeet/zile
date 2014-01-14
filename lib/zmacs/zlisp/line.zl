@@ -49,12 +49,11 @@ Depending on `tab-always-indent', either insert a tab or indent.
 If initial point was within line's indentation, position after
 the indentation.  Else stay at same point in text."
   (interactive)
-  (lambda ()
     "if lisp.get_variable ('tab-always-indent') then
       return insert_tab ()
     elseif (get_goalc () < previous_line_indent ()) then
       return lisp.execute_function ('indent-relative')
-    end"))
+    end")
 
 
 (defsubr indent-relative ()
@@ -67,7 +66,6 @@ column point starts at, `tab-to-tab-stop' is done instead, unless
 this command is invoked with a numeric argument, in which case it
 does nothing."
   (interactive)
-  (lambda ()
     "local target_goalc = 0
     local cur_goalc = get_goalc ()
     local t = tab_width (cur_bp)
@@ -131,14 +129,13 @@ does nothing."
     end
     undo_end_sequence ()
 
-    return ok"))
+    return ok")
 
 
 (defsubr newline-and-indent ()
   "Insert a newline, then indent.
 Indentation is done using the `indent-for-tab-command' function."
   (interactive)
-  (lambda ()
     "local ok = false
 
     if warn_if_readonly_buffer () then
@@ -167,46 +164,42 @@ Indentation is done using the `indent-for-tab-command' function."
     end
     undo_end_sequence ()
 
-    return ok"))
+    return ok")
 
 
 
-(defsubr delete-char (number)
+(defsubr delete-char (n)
   "Delete the following N characters (previous if N is negative)."
   (interactive)
-  (lambda (n)
-    "return execute_with_uniarg (true, n, delete_char, backward_delete_char)"))
+    "return execute_with_uniarg (true, n, delete_char, backward_delete_char)")
 
 
-(defsubr backward-delete-char (number)
+(defsubr backward-delete-char (n)
   "Delete the previous N characters (following if N is negative)."
   (interactive)
-  (lambda (n)
-    "return execute_with_uniarg (true, n, backward_delete_char, delete_char)"))
+    "return execute_with_uniarg (true, n, backward_delete_char, delete_char)")
 
 
 (defsubr delete-horizontal-space ()
   "Delete all spaces and tabs around point."
   (interactive)
-  "delete_horizontal_space")
+  "return delete_horizontal_space ()")
 
 
 (defsubr just-one-space ()
   "Delete all spaces and tabs around point, leaving one space."
   (interactive)
-  (lambda ()
     "undo_start_sequence ()
     delete_horizontal_space ()
     insert_char (' ')
-    undo_end_sequence ()"))
+    undo_end_sequence ()")
 
 
-(defsubr tab-to-tab-stop (number)
+(defsubr tab-to-tab-stop (&optional arg)
   "Insert a tabulation at the current point position into the current
 buffer."
   (interactive)
-  (lambda (&optional arg)
-    "return execute_with_uniarg (true, arg, insert_tab)"))
+    "return execute_with_uniarg (true, arg, insert_tab)")
 
 
 (defvar fill-column 70
@@ -224,24 +217,21 @@ Automatically becomes buffer-local when set in any fashion.")
   return insert_newline ()")
 
 
-(defsubr newline (number)
+(defsubr newline (&optional arg)
   "Insert a newline at the current point position into
 the current buffer.
 With ARG insert that many newlines."
   (interactive)
-  (lambda (&optional arg)
-    "return execute_with_uniarg (true, arg, newline)"))
+    "return execute_with_uniarg (true, arg, newline)")
 
 
-(defsubr open-line (number)
+(defsubr open-line (n)
   "Insert a newline and leave point before it.
 with arg N, insert N newlines."
   (interactive)
-  (lambda (n)
-    "return execute_with_uniarg (true, n, intercalate_newline)"))
+    "return execute_with_uniarg (true, n, intercalate_newline)")
 
 
-(defsubr insert (string)
+(defsubr insert (arg)
   "Insert the argument at point."
-  (lambda (arg)
-    "insert_string (arg)"))
+    "insert_string (arg)")

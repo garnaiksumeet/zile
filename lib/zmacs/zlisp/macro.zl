@@ -23,7 +23,6 @@
 The commands are recorded even as they are executed.
 Use \\[end-kbd-macro] to finish recording and make the macro available."
   (interactive)
-  (lambda ()
     "if thisflag.defining_macro then
       minibuf_error ('Already defining a keyboard macro')
       return false
@@ -36,7 +35,7 @@ Use \\[end-kbd-macro] to finish recording and make the macro available."
     minibuf_write ('Defining keyboard macro...')
 
     thisflag.defining_macro = true
-    cur_mp = {}"))
+    cur_mp = {}")
 
 
 (defsubr end-kbd-macro ()
@@ -44,20 +43,18 @@ Use \\[end-kbd-macro] to finish recording and make the macro available."
 The definition was started by \\[start-kbd-macro].
 The macro is now available for use via \\[execute-kbd-macro]."
   (interactive)
-  (lambda ()
     "if not thisflag.defining_macro then
       minibuf_error ('Not defining a keyboard macro')
       return false
     end
 
-    thisflag.defining_macro = false"))
+    thisflag.defining_macro = false")
 
 
 (defsubr call-last-kbd-macro ()
   "Call the last keyboard macro that you defined with \\[start-kbd-macro].
 A prefix argument serves as a repeat count."
   (interactive)
-  (lambda ()
     "if cur_mp == nil then
       minibuf_error ('No kbd macro has been defined')
       return false
@@ -65,15 +62,14 @@ A prefix argument serves as a repeat count."
 
     -- FIXME: Call execute-kbd-macro (needs a way to reverse keystrtovec)
     macro_keys = cur_mp
-    execute_with_uniarg (true, current_prefix_arg, call_macro)"))
+    execute_with_uniarg (true, current_prefix_arg, call_macro)")
 
 
-(defsubr execute-kbd-macro (string)
+(defsubr execute-kbd-macro (keystr)
   "Execute macro as string of editor command characters."
-  (lambda (keystr)
     "local keys = keystrtovec (keystr)
     if keys ~= nil then
       macro_keys = keys
       execute_with_uniarg (true, current_prefix_arg, call_macro)
       return true
-    end"))
+    end")

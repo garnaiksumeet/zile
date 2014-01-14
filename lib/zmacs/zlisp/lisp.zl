@@ -20,35 +20,32 @@
 ;; MA 02111-1301, USA.
 
 
-(defsubr load (string)
+(defsubr load (file)
   "Execute a file of Lisp code named FILE."
   (interactive)
-  (lambda (file)
     "if file then
       return lisp.eval_file (file)
-    end"))
+    end")
 
 
-(defsubr setq ()
+(defsubr setq (...)
   "(setq [sym val]...)
 
 Set each sym to the value of its val.
 The symbols sym are variables; they are literal (not evaluated).
 The values val are expressions; they are evaluated."
-  (lambda (...)
     "local ret
     local l = {...}
     for i = 1, #l/2 do
       ret = lisp.eval_expression (l[i + 1])
       lisp.set_variable (l[i], ret)
     end
-    return ret"))
+    return ret")
 
 
-(defsubr execute-extended-command (number)
+(defsubr execute-extended-command (prefixarg)
   "Read function name, then read its arguments and call it."
   (interactive)
-  (lambda (prefixarg)
     "local msg = ''
 
     if lastflag.set_uniarg then
@@ -62,29 +59,27 @@ The values val are expressions; they are evaluated."
 
     local name = minibuf_read_function_name (msg)
     local command = name and lisp.intern_soft (name)
-    return command and lisp.execute_function (command, prefixarg) or nil"))
+    return command and lisp.execute_function (command, prefixarg) or nil")
 
 
-(defsubr eval-buffer (string)
+(defsubr eval-buffer (&optional buffer)
   "Execute the current buffer as Lisp code.
 When called from a Lisp program (i.e., not interactively), this
 function accepts an optional argument, the BUFFER to evaluate (nil
 means use current buffer)."
   (interactive)
-  (lambda (&optional buffer)
     "local bp = (buffer and buffer ~= '') and get_buffer (buffer) or cur_bp
-    return lisp.eval_string (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))"))
+    return lisp.eval_string (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))")
 
 
 (localvar exprs_history
   "history_new ()")
 
-(defsubr eval-expression (string)
+(defsubr eval-expression (exp)
   "Evaluate EXP and print result in the echo area.
 When called interactively, read a ZLisp expression and
 evaluate it."
   (interactive)
-  (lambda (exp)
     "if not exp then
       exp = minibuf_read ('Eval: ', '', nil, exprs_history)
     end
@@ -93,4 +88,4 @@ evaluate it."
 
     if exp then
       add_history_element (exprs_history, exp)
-    end"))
+    end")

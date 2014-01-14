@@ -121,16 +121,17 @@ local defsubr, marshaller -- forward declarations
 
 --- Define a command in the execution environment for the evaluator.
 -- @string name command name
--- @tparam table argtypes a list of type strings that arguments must match
+-- @int min minimum number of arguments
+-- @int max maximum number of arguments
 -- @string doc docstring
 -- @bool interactive `true` if this command can be called interactively
 -- @func func function to call after marshalling arguments
 -- @treturn symbol newly interned symbol
-function defsubr (name, argtypes, doc, interactive, func)
+function defsubr (name, min, max, doc, interactive, func)
   local symbol = intern (name)
   symbol.name  = name	-- unmangled name
   rawset (symbol, "func", func)
-  symbol["marshall-argtypes"]      = argtypes
+  symbol["marshall-argspec"]       = Cons (min, max)
   symbol["function-documentation"] = doc:chomp ()
   symbol["interactive-form"]       = interactive
   getmetatable (symbol).__call = marshaller
@@ -138,24 +139,19 @@ function defsubr (name, argtypes, doc, interactive, func)
 end
 
 
---- Argument marshalling and type-checking for zlisp function symbols.
+--- Argument marshalling for zlisp function symbols.
 -- Used as the `__call` metamethod for function symbols.
 -- @local
 -- @tparam symbol symbol a symbol
 -- @tparam zile.Cons arglist arguments for calling this function symbol
 -- @return result of calling this function symbol
 function marshaller (symbol, arglist)
-  local argtypes = symbol["marshall-argtypes"]
-  local args, i = {}, 1
+  local argspec = symbol["marshall-argspec"]
 
+  local args = {}
   while arglist and arglist.car do
-    local val, ty = arglist.car, argtypes[i]
-    if ty == "string" then
-      val = tostring (val)
-    end
-    table.insert (args, val)
+    table.insert (args, arglist.car)
     arglist = arglist.cdr
-    i = i + 1
   end
 
   current_prefix_arg, prefix_arg = prefix_arg, false

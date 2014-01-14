@@ -28,10 +28,9 @@
 (localfun register_store (reg data)
   "regs[term_bytetokey (reg)] = data")
 
-(defsubr copy-to-register (number)
+(defsubr copy-to-register (register)
   "Copy region into register REGISTER."
   (interactive)
-  (lambda (register)
     "if not register then
       minibuf_write ('Copy to register: ')
       register = getkey_unfiltered (GETKEY_DEFAULT)
@@ -49,7 +48,7 @@
       end
     end
 
-    return true"))
+    return true")
 
 
 (localvar regnum
@@ -60,11 +59,10 @@
   "insert_estr (regs[term_bytetokey (regnum)])
   return true")
 
-(defsubr insert-register (number)
+(defsubr insert-register (register)
   "Insert contents of REGISTER. (REGISTER is a character.)
 Puts point before and mark after the inserted text."
   (interactive)
-  (lambda (register)
     "local ok = true
 
     if warn_if_readonly_buffer () then
@@ -92,7 +90,7 @@ Puts point before and mark after the inserted text."
       end
     end
 
-    return ok"))
+    return ok")
 
 
 (localfun write_registers_list (i)
@@ -116,5 +114,4 @@ Puts point before and mark after the inserted text."
 (defsubr list-registers ()
   "Display a list of nonempty registers saying briefly what they contain."
   (interactive)
-  (lambda ()
-    "write_temp_buffer ('*Registers List*', true, write_registers_list)"))
+    "write_temp_buffer ('*Registers List*', true, write_registers_list)")

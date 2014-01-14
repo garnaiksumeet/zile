@@ -27,14 +27,13 @@ It also inhibits display of the initial message in the `*scratch*'
 buffer.")
 
 
-(defsubr set-variable ()
+(defsubr set-variable (symbol value)
   "Set VARIABLE to VALUE.  VALUE is a Lisp object.
 VARIABLE should be a user option variable name, a Lisp variable
 meant to be customized by users.  You should enter VALUE in Lisp syntax,
 so if you want VALUE to be a string, you must surround it with doublequotes.
 VALUE is used literally, not evaluated."
   (interactive)
-  (lambda (symbol value)
     "-- non-interactively, symbol should be `(quote symbol)`
     if type (symbol) == 'table' and symbol.cdr then
       symbol = symbol.cdr.car
@@ -54,4 +53,4 @@ VALUE is used literally, not evaluated."
     if not value then return keyboard_quit () end
 
     lisp.set_variable (symbol, value)
-    return true"))
+    return true")

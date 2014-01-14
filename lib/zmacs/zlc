@@ -25,6 +25,9 @@ local io     = require "std.io_ext"
 local zz   = require "zile.zlisp"
 local prog = require "zile.version"
 
+local Cons, call_command, consp, eval_file, intern =
+      zz.Cons, zz.call_command, zz.consp, zz.eval_file, zz.intern
+
 
 
 --[[ ======================== ]]--
@@ -40,7 +43,7 @@ local prog = require "zile.version"
 --   interned
 -- @treturn zile.Symbol newly initialised symbol.
 local function define (name, value, symtab)
-  local symbol = zz.intern (name, symtab)
+  local symbol = intern (name, symtab)
   symbol.value = value
   return symbol
 end
@@ -91,76 +94,90 @@ local function isname (symbol)
 end
 
 
--- (defsubr NAME (PARAM...) DOCSTRING [(interactive)] (lambda "IMPLEMENTATION"))
+-- Parse argument specification into minimum and maximum argument
+-- counts.
+local function argspec (paramlist, min, max, kw)
+  min, max = min or 0, max or 0
+  if not consp (paramlist) then return min, max end
+
+  local param = paramlist.car
+  if param.name == "..." then
+    return min, '"UNEVAL"'
+  elseif param.name == "&rest" then
+    return min, '"MANY"'
+  elseif param.name == "&optional" then
+    kw = param.name
+  else
+    max = max + 1
+    if not kw then min = min + 1 end
+  end
+
+  return argspec (paramlist.cdr, min, max, kw)
+end
+
+
+-- (defsubr NAME ([PARAM]...) DOCSTRING [(interactive)] "BODY")
 -- A special form for describing Zmacs commands.  Each time it is called
 -- by Zlisp, output a lua command declaration for binding into Zmacs.
 define ("defsubr",
   function (arglist)
-    local name        = arglist:nth (1).name
-    local typelist    = arglist:nth (2)
-    local docstring   = arglist:nth (3)
-    local interactive = arglist:nth (4)
+    local name      = arglist:nth (1).name
+    local paramlist = arglist:nth (2)
+    local body      = arglist:nth (4) -- or 5, if interactive present
 
-    local impl
-    if interactive.car and interactive.car.name == "interactive" then
-      impl = arglist:nth (5)
-      interactive = true
-    else
-      impl = interactive
-      interactive = false
+    local mkargs = function ()
+      local min, max = argspec (paramlist)
+      return string.format ('"%s", %s, %s,',
+                            name, tostring (min), tostring (max))
     end
 
-    if typelist and typelist.car then
-      typelist = '"' .. typelist:concat ('", "') .. '"'
-    else
-      typelist = ""
-    end
-
-    local signature
-    if type (impl) ~= "string" then
-      local arglist = impl.cdr.car and impl.cdr.car.value or nil
-      if arglist then
-        signature = name .. " " ..
-	  arglist:mapconcat (function (symbol)
-		               local name = symbol.name
-		               return isname (symbol) and name:upper () or name
-			     end, " ")
+    local mkdocstring = function ()
+      local docstring = arglist:nth (3)
+      if consp (paramlist) and docstring:match "^%(" == nil then
+        -- Add a function signature unless docstring has one already.
+        local signature = paramlist:mapconcat (function (symbol)
+          return isname (symbol) and symbol.name:upper () or symbol.name
+        end, " ")
+        signature = table.concat ({name, signature}, " ")
+        docstring = "(" .. signature .. ")\n\n" .. docstring
       end
-
-      impl = zz.call_command (impl.car, impl.cdr)
+      return string.format ("[[\n%s\n]],", docstring)
     end
 
-    -- Don't re-add a function signature if docstring has one already.
-    if docstring:match "^%(" == nil then
-      signature = signature or name
-      docstring = "(" .. signature .. ")\n\n" .. docstring
+    local mkinteractive = function ()
+      local interactive = "false"
+      if consp (body) and body.car.name == "interactive" then
+        body = arglist:nth (5)
+        interactive = "true"
+      end
+      return string.format ("%s,", interactive)
     end
 
-    writef ('\n\ndefsubr ("%s",\n  {%s},\n[[\n%s\n]],\n  %s,\n  %s\n)\n',
-            name, typelist, docstring,
-	    tostring (interactive), tostring (impl))
-  end
-)
-
-
-define ("lambda",
-  function (arglist)
-    local params = arglist:nth (1)
-
-    if params and params.car then
-      params = params:filter (isname)
+    local mkparams = function ()
+      local params
+      if consp (paramlist) then
+        params = paramlist:filter (isname)
+      end
+      if params and params.car then
+        params = params:mapconcat (function (symbol)
+                                     return symbol.name:gsub ("[^%w%d%.]", "_")
+                                   end, ", ")
+      else
+        params = ""
+      end
+      return string.format ("function (%s)", params)
     end
 
-    if params and params.car then
-      params = params:mapconcat (function (symbol)
-                                   return symbol.name:gsub ("[^%w%d%.]", "_")
-                                 end, ", ")
-    else
-      params = ""
+    local mkbody = function ()
+      return string.format ("  %s\n  end", body)
     end
 
-    return string.format ("function (%s)\n    %s\n  end",
-      params, arglist:nth (2))
+    io.write ("\n\n" ..
+      "defsubr (" .. mkargs () .. "\n" ..
+      mkdocstring () .. "\n" ..
+      "  " .. mkinteractive () .. "\n" ..
+      "  " .. mkparams () .. "\n" ..
+      "  " .. mkbody () .. ")\n")
   end
 )
 
@@ -235,7 +252,7 @@ io.writelines ('-- Generated by ' .. prog.name .. '.',
 
 -- Treat remaining arguments as filenames to be evaluated by Zlisp.
 for i = 1, #arg do
-  local ok, errmsg = zz.eval_file (arg[i])
+  local ok, errmsg = eval_file (arg[i])
   if not ok then
     errmsg = errmsg or "unknown error"
     io.stderr:write (arg[i] .. ": " .. errmsg .. ".\n")

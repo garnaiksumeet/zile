@@ -22,12 +22,11 @@
   "Non-nil means ring the terminal bell on any error.")
 
 
-(defsubr set-fill-column (number)
+(defsubr set-fill-column (arg)
   "Set `fill-column' to specified argument.
 Use C-u followed by a number to specify a column.
 Just C-u as argument means to use the current column."
   (interactive)
-  (lambda (arg)
     "if not arg and command.is_interactive () then
       local o = get_buffer_pt (cur_bp) - get_buffer_line_o (cur_bp)
       if lastflag.set_uniarg then
@@ -49,17 +48,16 @@ Just C-u as argument means to use the current column."
     minibuf_echo (string.format ('Fill column set to %d (was %d)', arg,
                                  lisp.get_variable ('fill-column')))
     lisp.set_variable ('fill-column', arg)
-    return true"))
+    return true")
 
 
 (defsubr quoted-insert ()
   "Read next input character and insert it.
 This is useful for inserting control characters."
   (interactive)
-  (lambda ()
     "minibuf_write ('C-q-')
     insert_char (string.char (bit32.band (getkey_unfiltered (GETKEY_DEFAULT), 0xff)))
-    minibuf_clear ()"))
+    minibuf_clear ()")
 
 
 (defsubr fill-paragraph ()
@@ -67,7 +65,6 @@ This is useful for inserting control characters."
 
 The variable `fill-column' controls the width for filling."
   (interactive)
-  (lambda ()
     "local m = point_marker ()
 
     undo_start_sequence ()
@@ -96,10 +93,10 @@ The variable `fill-column' controls the width for filling."
     goto_offset (m.o)
     unchain_marker (m)
 
-    undo_end_sequence ()"))
+    undo_end_sequence ()")
 
 
-(defsubr shell-command (string string)
+(defsubr shell-command (command &optional output-buffer)
   "Execute string COMMAND in inferior shell; display output, if any.
 With prefix argument, insert the COMMAND's output at point.
 
@@ -117,7 +114,6 @@ insert output in current buffer.
 In either case, the buffer is first erased, and the output is
 inserted after point (leaving mark after it)."
   (interactive)
-  (lambda (command &optional output-buffer)
     "if not output_buffer then
       output_buffer = lastflag.set_uniarg
       -- Undo mangled interactive args when called from \C-u\M-!cmd\r.
@@ -130,12 +126,12 @@ inserted after point (leaving mark after it)."
     if command then
       return pipe_command (command, output_buffer, false)
     end
-    return true"))
+    return true")
 
 
 -- The `start' and `finish' arguments are fake, hence their string type,
 -- so they can be ignored.
-(defsubr shell-command-on-region (string string string boolean boolean)
+(defsubr shell-command-on-region (start finish command &optional output-buffer replace)
   "Execute string COMMAND in inferior shell with region as input.
 Normally display output (if any) in temp buffer `*Shell Command Output*'
 Prefix arg means replace the region with it.  Return the exit code of
@@ -158,7 +154,6 @@ Option fifth arg REPLACE, if non-nil, means to insert the
 output in place of text from START to FINISH, putting point and mark
 around it."
   (interactive)
-  (lambda (start finish command &optional output-buffer replace)
     "command = command or minibuf_read_shell_command ()
     replace = replace or lastflag.set_uniarg
     output_buffer = output_buffer or lastflag.set_uniarg
@@ -171,14 +166,13 @@ around it."
       end
       return false
     end
-    return true"))
+    return true")
 
 
 (defsubr delete-region ()
   "Delete the text between point and mark."
   (interactive)
-  (lambda ()
-    "return delete_region (calculate_the_region ())"))
+    "return delete_region (calculate_the_region ())")
 
 
 (defsubr delete-blank-lines ()
@@ -186,7 +180,6 @@ around it."
 On isolated blank line, delete that one.
 On nonblank line, delete any immediately following blank lines."
   (interactive)
-  (lambda ()
     "local m = point_marker ()
     local r = region_new (get_buffer_line_o (cur_bp), get_buffer_line_o (cur_bp))
 
@@ -239,78 +232,69 @@ On nonblank line, delete any immediately following blank lines."
     undo_end_sequence ()
 
     unchain_marker (m)
-    deactivate_mark ()"))
+    deactivate_mark ()")
 
 
-(defsubr downcase-word (number)
+(defsubr downcase-word (arg)
   "Convert following word (or ARG words) to lower case, moving over."
   (interactive)
-  (lambda (arg)
-    "return execute_with_uniarg (true, arg, function () return setcase_word ('lower') end)"))
+    "return execute_with_uniarg (true, arg, function () return setcase_word ('lower') end)")
 
 
-(defsubr upcase-word (number)
+(defsubr upcase-word (arg)
   "Convert following word (or ARG words) to upper case, moving over."
   (interactive)
-  (lambda (arg)
-    "return execute_with_uniarg (true, arg, function () return setcase_word ('upper') end)"))
+    "return execute_with_uniarg (true, arg, function () return setcase_word ('upper') end)")
 
 
-(defsubr capitalize-word (number)
+(defsubr capitalize-word (arg)
   "Capitalize the following word (or ARG words), moving over.
 This gives the word(s) a first character in upper case
 and the rest lower case."
   (interactive)
-  (lambda (arg)
-    "return execute_with_uniarg (true, arg, function () return setcase_word ('capitalized') end)"))
+    "return execute_with_uniarg (true, arg, function () return setcase_word ('capitalized') end)")
 
 
 (defsubr upcase-region ()
   "Convert the region to upper case."
   (interactive)
-  (lambda ()
-    "return setcase_region (string.upper)"))
+    "return setcase_region (string.upper)")
 
 
 (defsubr downcase-region ()
   "Convert the region to lower case."
   (interactive)
-  (lambda ()
-    "return setcase_region (string.lower)"))
+    "return setcase_region (string.lower)")
 
 
-(defsubr transpose-chars (number)
+(defsubr transpose-chars (arg)
   "Interchange characters around point, moving forward one character.
 With prefix arg ARG, effect is to take character before point
 and drag it forward past ARG other characters (backward if ARG negative).
 If no argument and at end of line, the previous two chars are exchanged."
   (interactive)
-  (lambda (arg)
-    "return transpose (arg or 1, move_char)"))
+    "return transpose (arg or 1, move_char)")
 
 
-(defsubr transpose-words (number)
+(defsubr transpose-words (arg)
   "Interchange words around point, leaving point at end of them.
 With prefix arg ARG, effect is to take word before or around point
 and drag it forward past ARG other words (backward if ARG negative).
 If ARG is zero, the words around or after point and around or after mark
 are interchanged."
   (interactive)
-  (lambda (arg)
-    "return transpose (arg or 1, move_word)"))
+    "return transpose (arg or 1, move_word)")
 
 
-(defsubr transpose-sexps (number)
+(defsubr transpose-sexps (n)
   "Like \\[transpose-words] but applies to sexps."
   (interactive)
-  (lambda (n)
-    "return transpose (n or 1, move_sexp)"))
+    "return transpose (n or 1, move_sexp)")
 
 
-(defsubr transpose-lines (number)
+(defsubr transpose-lines (arg)
   "Exchange current line and previous line, leaving point after both.
 With argument ARG, takes previous line and moves it past ARG lines.
 With argument 0, interchanges line point is in with line mark is in."
   (interactive)
-  (lambda (arg)
-    "return transpose (arg or 1, move_line)"))
+    "return transpose (arg or 1, move_line)")

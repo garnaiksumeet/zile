@@ -21,15 +21,13 @@
 (defsubr search-forward (string)
   "Search forward from point for STRING."
   (interactive)
-  (lambda (string)
-    "return do_search (true, false, string)"))
+    "return do_search (true, false, string)")
 
 
 (defsubr search-backward (string)
   "Search backward from point for STRING."
   (interactive)
-  (lambda (string)
-    "return do_search (false, false, string)"))
+    "return do_search (false, false, string)")
 
 
 (defvar case-fold-search t
@@ -37,24 +35,22 @@
 (make-variable-buffer-local 'case-fold-search)
 
 
-(defsubr search-forward-regexp (string)
+(defsubr search-forward-regexp (regexp)
   "Search forward from point for regular expression REGEXP.
 
 Search case-sensitivity is determined by the value of the variable
 `case-fold-search'."
   (interactive)
-  (lambda (regexp)
-    "return do_search (true, true, regexp)"))
+    "return do_search (true, true, regexp)")
 
 
-(defsubr search-backward-regexp (string)
+(defsubr search-backward-regexp (regexp)
   "Search backward from point for match for regular expression REGEXP.
 
 Search case-sensitivity is determined by the value of the variable
 `case-fold-search'."
   (interactive)
-  (lambda (regexp)
-    "return do_search (false, true, regexp)"))
+    "return do_search (false, true, regexp)")
 
 
 (defsubr isearch-forward ()
@@ -65,8 +61,7 @@ Type return to exit, leaving point at location found.
 Type @kbd{C-s} to search again forward, @kbd{C-r} to search again backward.
 @kbd{C-g} when search is successful aborts and moves point to starting point."
   (interactive)
-  (lambda ()
-    "return isearch (true, lastflag.set_uniarg)"))
+    "return isearch (true, lastflag.set_uniarg)")
 
 
 (defsubr isearch-backward ()
@@ -77,8 +72,7 @@ Type return to exit, leaving point at location found.
 Type @kbd{C-r} to search again backward, @kbd{C-s} to search again forward.
 @kbd{C-g} when search is successful aborts and moves point to starting point."
   (interactive)
-  (lambda ()
-    "return isearch (false, lastflag.set_uniarg)"))
+    "return isearch (false, lastflag.set_uniarg)")
 
 
 (defsubr isearch-forward-regexp ()
@@ -87,8 +81,7 @@ With a prefix argument, do a regular string search instead.
 Like ordinary incremental search except that your input is treated
 as a regexp.  See the command `isearch-forward' for more information."
   (interactive)
-  (lambda ()
-    "return isearch (true, not lastflag.set_uniarg)"))
+    "return isearch (true, not lastflag.set_uniarg)")
 
 
 (defsubr isearch-backward-regexp ()
@@ -97,8 +90,7 @@ With a prefix argument, do a regular string search instead.
 Like ordinary incremental search except that your input is treated
 as a regexp.  See `isearch-backward' for more information."
   (interactive)
-  (lambda ()
-    "return isearch (false, not lastflag.set_uniarg)"))
+    "return isearch (false, not lastflag.set_uniarg)")
 
 
 (localfun check_case (s)
@@ -121,7 +113,6 @@ the first letter is, and nil otherwise."
 As each match is found, the user must type a character saying
 what to do with it."
   (interactive)
-  (lambda ()
     "local find = minibuf_read ('Query replace string: ', '')
     if not find then
       return keyboard_quit ()
@@ -195,4 +186,4 @@ what to do with it."
       minibuf_echo (string.format ('Replaced %d occurrence%s', count, count ~= 1 and 's' or ''))
     end
 
-    return ok"))
+    return ok")
