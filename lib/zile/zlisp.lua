@@ -219,8 +219,8 @@ local function parse (s, mangle)
 
   -- New nodes are pushed onto the front of the list for speed...
   local function push (ast, value, quoted)
-    local node = Cons (value, ast)
-    return quoted and Cons (intern ("quote"), node) or node
+    if quoted then value = Cons (intern "quote", Cons (value)) end
+    return Cons (value, ast)
   end
 
   local function read (nested, openparen)

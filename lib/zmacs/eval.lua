@@ -59,6 +59,9 @@ local Cons = lisp.Cons
 local mapatoms = lisp.mapatoms
 
 
+local consp, symbolp = lisp.consp, lisp.symbolp
+
+
 --[[ ======================== ]]--
 --[[ Symbol Table Management. ]]--
 --[[ ======================== ]]--
@@ -101,7 +104,7 @@ local function intern_soft (name, ...)
 end
 
 
-local defsubr, marshaller -- forward declarations
+local defsubr, eval_expression, marshaller -- forward declarations
 
 
 ------
@@ -127,6 +130,7 @@ local defsubr, marshaller -- forward declarations
 -- @bool interactive `true` if this command can be called interactively
 -- @func func function to call after marshalling arguments
 -- @treturn symbol newly interned symbol
+-- @local
 function defsubr (name, min, max, doc, interactive, func)
   local symbol = intern (name)
   symbol.name  = name	-- unmangled name
@@ -141,16 +145,18 @@ end
 
 --- Argument marshalling for zlisp function symbols.
 -- Used as the `__call` metamethod for function symbols.
--- @local
 -- @tparam symbol symbol a symbol
 -- @tparam zile.Cons arglist arguments for calling this function symbol
 -- @return result of calling this function symbol
+-- @local
 function marshaller (symbol, arglist)
   local argspec = symbol["marshall-argspec"]
 
   local args = {}
-  while arglist and arglist.car do
-    table.insert (args, arglist.car)
+  while arglist and arglist.car ~= nil do
+    local arg = arglist.car
+    if argspec.cdr ~= "UNEVAL" then arg = eval_expression (arg) end
+    table.insert (args, arg)
     arglist = arglist.cdr
   end
 
@@ -330,20 +336,19 @@ end
 -- `setq`, where some nodes of the AST are evaluated and others are not.
 -- @tparam zile.Cons expr a lisp object or Cons list expression
 -- @treturn zile.Cons the result of evaluating `expr`
-local function eval_expression (expr)
-  if type (expr) ~= "table" then
-    return expr
-  elseif expr.name and expr.value == "t" or expr.value == "nil" then
-    return expr.value ~= "nil"
-  elseif expr.name and expr.value then
-    local value = get_variable (expr.name)
-    if value then return value end
-  elseif expr.car and expr.car.name then
-    if expr.car.func then
-      return eval_command (expr)
+-- @local
+function eval_expression (expr)
+  if symbolp (expr) then
+    return get_variable (expr)
+  elseif consp (expr) then
+    -- FIXME: quote should be a special form, without special handling
+    --        here.
+    if expr.car == intern_soft "quote" then
+      return expr.cdr.car
     end
+    return execute_function (expr.car, expr.cdr)
   end
-  return Cons (expr)
+  return expr
 end
 
 

@@ -34,23 +34,18 @@ meant to be customized by users.  You should enter VALUE in Lisp syntax,
 so if you want VALUE to be a string, you must surround it with doublequotes.
 VALUE is used literally, not evaluated."
   (interactive)
-    "-- non-interactively, symbol should be `(quote symbol)`
-    if type (symbol) == 'table' and symbol.cdr then
-      symbol = symbol.cdr.car
-    end
-    -- interactively, read a symbol name and lookup associated variable
-    if not symbol then
+    "if not symbol then
       local name = minibuf_read_variable_name ('Set variable: ')
       symbol = lisp.fetch_variable (name)
     end
     if not symbol then return false end
 
-    if not value then
+    if value == nil then
       local list = parse (minibuf_read (
                             string.format ('Set %s to value: ', symbol.name), ''))
       if list then value = list.car end
     end
-    if not value then return keyboard_quit () end
+    if value == nil then return keyboard_quit () end
 
     lisp.set_variable (symbol, value)
     return true")

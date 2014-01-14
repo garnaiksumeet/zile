@@ -65,6 +65,10 @@ GNU Zile NEWS                                    -*- outline -*-
 
 *** Zlisp
 
+  - Now has a fully functional reader and evaluator so that, for
+    example, calling functions with arguments that are themselves
+    function calls or variables works as expected.
+
   - Support for `point` and `mark`.  \C-h f ... RET for details.
 
 *** Zz
