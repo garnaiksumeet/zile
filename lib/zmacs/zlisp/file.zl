@@ -145,10 +145,11 @@ Interactively, confirmation is required unless you supply a prefix argument."
     "return save_some_buffers ()")
 
 
-(defsubr save-buffers-kill-emacs ()
-  "Offer to save each buffer, then kill this process."
+(defsubr save-buffers-kill-emacs (&optional arg)
+  "Offer to save each buffer, then kill this process.
+With prefix ARG, silently save all file-visiting buffers without asking."
   (interactive)
-    "if not save_some_buffers () then
+    "if not save_some_buffers (arg ~= nil) then
       return false
     end
 

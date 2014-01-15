@@ -280,9 +280,9 @@ function save_buffer (bp)
   return true
 end
 
-function save_some_buffers ()
+function save_some_buffers (noask)
+  noask = noask or false
   local none_to_save = true
-  local noask = false
 
   for _, bp in ripairs (buffers) do
     if bp.modified and not bp.nosave then

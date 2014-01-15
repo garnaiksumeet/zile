@@ -72,6 +72,9 @@ GNU Zile NEWS                                    -*- outline -*-
   - `copy-region-as-kill` understands it's parameters now, and copies
     the described region correctly.
 
+  - `save-buffers-kill-emacs` accepts an optional prefix argument; when
+    non-nil save all modified buffers without asking.
+
   - New functions: `buffer-size`, `mark`, `point`, `point-max`,
     `point-min`.
     \C-h f ... RET for details.
