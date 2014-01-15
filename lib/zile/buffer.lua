@@ -301,7 +301,7 @@ end
 
 -- Switch to the specified buffer.
 function switch_to_buffer (bp)
-  assert (cur_wp.bp == cur_bp)
+  assert (cur_wp.bp == cur_bp or cur_wp.bp == buffer_stack[1])
 
   -- The buffer is the current buffer; return safely.
   if cur_bp == bp then
@@ -323,6 +323,12 @@ function switch_to_buffer (bp)
 
   -- Change to buffer's default directory
   posix.chdir (bp.dir)
+
+  -- If there is a pending buffer unwind, make sure we end up
+  -- back here, and not in some previous "current" buffer.
+  if #buffer_stack > 0 then
+    buffer_stack[1] = cur_bp
+  end
 
   thisflag.need_resync = true
 end
