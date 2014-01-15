@@ -1,0 +1,52 @@
+before:
+  require "spec_helper"
+
+
+specify where-is:
+- context in batch mode:
+  - before:
+      zmacs = Zmacs {"--batch"}
+  # Lisp context only - you can't send keystrokes in batch mode!
+  - context with lisp:
+    - it writes bindings to minibuf:
+        expect (zmacs:edit [[(where-is 'where-is)]]).
+          should_write_to_minibuf.all_of {"where-is", "C-h w", "<f1> w"}
+    - it writes unbound command to minibuf:
+        expect (zmacs:edit [[(where-is 'auto-fill-mode)]]).
+          should_write_to_minibuf "auto-fill-mode is not on any key"
+    - it writes bindings to current buffer:
+        expect (zmacs:edit [[(where-is 'where-is t)]]).
+          should_write_to_buffer.all_of {"where-is", "C-h w", "<f1> w"}
+    - it writes unbound command to current buffer:
+        expect (zmacs:edit [[(where-is 'auto-fill-mode t)]]).
+          should_write_to_buffer "M-x auto-fill-mode RET"
+
+- context in interactive mode:
+  - before:
+      zmacs = Zmacs {"--no-init-file"}
+  - context with lisp:
+    - it writes bindings to minibuf:
+        expect (zmacs:edit [[(where-is 'where-is)]]).
+          should_write_to_minibuf.all_of {"where-is", "C-h w", "<f1> w"}
+    - it writes unbound command to minibuf:
+        expect (zmacs:edit [[(where-is 'auto-fill-mode)]]).
+          should_write_to_minibuf "auto-fill-mode is not on any key"
+    - it writes bindings to current buffer:
+        expect (zmacs:edit [[(where-is 'where-is t)]]).
+          should_write_to_buffer.all_of {"where-is", "C-h w", "<f1> w"}
+    - it writes unbound command to current buffer:
+        expect (zmacs:edit [[(where-is 'auto-fill-mode t)]]).
+          should_write_to_buffer "M-x auto-fill-mode RET"
+  - context with keystrokes:
+    - it writes bindings to minibuf:
+        expect (zmacs:edit [[\C-hwwhere-is\r]]).
+          should_write_to_minibuf.all_of {"where-is", "C-h w", "<f1> w"}
+    - it writes unbound command to minibuf:
+        expect (zmacs:edit [[\C-hwauto-fill-mode\r]]).
+          should_write_to_minibuf "auto-fill-mode is not on any key"
+    - it writes bindings to current buffer:
+        expect (zmacs:edit [[\C-u\C-hwwhere-is\r]]).
+          should_write_to_buffer.all_of {"where-is", "C-h w", "<f1> w"}
+    - it writes unbound command to current buffer:
+        expect (zmacs:edit [[\C-u\C-hwauto-fill-mode\r]]).
+          should_write_to_buffer "M-x auto-fill-mode RET"

@@ -33,6 +33,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 dnl Lua 5.2
 AX_PROG_LUA([5.2])
 AC_PATH_PROG([LDOC], [ldoc], [:])
+AC_PATH_PROG([SPECL], [specl], [:])
 
 dnl help2man
 AC_PATH_PROG([HELP2MAN], [help2man], [false])

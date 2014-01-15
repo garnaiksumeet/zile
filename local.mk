@@ -55,6 +55,7 @@ install_exec_hook	=
 
 include lib/zile/zile.mk
 include lib/zmacs/zmacs.mk
+include lib/zmacs/specs/specs.mk
 include lib/zz/zz.mk
 include tests/tests.mk
 
