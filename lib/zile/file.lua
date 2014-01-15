@@ -64,7 +64,7 @@ function canonicalize_filename (path)
   -- Deal with `~[user]', `..', `.', `//'
   for i, v in ipairs (comp) do
     if v == "" and i > 1 and i < #comp then -- `//'
-      ncomp = {}
+      ncomp = {""}
     elseif v == ".." then -- `..'
       table.remove (ncomp)
     elseif v ~= "." then -- not `.'
