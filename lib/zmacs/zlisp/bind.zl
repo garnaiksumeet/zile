@@ -28,19 +28,34 @@ Whichever character you type to run this command is inserted."
     "return execute_with_uniarg (true, current_prefix_arg, self_insert_command)")
 
 
-(defsubr where-is (definition)
+(defsubr where-is (definition &optional insert)
   "Print message listing key sequences that invoke the command DEFINITION.
-Argument is a command name."
+Argument is a command name.
+If INSERT (the prefix arg) is non-nil, insert the message in the buffer."
   (interactive)
-    "definition = definition or minibuf_read_function_name ('Where is command: ')
+    "if not insert and lastflag.set_uniarg then
+      definition, insert = nil, lastflag.set_uniarg
+    end
+
+    if not definition then
+      definition = minibuf_read_function_name ('Where is command: ')
+      if not definition then return false end
+    else
+      definition = definition.name
+    end
 
     local bindings = bind.where_is (definition)
     if bindings ~= nil then
-      if #bindings == 0 then
-        minibuf_echo (definition .. ' is not on any key')
+      if insert then
+        if #bindings > 0 then
+          insert_string (table.concat (bindings, ', ') .. ' (' .. definition .. ')')
+        else
+          insert_string ('M-x ' .. definition .. ' RET')
+        end
       else
-        minibuf_echo (string.format ('%s is on %s',
-                                     definition, table.concat (bindings, ', ')))
+        minibuf_echo (string.format ('%s is %s %s', definition,
+          #bindings > 0 and 'on' or 'not on',
+          #bindings > 0 and table.concat (bindings, ', ') or 'any key'))
       end
       return true
     end")

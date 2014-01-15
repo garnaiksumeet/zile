@@ -75,6 +75,9 @@ GNU Zile NEWS                                    -*- outline -*-
   - `save-buffers-kill-emacs` accepts an optional prefix argument; when
     non-nil save all modified buffers without asking.
 
+  - `where-is` accepts an optional `insert` argument; when non-nil
+    insert the result into the current buffer instead of the echo area.
+
   - New functions: `buffer-size`, `mark`, `point`, `point-max`,
     `point-min`.
     \C-h f ... RET for details.
