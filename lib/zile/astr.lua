@@ -19,6 +19,23 @@
 
 local Object = require "std.object"
 
+
+alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
+
+local function memchr (buf, ch, o)
+  local b = buf.buffer
+  local next = alien.default.memchr (
+    b:topointer (o), string.byte (ch), #b - (o - 1))
+  return next and b:tooffset (next) or nil
+end
+
+local function memrchr (buf, ch, o)
+  local c = string.byte (ch)
+  for i = o, 1, -1 do
+    if buf[i] == c then return i end
+  end
+end
+
 local allocation_chunk_size = 16
 AStr = Object {
   _init = function (self, s)
@@ -74,11 +91,11 @@ AStr = Object {
     alien.memmove (self.buf.buffer:topointer (from), rep, #rep)
   end,
 
-  find = function (self, s, from)
-    return tostring (self):find (s, from) -- FIXME
+  find = function (self, ch, from)
+    return memchr (self.buf, ch, from)
   end,
 
-  rfind = function (self, s, from)
-    return find_substr (tostring (self), s, 1, from - 1, false, true, true, false, false) -- FIXME
+  rfind = function (self, ch, from)
+    return memrchr (self.buf, ch, from - 1)
   end
 }
