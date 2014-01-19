@@ -20,8 +20,9 @@
 
 -- Return true if x is a function, or has a __cal metamethod.
 function iscallable (x)
+  if type (x) == "function" then return true end
   local mt = getmetatable (x)
-  return type (x) == "function" or (mt and mt.__call)
+  return mt and mt.__call and mt._type == "Symbol"
 end
 
 -- Recase str according to newcase.

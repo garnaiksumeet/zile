@@ -8,8 +8,10 @@ env:
     - LUAROCKS_CONFIG=build-aux/luarocks-config.lua
     - LUAROCKS_BASE=luarocks-2.1.1
     - LUAROCKS="$LUA $HOME/bin/luarocks"
-    - LDOC_ROCKSPEC=http://raw.github.com/gvvaughan/LDoc/next/ldoc-next-1.rockspec
-    - SPECL_ROCKSPEC=http://raw.github.com/gvvaughan/specl/release/specl-10-1.rockspec
+    - GHROOT=http://raw.github.com
+    - LDOC_ROCKSPEC=$GHROOT/gvvaughan/LDoc/next/ldoc-next-1.rockspec
+    - SPECL_ROCKSPEC=$GHROOT/gvvaughan/specl/release/specl-10-1.rockspec
+    - STDLIB_ROCKSPEC=$GHROOT/rrthomas/lua-stdlib/release/stdlib-37-1.rockspec
   matrix:
     - LUA=lua5.2             LUA_INCDIR=/usr/include/lua5.2     LUA_SUFFIX=5.2
 
@@ -54,6 +56,8 @@ script:
   - $LUAROCKS install $LDOC_ROCKSPEC
   # We need bugfixes not yet in a released version of Specl.
   - $LUAROCKS install $SPECL_ROCKSPEC
+  # STDLIBv37 didn't reach LuaRocks repo yet..
+  - $LUAROCKS install $STDLIB_ROCKSPEC
 
   # Make git rockspec for zile
   - make rockspecs LUAROCKS="$LUAROCKS" V=1

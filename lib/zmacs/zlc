@@ -19,8 +19,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local getopt = require "std.getopt"
-local io     = require "std.io_ext"
+local io     = require "std.io"
 
 local zz   = require "zile.zlisp"
 local prog = require "zile.version"
@@ -228,17 +227,33 @@ define ("localvar",
 --[[ Option Parsing. ]]--
 --[[ =============== ]]--
 
-prog.banner = prog.version .. "\n" ..
-  "Written by Gary V. Vaughan <gary@gnu.org>, 2013\n" ..
-  "\n" ..
-  prog.COPYRIGHT_STRING .. "\n" ..
-  prog.COPYRIGHT_NOTICE .. "\n"
+local OptionParser = require "std.optparse"
 
-getopt.processArgs (prog)
+local parser = OptionParser ([[
+zlc (GNU Zile) ]] .. prog.VERSION .. "\n" .. [[
+Written by Gary V. Vaughan <gary@gnu.org>, 2013
+
+Copyright (C) 2013, Free Software Foundation, Inc.
+Zile comes with ABSOLUTELY NO WARRANTY.
+You may redistribute copies of Specl under the terms of the GNU
+General Public Licens; either version 3, or any later version.
+For more information, see <http://gnu.org/licenses>.
+
+Usage: zlc FILE...
+
+Compile Zlisp subr declarations into Lua source code.
+
+      --help            print this help, then exit
+      --version         print version number, then exit
+
+Listed FILEs are compiled to standard output in order.
+
+Report bugs to ]] .. prog.PACKAGE_BUGREPORT .. ".")
+
+local arg, opts = parser:parse (_G.arg)
 
 if #arg == 0 then
-  getopt.usage ()
-  os.exit (1)
+  return parser:opterr "No input files"
 end
 
 

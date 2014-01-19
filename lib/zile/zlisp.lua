@@ -38,7 +38,7 @@
 ]]
 
 local Set    = require "zile.Set"
-local io     = require "std.io_ext"
+local io     = require "std.io"
 
 
 --[[ ======== ]]--
