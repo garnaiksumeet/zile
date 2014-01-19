@@ -20,6 +20,7 @@
 local Object = require "std.object"
 
 
+-- We can rely on access to memchr...
 alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
 
 local function memchr (buf, ch, o)
@@ -29,10 +30,26 @@ local function memchr (buf, ch, o)
   return next and b:tooffset (next) or nil
 end
 
-local function memrchr (buf, ch, o)
-  local c = string.byte (ch)
-  for i = o, 1, -1 do
-    if buf[i] == c then return i end
+-- ...but memrchr is not so widely available, and will throw an error
+-- during parsing from inside loadstring if alien can't find the symbol.
+local have_memrchr, memrchr = pcall (loadstring [[
+  alien.default.memrchr:types ("pointer", "pointer", "int", "size_t")
+
+  return function (buf, ch, o)
+    local b = buf.buffer
+    local prev = alien.default.memrchr (
+      b:topointer (o), string.byte (ch), o - 1)
+    return prev and b:tooffset (prev) or nil
+  end
+]])
+
+if not have_memrchr then
+  -- Brute force reverse buffer search using alien.array [] references.
+  function memrchr (buf, ch, o)
+    local c = string.byte (ch)
+    for i = o, 1, -1 do
+      if buf[i] == c then return i end
+    end
   end
 end
 
