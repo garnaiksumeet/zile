@@ -98,17 +98,17 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
     elseif c == keycode "\\C-g" then
       as = nil
       break
-    elseif keyset {"\\C-a", "\\HOME"}:member (c) then
+    elseif set.member (keyset {"\\C-a", "\\HOME"}, c) then
       pos = 0
-    elseif keyset {"\\C-e", "\\END"}:member (c) then
+    elseif set.member (keyset {"\\C-e", "\\END"}, c) then
       pos = #as
-    elseif keyset {"\\C-b", "\\LEFT"}:member (c) then
+    elseif set.member (keyset {"\\C-b", "\\LEFT"}, c) then
       if pos > 0 then
         pos = pos - 1
       else
         ding ()
       end
-    elseif keyset {"\\C-f", "\\RIGHT"}:member (c) then
+    elseif set.member (keyset {"\\C-f", "\\RIGHT"}, c) then
       if pos < #as then
         pos = pos + 1
       else
@@ -128,27 +128,27 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
       else
         ding ()
       end
-    elseif keyset {"\\C-d", "\\DELETE"}:member (c) then
+    elseif set.member (keyset {"\\C-d", "\\DELETE"}, c) then
       if pos < #as then
         as = string.sub (as, 1, pos) .. string.sub (as, pos + 2)
       else
         ding ()
       end
-    elseif keyset {"\\M-v", "\\PAGEUP"}:member (c) then
+    elseif set.member (keyset {"\\M-v", "\\PAGEUP"}, c) then
       if cp == nil then
         ding ()
       elseif cp.poppedup then
         completion_scroll_down ()
         thistab = lasttab
       end
-    elseif keyset {"\\C-v", "\\PAGEDOWN"}:member (c) then
+    elseif set.member (keyset {"\\C-v", "\\PAGEDOWN"}, c) then
       if cp == nil then
         ding ()
       elseif cp.poppedup then
         completion_scroll_up ()
         thistab = lasttab
       end
-    elseif keyset {"\\M-p", "\\UP"}:member (c) then
+    elseif set.member (keyset {"\\M-p", "\\UP"}, c) then
       if hp then
         local elem = previous_history_element (hp)
         if elem then
@@ -158,7 +158,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
           as = elem
         end
       end
-    elseif keyset {"\\M-n", "\\DOWN"}:member (c) then
+    elseif set.member (keyset {"\\M-n", "\\DOWN"}, c) then
       if hp then
         local elem = next_history_element (hp)
         if elem then
@@ -207,7 +207,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
     end
 
     lasttab = thistab
-  until keyset {"\\RET", "\\C-g"}:member (c)
+  until set.member (keyset {"\\RET", "\\C-g"}, c)
 
   minibuf_clear ()
   maybe_close_popup (cp)

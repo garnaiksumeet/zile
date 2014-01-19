@@ -263,7 +263,7 @@ end
 -- Convert a list of keychord strings to a set of key codes.
 -- Create a new stdlib set of keycode objects.
 -- A fast way to check for a group of keys:
---   if keyset {"x", "y", "z"}:member (key) then ... end
+--   if set.member (keyset {"x", "y", "z"}, key) then ... end
 function keyset (l)
   return set.new (list.map (keycode, l))
 end

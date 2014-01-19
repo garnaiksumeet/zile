@@ -183,7 +183,7 @@ what to do with it.
         end
       end
 
-      if keyset {' ', 'y', 'Y', '.', '!'}:member (c) then
+      if set.member (keyset {' ', 'y', 'Y', '.', '!'}, c) then
         -- Perform replacement.
         count = count + 1
         local case_repl = repl
@@ -203,7 +203,7 @@ what to do with it.
         if c == keycode '.' then -- Replace and quit.
           break
         end
-      elseif not keyset {'n', 'N', '\\RET', '\\DELETE'}:member (c) then
+      elseif not set.member (keyset {'n', 'N', '\\RET', '\\DELETE'}, c) then
         ungetkey (c)
         ok = false
         break

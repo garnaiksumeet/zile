@@ -138,7 +138,7 @@ function minibuf_vread_completion (fmt, value, cp, hp, empty_err, invalid_err)
         popup_completion (cp)
       end
 
-      if set.new (cp.completions):member (ms) then
+      if set.member (set.new (cp.completions), ms) then
         if hp then
           add_history_element (hp, ms)
         end
@@ -212,7 +212,7 @@ function minibuf_read_key (fmt, keys, extra)
     if key == keycode "\\C-g" then
       keyboard_quit ()
       break
-    elseif keyset (accept):member (key) then
+    elseif set.member (keyset (accept), key) then
       return key
     else
       errmsg = keys[#keys]
