@@ -20,39 +20,6 @@
 local Object = require "std.object"
 
 
--- We can rely on access to memchr...
-alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
-
-local function memchr (buf, ch, o)
-  local b = buf.buffer
-  local next = alien.default.memchr (
-    b:topointer (o), string.byte (ch), #b - (o - 1))
-  return next and b:tooffset (next) or nil
-end
-
--- ...but memrchr is not so widely available, and will throw an error
--- during parsing from inside loadstring if alien can't find the symbol.
-local have_memrchr, memrchr = pcall (loadstring [[
-  alien.default.memrchr:types ("pointer", "pointer", "int", "size_t")
-
-  return function (buf, ch, o)
-    local b = buf.buffer
-    local prev = alien.default.memrchr (
-      b:topointer (o), string.byte (ch), o - 1)
-    return prev and b:tooffset (prev) or nil
-  end
-]])
-
-if not have_memrchr then
-  -- Brute force reverse buffer search using alien.array [] references.
-  function memrchr (buf, ch, o)
-    local c = string.byte (ch)
-    for i = o, 1, -1 do
-      if buf[i] == c then return i end
-    end
-  end
-end
-
 local allocation_chunk_size = 16
 AStr = Object {
   _init = function (self, s)
@@ -108,11 +75,37 @@ AStr = Object {
     alien.memmove (self.buf.buffer:topointer (from), rep, #rep)
   end,
 
-  find = function (self, ch, from)
-    return memchr (self.buf, ch, from)
+  find = function (self, s, from) -- FIXME for #s > 1 (crlf)
+    local n = #self - (from - 1)
+    if n > 0 and n <= #self then -- skip if from if out-of-bounds
+      local b, c = self.buf.buffer, string.byte (s)
+      local next = alien.default.memchr (b:topointer (from), c, n)
+      return next and b:tooffset (next) or nil
+    end
   end,
 
-  rfind = function (self, ch, from)
-    return memrchr (self.buf, ch, from - 1)
-  end
+  rfind = function (self, s, from) -- FIXME for #s > 1 (crlf)
+    local b, c = self.buf, string.byte (s)
+    for i = from - 1, 1, -1 do
+      if b[i] == c then return i end
+    end
+  end,
 }
+
+alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
+
+local have_memrchr, rfind = pcall (loadstring [[
+  alien.default.memrchr:types ("pointer", "pointer", "int", "size_t")
+
+  return function (self, s, from) -- FIXME for #s > 1 (crlf)
+    local n = from - 1
+    if n > 0 and n <= #self then -- skip if out-of-bounds
+      local b, c = self.buf.buffer, string.byte (s)
+      local prev = alien.default.memrchr (b:topointer (), c, n)
+      return prev and b:tooffset (prev) or nil
+    end
+  end
+]])
+
+-- Use the faster memrchr implementation if libc provides it.
+if have_memrchr then AStr.rfind = rfind end
