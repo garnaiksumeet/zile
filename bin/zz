@@ -98,7 +98,6 @@ require "std.strict" -- optional stdlib module
 posix      = require_version ("posix", "29")
 curses     = require "curses" -- part of luaposix
 rex_gnu    = require_version ("rex_gnu", "2.7.1", nil, "[%S]+%s*([%S]+)")
-require_version ("alien", "0.7.0")
 
 -- Load modules with Zile callbacks first:
 eval = require "zz.eval"

@@ -17,6 +17,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local alien  = require "alien"
 local Object = require "std.object"
 
 alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
