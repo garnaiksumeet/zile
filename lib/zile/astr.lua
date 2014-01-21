@@ -19,6 +19,12 @@
 
 local Object = require "std.object"
 
+alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
+
+local have_memrchr = pcall (loadstring [[
+  alien.default.memrchr:types ("pointer", "pointer", "int", "size_t")
+]])
+
 
 local allocation_chunk_size = 16
 AStr = Object {
@@ -92,12 +98,9 @@ AStr = Object {
   end,
 }
 
-alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
-
-local have_memrchr, rfind = pcall (loadstring [[
-  alien.default.memrchr:types ("pointer", "pointer", "int", "size_t")
-
-  return function (self, s, from) -- FIXME for #s > 1 (crlf)
+-- Use the faster memrchr implementation if libc provides it.
+if have_memrchr then
+  AStr.rfind = function (self, s, from) -- FIXME for #s > 1 (crlf)
     local n = from - 1
     if n > 0 and n <= #self then -- skip if out-of-bounds
       local b, c = self.buf.buffer, string.byte (s)
@@ -105,7 +108,4 @@ local have_memrchr, rfind = pcall (loadstring [[
       return prev and b:tooffset (prev) or nil
     end
   end
-]])
-
--- Use the faster memrchr implementation if libc provides it.
-if have_memrchr then AStr.rfind = rfind end
+end
