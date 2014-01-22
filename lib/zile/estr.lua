@@ -30,10 +30,6 @@ local max_eol_check_count = 3
 
 EStr = Object {
   _init = function (self, s, eol)
-    self.s = s
-    if type (s) == "string" then
-      self.s = MutableString (s)
-    end
     if eol then -- if eol supplied, use it
       self.eol = eol
     else -- otherwise, guess
@@ -68,6 +64,21 @@ EStr = Object {
         i = i + 1
       end
     end
+
+    if type (s) == "string" then
+      self.s = MutableString (s)
+      if #self.eol == 1 then
+        -- Use faster search functions for single-char eols.
+        self.find, self.rfind = MutableString.chr, MutableString.rchr
+      else
+        self.find, self.rfind = MutableString.find, MutableString.rfind
+      end
+    else
+      self.s = s
+      -- Non-MutableStrings have to provide their own find and rfind
+      -- functions.
+      self.find, self.rfind = self.s.find, self.s.rfind
+    end
     return self
   end,
 
@@ -86,12 +97,12 @@ EStr = Object {
   end,
 
   start_of_line = function (self, o)
-    local prev = self.s:rfind (self.eol, o)
+    local prev = self.rfind (self.s, self.eol, o)
     return prev and prev + #self.eol or 1
   end,
 
   end_of_line = function (self, o)
-    local next = self.s:find (self.eol, o)
+    local next = self.find (self.s, self.eol, o)
     return next or #self.s + 1
   end,
 
@@ -100,7 +111,7 @@ EStr = Object {
     local s = 1
     local next
     repeat
-      next = self.s:find (self.eol, s)
+      next = self.find (self.s, self.eol, s)
       if next then
         lines = lines + 1
         s = next + #self.eol + 1
