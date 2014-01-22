@@ -18,6 +18,17 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+-- Lookup `with` in the `branches` table, and return the result of
+-- running the function found there. If there is no explicit match,
+-- then use the default branch at index 1. otherwise raise an error
+-- because there was no match.
+function case (with, branches)
+  local fn = branches[with] or branches[1]
+  if fn then return fn () end
+  error ("unmatched case branch", 2)
+end
+
+
 -- Return true if x is a function, or is a Symbol with a __call metamethod.
 function iscallable (x)
   if type (x) == "function" then return true end
