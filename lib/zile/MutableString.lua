@@ -18,8 +18,8 @@
 --[[--
  Efficient string buffers.
 
- An MutableString is a fast array of bytes, and methods to query and manipulate
- it.
+ An MutableString is a fast array of bytes, and methods to query and
+ manipulate it.
 
  Create a new MutableString with:
 
@@ -38,19 +38,44 @@ local Object = require "std.object"
 
 local allocation_chunk_size = 16
 
-alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
-
 
 --- Look for the first occurrence of `s` starting at `from`.
+-- @function find
 -- @string s string to search for
 -- @int from index to start search
-local function find (self, s, from) -- FIXME for #s > 1 (crlf)
-  local n = #self - (from - 1)
-  if n > 0 and n <= #self then -- skip if from if out-of-bounds
-    local b, c = self.buf.buffer, string.byte (s)
-    local next = alien.default.memchr (b:topointer (from), c, n)
-    return next and b:tooffset (next) or nil
+local find
+
+local have_memmem = pcall (loadstring [[
+  alien.default.memmem:types ("pointer", "pointer", "size_t", "pointer", "size_t")
+]])
+
+if have_memmem then
+
+  -- Use the faster memmem implementation if libc provides it.
+  function find (self, s, from)
+    local n = #self - (from - 1)
+    if n > 0 and n <= #self then
+      local b, needle = self.buf.buffer, alien.buffer (s)
+      local next =
+        alien.default.memmem (b:topointer (from), n, needle:topointer (), #s)
+      return next and b:tooffset (next) or nil
+    end
   end
+
+else
+
+  alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
+
+  -- Use memchr, and then check array members manually if necessary.
+  function find (self, s, from) -- FIXME for #s > 1 (crlf)
+    local n = #self - (from - 1)
+    if n > 0 and n <= #self then -- skip if from if out-of-bounds
+      local b, c = self.buf.buffer, string.byte (s)
+      local next = alien.default.memchr (b:topointer (from), c, n)
+      return next and b:tooffset (next) or nil
+    end
+  end
+
 end
 
 
