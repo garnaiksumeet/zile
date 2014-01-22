@@ -118,4 +118,5 @@ dist_modules_DATA +=				\
 	$(NOTHING_ELSE)
 
 $(dist_doc_DATA) $(dist_classes_DATA) $(dist_modules_DATA): $(ldoc_DEPS)
-	cd $(srcdir) && $(LDOC) -c doc/config.ld .
+	test -d "$(srcdir)/doc" || mkdir "$(srcdir)/doc"
+	$(LDOC) -c build-aux/config.ld -d $(abs_srcdir)/doc .

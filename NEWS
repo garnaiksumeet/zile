@@ -42,6 +42,8 @@ GNU Zile NEWS                                    -*- outline -*-
     means the lua source rock installs directly by copying files into
     the rocks tree.
 
+  - LuaRocks install doesn't copy config.ld to $docdir.
+
 *** Zmacs
 
   - Support for FAQ, COPYING and NEWS browsing in editor with \C-h\C-f,

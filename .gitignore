@@ -16,6 +16,7 @@
 /aclocal.m4
 /autom4te.cache
 /build-aux/
+!/build-aux/config.ld
 !/build-aux/git-log-fix
 !/build-aux/sanity-cfg.mk
 /config.cache
