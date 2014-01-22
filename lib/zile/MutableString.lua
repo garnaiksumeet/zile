@@ -215,9 +215,10 @@ end
 
 --- Return a copy of a substring of this MutableString.
 -- @int from the index of the first element to copy.
--- @int to the index of the last element to copy.
+-- @int[opt=end-of-string] to the index of the last element to copy.
 -- @treturn string a new Lua string
 local function sub (self, from, to)
+  to = to or self.length
   return tostring (self):sub (from, to) -- FIXME
 end
 
