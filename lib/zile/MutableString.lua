@@ -18,7 +18,7 @@
 --[[--
  Efficient string buffers.
 
- An MutableString is a fast array of bytes, and methods to query and
+ A MutableString is a fast array of bytes, and methods to query and
  manipulate it.
 
  Create a new MutableString with:
