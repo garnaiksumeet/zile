@@ -86,6 +86,10 @@ EStr = Object {
     return tostring (self.s)
   end,
 
+  __index = function (self, n)
+    return self.s[n]
+  end,
+
   prev_line = function (self, o)
     local so = self:start_of_line (o)
     return so ~= 1 and self:start_of_line (so - #self.eol) or nil

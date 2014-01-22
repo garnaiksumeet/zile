@@ -130,7 +130,7 @@ end
 
 function get_buffer_char (bp, o)
   local n = o_to_realo (bp, o)
-  return bp.text:sub (n, n)
+  return string.char (bp.text[n])
 end
 
 function buffer_prev_line (bp, o)

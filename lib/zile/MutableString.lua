@@ -257,6 +257,12 @@ local _functions = {
 }
 
 
+-- Object methods include all module functions, plus `topointer`
+local methods = merge (clone (_functions), {
+  topointer = topointer,
+})
+
+
 ------
 -- An efficient string buffer object.
 -- @table MutableString
@@ -315,7 +321,19 @@ MutableString = Object {
   end,
 
 
-  __index = merge (clone (_functions), { topointer = topointer }),
+  --- Return the `n`th character in this MutableString.
+  -- @function __index
+  -- @int n 1-based index
+  -- @treturn string the character at index `n`
+  __index = function (self, n)
+    return case (type (n), {
+      -- Do character lookup with an integer...
+      number   = function () return self.buf[n] end,
+
+      -- ...otherwise dispatch to method table.
+      function () return methods[n] end,
+    })
+  end,
 }
 
 return MutableString
