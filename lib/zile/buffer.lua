@@ -18,7 +18,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-local AStr = require "zile.astr"
+local MutableString = require "zile.MutableString"
 
 -- Buffer methods that know about the gap.
 
@@ -220,7 +220,7 @@ function buffer_new ()
 
   bp.pt = 1
   bp.gap = 0
-  bp.text = EStr (AStr (""))
+  bp.text = EStr (MutableString (""))
   bp.markers = {}
   bp.dir = posix.getcwd () or ""
 

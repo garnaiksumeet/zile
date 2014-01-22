@@ -99,22 +99,22 @@ EXTRA_DIST +=						\
 ## Documentation. ##
 ## -------------- ##
 
-dist_doc_DATA +=				\
-	$(srcdir)/doc/index.html		\
-	$(srcdir)/doc/ldoc.css			\
+dist_doc_DATA +=					\
+	$(srcdir)/doc/index.html			\
+	$(srcdir)/doc/ldoc.css				\
 	$(NOTHING_ELSE)
 
-dist_classes_DATA +=				\
-	$(srcdir)/doc/classes/zile.astr.html	\
-	$(srcdir)/doc/classes/zile.Cons.html	\
-	$(srcdir)/doc/classes/zile.Set.html	\
-	$(srcdir)/doc/classes/zile.Symbol.html	\
+dist_classes_DATA +=					\
+	$(srcdir)/doc/classes/zile.Cons.html		\
+	$(srcdir)/doc/classes/zile.MutableString.html	\
+	$(srcdir)/doc/classes/zile.Set.html		\
+	$(srcdir)/doc/classes/zile.Symbol.html		\
 	$(NOTHING_ELSE)
 
-dist_modules_DATA +=				\
-	$(srcdir)/doc/modules/zile.zlisp.html	\
-	$(srcdir)/doc/modules/zmacs.eval.html	\
-	$(srcdir)/doc/modules/zz.eval.html	\
+dist_modules_DATA +=					\
+	$(srcdir)/doc/modules/zile.zlisp.html		\
+	$(srcdir)/doc/modules/zmacs.eval.html		\
+	$(srcdir)/doc/modules/zz.eval.html		\
 	$(NOTHING_ELSE)
 
 $(dist_doc_DATA) $(dist_classes_DATA) $(dist_modules_DATA): $(ldoc_DEPS)

@@ -17,8 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local AStr   = require "zile.astr"
-local Object = require "std.object"
+local MutableString = require "zile.MutableString"
+local Object        = require "std.object"
 
 -- Formats of end-of-line
 coding_eol_lf = "\n"
@@ -32,7 +32,7 @@ EStr = Object {
   _init = function (self, s, eol)
     self.s = s
     if type (s) == "string" then
-      self.s = AStr (s)
+      self.s = MutableString (s)
     end
     if eol then -- if eol supplied, use it
       self.eol = eol

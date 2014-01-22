@@ -18,18 +18,18 @@
 --[[--
  Efficient string buffers.
 
- An AStr is a fast array of bytes, and methods to query and manipulate
+ An MutableString is a fast array of bytes, and methods to query and manipulate
  it.
 
- Create a new AStr with:
+ Create a new MutableString with:
 
-     > AStr = require "zile.astr"
-     > =AStr "the content"
+     > MutableString = require "zile.MutableString"
+     > =MutableString "the content"
      the content
 
  All the indexes passed to methods use 1-based counting.
 
- @classmod zile.astr
+ @classmod zile.MutableString
 ]]
 
 
@@ -70,8 +70,8 @@ end
 
 --- Move `n` bytes from `from` to `to`.  The two byte strings may
 -- overlap.
--- @int to start of destination within this AStr
--- @int from start of source bytes within the AStr
+-- @int to start of destination within this MutableString
+-- @int from start of source bytes within the MutableString
 -- @int n number of bytes to move
 local function move (self, to, from, n)
   assert (math.max (from, to) + n <= #self + 1)
@@ -81,7 +81,7 @@ end
 
 --- Remove `n` bytes starting at `from`.
 -- There is no _hole_ afterwards; the following bytes are moved up to
--- fill it.  The total size of the AStr may be reduced.
+-- fill it.  The total size of the MutableString may be reduced.
 -- @function remove
 -- @int from index of first byte to remove
 -- @int n number of bytes to remove
@@ -156,7 +156,7 @@ local function set_len (self, n)
 end
 
 
---- Return a copy of a substring of this AStr.
+--- Return a copy of a substring of this MutableString.
 -- @int from the index of the first element to copy.
 -- @int to the index of the last element to copy.
 -- @treturn string a new Lua string
@@ -171,9 +171,9 @@ end
 -- @int length number of bytes currently allocated
 -- @tfield alien.array buf a block of mutable memory
 return Object {
-  _type      = "AStr",
+  _type      = "MutableString",
 
-  -- Instantiate a newly cloned AStr.
+  -- Instantiate a newly cloned MutableString.
   _init = function (self, s)
     self.buf = alien.array ("char", #s, alien.buffer (s))
     self.length = #s
@@ -181,14 +181,14 @@ return Object {
   end,
 
 
-  --- Return the string contents of this AStr.
+  --- Return the string contents of this MutableString.
   -- @function __tostring
   __tostring = function (self)
     return self.buf.buffer:tostring (#self)
   end,
 
 
-  --- Return the number of bytes in this AStr.
+  --- Return the number of bytes in this MutableString.
   -- @function __len
   __len = function (self)
     return self.length

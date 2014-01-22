@@ -103,7 +103,6 @@ eval = require "zmacs.eval"
 
 -- Load Zile modules:
 require "zile.lib"
-require "zile.astr"
 require "zile.estr"
 require "zile.history"
 require "zile.bind"
