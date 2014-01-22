@@ -1,5 +1,6 @@
 -- -*- lua -*-
-project = "zile"
+title = "GNU Zile @VERSION@ Reference"
+project = "GNU Zile @VERSION@"
 description = "Zile Implements Lua Editors"
 boilerplate = true
 dir = "."
