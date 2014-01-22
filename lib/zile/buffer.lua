@@ -18,6 +18,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local FileString    = require "zile.FileString"
 local MutableString = require "zile.MutableString"
 
 -- Buffer methods that know about the gap.
@@ -78,7 +79,7 @@ function replace_estr (del, es, bp)
   end
 
   if es.eol ~= get_buffer_eol (bp) then
-    es = EStr ("", get_buffer_eol (bp)):cat (es)
+    es = FileString ("", get_buffer_eol (bp)):cat (es)
   end
 
   local newlen = es:len (bp.text.eol)
@@ -170,13 +171,13 @@ function get_buffer_region (bp, r)
     local from = math.max (r.start - get_buffer_pt (bp), 0)
     s = s .. get_buffer_post_point (bp):sub (from + 1, r.finish - get_buffer_pt (bp))
   end
-  return EStr (s, get_buffer_eol (bp))
+  return FileString (s, get_buffer_eol (bp))
 end
 
 -- Insert the character `c' at the current point position
 -- into the current buffer.
 function insert_char (c)
-  return replace_estr (0, EStr (c))
+  return replace_estr (0, FileString (c))
 end
 
 function delete_char ()
@@ -191,10 +192,10 @@ function delete_char ()
   end
 
   if eolp () then
-    replace_estr (#get_buffer_eol (cur_bp), EStr (""))
+    replace_estr (#get_buffer_eol (cur_bp), FileString (""))
     thisflag.need_resync = true
   else
-    replace_estr (1, EStr (""))
+    replace_estr (1, FileString (""))
   end
 
   cur_bp.modified = true
@@ -204,7 +205,7 @@ end
 
 function insert_buffer (bp)
   -- Copy text to avoid problems when bp == cur_bp.
-  insert_estr (EStr (get_buffer_pre_point (bp) .. get_buffer_post_point (bp), get_buffer_eol (bp)))
+  insert_estr (FileString (get_buffer_pre_point (bp) .. get_buffer_post_point (bp), get_buffer_eol (bp)))
 end
 
 
@@ -220,7 +221,7 @@ function buffer_new ()
 
   bp.pt = 1
   bp.gap = 0
-  bp.text = EStr (MutableString (""))
+  bp.text = FileString (MutableString (""))
   bp.markers = {}
   bp.dir = posix.getcwd () or ""
 
@@ -385,7 +386,7 @@ function delete_region (r)
 
   local m = point_marker ()
   goto_offset (r.start)
-  replace_estr (get_region_size (r), EStr (""))
+  replace_estr (get_region_size (r), FileString (""))
   goto_offset (m.o)
   unchain_marker (m)
   deactivate_mark ()

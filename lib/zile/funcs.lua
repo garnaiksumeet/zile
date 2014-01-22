@@ -17,6 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local FileString = require "zile.FileString"
+
 function get_region ()
   activate_mark ()
   return get_buffer_region (cur_bp, calculate_the_region ())
@@ -129,7 +131,7 @@ function pipe_command (cmd, output, replace, input)
           goto_offset (r.start, bp)
           del = get_region_size (r)
         end
-        replace_estr (del, EStr (out, coding_eol_lf), bp)
+        replace_estr (del, FileString (out, coding_eol_lf), bp)
       end
     end
   end
@@ -286,7 +288,7 @@ function setcase_word (rcase)
   end
 
   if #as > 0 then
-    replace_estr (#as, EStr (recase (as, rcase), coding_eol_lf))
+    replace_estr (#as, FileString (recase (as, rcase), coding_eol_lf))
   end
 
   cur_bp.modified = true

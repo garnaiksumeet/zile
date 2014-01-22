@@ -17,6 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local FileString = require "zile.FileString"
+
 prog = require "zile.version"
 
 -- FIXME: Warn when file changes on disk
@@ -345,7 +347,7 @@ function find_file (filename)
       else
         s = ""
       end
-      bp.text = EStr (s)
+      bp.text = FileString (s)
 
       -- Reset undo history
       bp.next_undop = nil

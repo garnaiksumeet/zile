@@ -17,6 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <htt://www.gnu.org/licenses/>.
 
+local FileString = require "zile.FileString"
+
 local eval = require "zz.eval"
 local Defun, zz = eval.Defun, eval.sandbox
 
@@ -120,7 +122,7 @@ Set mark after the inserted text.
     if ok then
       local s = io.slurp (file)
       if s then
-        insert_estr (EStr (s))
+        insert_estr (FileString (s))
         zz.set_mark_command ()
       else
         ok = minibuf_error ('%s: %s', file, posix.errno ())

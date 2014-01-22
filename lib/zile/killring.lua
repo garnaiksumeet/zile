@@ -17,6 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local FileString = require "zile.FileString"
+
 local kill_ring_text
 
 function killring_empty ()
@@ -34,7 +36,7 @@ function maybe_free_kill_ring ()
 end
 
 local function kill_ring_push (es)
-  kill_ring_text = (kill_ring_text or EStr ("")):cat (es)
+  kill_ring_text = (kill_ring_text or FileString ("")):cat (es)
   command.attach_label ":kill_ring_push"
 end
 
@@ -95,7 +97,7 @@ function kill_line (whole_line)
       return false
     end
 
-    kill_ring_push (EStr ("\n"))
+    kill_ring_push (FileString ("\n"))
   end
 
   undo_end_sequence ()

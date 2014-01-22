@@ -17,6 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local FileString = require "zile.FileString"
+
 local eval  = require "zz.eval"
 local Defun = eval.Defun
 
@@ -196,7 +198,7 @@ what to do with it.
         end
         local m = point_marker ()
         goto_offset (r.start)
-        replace_estr (#find, EStr (case_repl))
+        replace_estr (#find, FileString (case_repl))
         goto_offset (m.o)
         unchain_marker (m)
 

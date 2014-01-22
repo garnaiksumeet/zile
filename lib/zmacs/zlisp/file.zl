@@ -18,6 +18,9 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+(localvar FileString "require 'zile.FileString'")
+
+
 (defsubr find-file (filename)
   "Edit file FILENAME.
 Switch to a buffer visiting file FILENAME,
@@ -99,7 +102,7 @@ Set mark after the inserted text."
     if ok then
       local s = io.slurp (filename)
       if s then
-        insert_estr (EStr (s))
+        insert_estr (FileString (s))
         lisp.execute_function ('set-mark-command')
       else
         ok = minibuf_error ('%s: %s', filename, posix.errno ())

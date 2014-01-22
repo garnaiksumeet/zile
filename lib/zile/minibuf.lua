@@ -17,6 +17,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local FileString = require "zile.FileString"
 
 files_history = history_new ()
 
@@ -67,7 +68,7 @@ local function trim_messages (bp)
   bp.noundo = true
   bp.readonly = false
   goto_offset (get_buffer_size (bp) + 1, bp)
-  replace_estr (0, EStr (minibuf_contents .. "\n"), bp)
+  replace_estr (0, FileString (minibuf_contents .. "\n"), bp)
   bp.lines = (bp.lines or 0) + 1
 
   local max = eval.get_variable ("message_log_max")
@@ -84,7 +85,7 @@ local function trim_messages (bp)
       buffer_start_of_line (bp, get_buffer_pt (bp))
       local kill_chars = get_buffer_pt (bp) - 1
       goto_offset (1, bp)
-      replace_estr (kill_chars, EStr "", bp)
+      replace_estr (kill_chars, FileString "", bp)
       bp.lines = tonumber (max)
       goto_offset (get_buffer_size (bp) + 1, bp)
     end

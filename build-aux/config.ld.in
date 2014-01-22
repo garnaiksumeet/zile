@@ -8,6 +8,7 @@ dir = "."
 file = {
   -- Classes
   "../lib/zile/Cons.lua",
+  "../lib/zile/FileString.lua",
   "../lib/zile/MutableString.lua",
   "../lib/zile/Set.lua",
   "../lib/zile/Symbol.lua",

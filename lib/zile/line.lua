@@ -19,8 +19,11 @@
 -- Free Software Foundation, Fifth Floor, 51 Franklin Street, Boston,
 -- MA 02111-1301, USA.
 
+
+local FileString = require "zile.FileString"
+
 function insert_string (s, eol)
-  return insert_estr (EStr (s, eol or coding_eol_lf))
+  return insert_estr (FileString (s, eol or coding_eol_lf))
 end
 
 function delete_horizontal_space ()
