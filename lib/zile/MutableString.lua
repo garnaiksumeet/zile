@@ -36,10 +36,13 @@
 local alien  = require "alien"
 local Object = require "std.object"
 
+local cstring, libc, memmove, memset =
+  alien.buffer, alien.default, alien.memmove, alien.memset
+
 local allocation_chunk_size = 16
 
 
-alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
+libc.memchr:types ("pointer", "pointer", "int", "size_t")
 
 
 --- Lock for the first occurrence of `ch` starting at `from`.
@@ -49,7 +52,7 @@ local function chr (self, ch, from)
   local n = #self - (from - 1)
   if n > 0 and n <= #self then -- skip if from if out-of-bounds
     local b, c = self.buf.buffer, string.byte (ch)
-    local next = alien.default.memchr (b:topointer (from), c, n)
+    local next = libc.memchr (b:topointer (from), c, n)
     return next and b:tooffset (next) or nil
   end
 end
@@ -62,7 +65,7 @@ end
 local find
 
 local have_memmem = pcall (loadstring [[
-  alien.default.memmem:types ("pointer", "pointer", "size_t", "pointer", "size_t")
+  libc.memmem:types ("pointer", "pointer", "size_t", "pointer", "size_t")
 ]])
 
 if have_memmem then
@@ -71,9 +74,9 @@ if have_memmem then
   function find (self, s, from)
     local n = #self - (from - 1)
     if n > 0 and n <= #self then
-      local b, needle = self.buf.buffer, alien.buffer (s)
+      local b, needle = self.buf.buffer, cstring (s)
       local next =
-        alien.default.memmem (b:topointer (from), n, needle:topointer (), #s)
+        libc.memmem (b:topointer (from), n, needle:topointer (), #s)
       return next and b:tooffset (next) or nil
     end
   end
@@ -113,7 +116,8 @@ end
 -- @int n number of bytes to move
 local function move (self, to, from, n)
   assert (math.max (from, to) + n <= #self + 1)
-  alien.memmove (self.buf.buffer:topointer (to), self.buf.buffer:topointer (from), n)
+  local b = self.buf.buffer
+  memmove (b:topointer (to), b:topointer (from), n)
 end
 
 
@@ -135,7 +139,7 @@ end
 -- @string rep replacement string
 local function replace (self, from, rep)
   assert (from + #rep <= #self + 1)
-  alien.memmove (self.buf.buffer:topointer (from), rep, #rep)
+  memmove (self.buf.buffer:topointer (from), rep, #rep)
 end
 
 
@@ -146,7 +150,7 @@ end
 local rchr
 
 local have_memrchr = pcall (loadstring [[
-  alien.default.memrchr:types ("pointer", "pointer", "int", "size_t")
+  libc.memrchr:types ("pointer", "pointer", "int", "size_t")
 ]])
 
 if have_memrchr then
@@ -156,7 +160,7 @@ if have_memrchr then
     local n = from - 1
     if n > 0 and n <= #self then -- skip if out-of-bounds
       local b, c = self.buf.buffer, string.byte (s)
-      local prev = alien.default.memrchr (b:topointer (), c, n)
+      local prev = libc.memrchr (b:topointer (), c, n)
       return prev and b:tooffset (prev) or nil
     end
   end
@@ -194,15 +198,16 @@ end
 -- @int n number of bytes to set
 local function set (self, from, c, n)
   assert (from + n <= #self + 1)
-  alien.memset (self.buf.buffer:topointer (from), c:byte (), n)
+  memset (self.buf.buffer:topointer (from), c:byte (), n)
 end
 
 
 --- Change the number of bytes allocated to be at least `n`.
 -- @int n the number of bytes required
 local function set_len (self, n)
-  if n > self.buf.length or n < self.buf.length / 2 then
-    self.buf:realloc (n + allocation_chunk_size)
+  local a = self.buf
+  if n > a.length or n < a.length / 2 then
+    a:realloc (n + allocation_chunk_size)
   end
   self.length = n
 end
@@ -227,7 +232,7 @@ return Object {
 
   -- Instantiate a newly cloned MutableString.
   _init = function (self, s)
-    self.buf = alien.array ("char", #s, alien.buffer (s))
+    self.buf = alien.array ("char", #s, cstring (s))
     self.length = #s
     return self
   end,
