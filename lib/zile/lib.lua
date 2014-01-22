@@ -18,7 +18,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
--- Return true if x is a function, or has a __cal metamethod.
+-- Return true if x is a function, or is a Symbol with a __call metamethod.
 function iscallable (x)
   if type (x) == "function" then return true end
   local mt = getmetatable (x)
