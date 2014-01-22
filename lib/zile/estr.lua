@@ -107,15 +107,10 @@ EStr = Object {
   end,
 
   lines = function (self)
-    local lines = 0
-    local s = 1
-    local next
+    local lines, next = -1, 1
     repeat
-      next = self.find (self.s, self.eol, s)
-      if next then
-        lines = lines + 1
-        s = next + #self.eol + 1
-      end
+      next = self:next_line (next)
+      lines = lines + 1
     until not next
     return lines
   end,
