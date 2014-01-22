@@ -35,9 +35,20 @@
 
 local alien  = require "alien"
 local Object = require "std.object"
+local table  = require "std.table"
 
-local cstring, libc, memmove, memset =
-  alien.buffer, alien.default, alien.memmove, alien.memset
+local calloc, cstring, libc, memmove, memset =
+  alien.array, alien.buffer, alien.default, alien.memmove, alien.memset
+
+local clone, merge = table.clone, table.merge
+
+
+local utils = require "zile.lib"
+
+-- local case = utils.case -- FIXME uncomment when zile.lib returns a table
+
+
+local MutableString  -- forward declaration
 
 local allocation_chunk_size = 16
 
@@ -116,8 +127,7 @@ end
 -- @int n number of bytes to move
 local function move (self, to, from, n)
   assert (math.max (from, to) + n <= #self + 1)
-  local b = self.buf.buffer
-  memmove (b:topointer (to), b:topointer (from), n)
+  memmove (self:topointer (to), self:topointer (from), n)
 end
 
 
@@ -139,7 +149,7 @@ end
 -- @string rep replacement string
 local function replace (self, from, rep)
   assert (from + #rep <= #self + 1)
-  memmove (self.buf.buffer:topointer (from), rep, #rep)
+  memmove (self:topointer (from), rep, #rep)
 end
 
 
@@ -198,7 +208,7 @@ end
 -- @int n number of bytes to set
 local function set (self, from, c, n)
   assert (from + n <= #self + 1)
-  memset (self.buf.buffer:topointer (from), c:byte (), n)
+  memset (self:topointer (from), c:byte (), n)
 end
 
 
@@ -223,18 +233,70 @@ local function sub (self, from, to)
 end
 
 
+--- Convert a Lua offset to a C pointer into this MutableString.
+-- @function topointer
+-- @int offset 1-based offset from start of this MutableString.
+-- @return a pointer suitable for passing to C
+local function topointer (self, offset)
+  return self.buf.buffer:topointer (offset)
+end
+
+
+--- @export
+local _functions = {
+  chr     = chr,
+  find    = find,
+  insert  = insert,
+  move    = move,
+  rchr    = rchr,
+  replace = replace,
+  rfind   = rfind,
+  set     = set,
+  set_len = set_len,
+  sub     = sub,
+}
+
+
 ------
 -- An efficient string buffer object.
--- @table Astr
+-- @table MutableString
 -- @int length number of bytes currently allocated
 -- @tfield alien.array buf a block of mutable memory
-return Object {
+MutableString = Object {
   _type      = "MutableString",
 
-  -- Instantiate a newly cloned MutableString.
-  _init = function (self, s)
-    self.buf = alien.array ("char", #s, cstring (s))
-    self.length = #s
+
+  -- Module functions.
+  _functions = _functions,
+
+
+  --- Instantiate a newly cloned MutableString.
+  -- @function __call
+  -- @param init either a string or a MutableString to copy, or the
+  --   number of bytes to allocate for a number
+  -- @int[opt] len the number of bytes to copy if `init` is a
+  --   MutableString
+  -- @treturn MutableString a new MutableString object
+  _init = function (self, init, len)
+    case (type (init),
+    {
+      string   = function ()
+                   self.buf    = calloc ("char", #init, cstring (init))
+                   self.length = #init
+		 end,
+      number   = function ()
+                   self.buf    = calloc ("char", math.max (init, 1))
+                   self.length = init
+		 end,
+      userdata = function ()
+                   self.buf    = calloc ("char", len, cstring (init))
+                   self.length = len
+		 end,
+      --[[else]] function ()
+                   self.buf    = calloc ("char", init)
+                   self.length = #init
+		 end,
+    })
     return self
   end,
 
@@ -253,17 +315,7 @@ return Object {
   end,
 
 
-  --- @export
-  __index    = {
-    chr      = chr,
-    find     = find,
-    insert   = insert,
-    move     = move,
-    rchr     = rchr,
-    replace  = replace,
-    rfind    = rfind,
-    set      = set,
-    set_len  = set_len,
-    sub      = sub,
-  },
+  __index = merge (clone (_functions), { topointer = topointer }),
 }
+
+return MutableString
