@@ -39,6 +39,22 @@ local Object = require "std.object"
 local allocation_chunk_size = 16
 
 
+alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
+
+
+--- Lock for the first occurrence of `ch` starting at `from`.
+-- @string ch a one character string to search for
+-- @int from index to start search
+local function chr (self, ch, from)
+  local n = #self - (from - 1)
+  if n > 0 and n <= #self then -- skip if from if out-of-bounds
+    local b, c = self.buf.buffer, string.byte (ch)
+    local next = alien.default.memchr (b:topointer (from), c, n)
+    return next and b:tooffset (next) or nil
+  end
+end
+
+
 --- Look for the first occurrence of `s` starting at `from`.
 -- @function find
 -- @string s string to search for
@@ -64,15 +80,12 @@ if have_memmem then
 
 else
 
-  alien.default.memchr:types ("pointer", "pointer", "int", "size_t")
-
-  -- Use memchr, and then check array members manually if necessary.
-  function find (self, s, from) -- FIXME for #s > 1 (crlf)
-    local n = #self - (from - 1)
-    if n > 0 and n <= #self then -- skip if from if out-of-bounds
-      local b, c = self.buf.buffer, string.byte (s)
-      local next = alien.default.memchr (b:topointer (from), c, n)
-      return next and b:tooffset (next) or nil
+  -- Use chr, and then check array members manually if necessary.
+  function find (self, s, from)
+    local b, len = self.buf.buffer, #s
+    while from and from + len <= #self do
+      from = chr (self, s, from)
+      if from and b:tostring (len, from) == s then return from end
     end
   end
 
@@ -126,11 +139,11 @@ local function replace (self, from, rep)
 end
 
 
---- Look for the **last** occurrence of `s` before `from`.
--- @function rfind
--- @string s string to search for
+--- Look for the **last** occurrence of `ch` before `to`.
+-- @function rchr
+-- @string ch a one character string to search for
 -- @int to largest index to search
-local rfind
+local rchr
 
 local have_memrchr = pcall (loadstring [[
   alien.default.memrchr:types ("pointer", "pointer", "int", "size_t")
@@ -139,7 +152,7 @@ local have_memrchr = pcall (loadstring [[
 if have_memrchr then
 
   -- Use the faster memrchr implementation if libc provides it.
-  function rfind (self, s, from) -- FIXME for #s > 1 (crlf)
+  function rchr (self, s, from)
     local n = from - 1
     if n > 0 and n <= #self then -- skip if out-of-bounds
       local b, c = self.buf.buffer, string.byte (s)
@@ -151,13 +164,27 @@ if have_memrchr then
 else
 
   -- Check array members manually if necessary.
-  function rfind (self, s, to) -- FIXME for #s > 1 (crlf)
+  function rchr (self, s, to)
     local b, c = self.buf, string.byte (s)
     for i = to - 1, 1, -1 do
       if b[i] == c then return i end
     end
   end
 
+end
+
+
+--- Look for the **last** occurrence of `s` before `to`.
+-- @function rfind
+-- @string s string to search for
+-- @int to largest index to search
+local function rfind (self, s, to)
+  local b, len = self.buf.buffer, #s
+  to = to - #s + 1
+  while to and to > 0 do
+    to = rchr (self, s, to)
+    if to and b:tostring (len, to) == s then return to end
+  end
 end
 
 
@@ -222,9 +249,11 @@ return Object {
 
   --- @export
   __index    = {
+    chr      = chr,
     find     = find,
     insert   = insert,
     move     = move,
+    rchr     = rchr,
     replace  = replace,
     rfind    = rfind,
     set      = set,
