@@ -18,6 +18,8 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local AStr = require "zile.astr"
+
 -- Buffer methods that know about the gap.
 
 function get_buffer_pre_point (bp)

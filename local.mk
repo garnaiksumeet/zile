@@ -105,6 +105,7 @@ dist_doc_DATA +=				\
 	$(NOTHING_ELSE)
 
 dist_classes_DATA +=				\
+	$(srcdir)/doc/classes/zile.astr.html	\
 	$(srcdir)/doc/classes/zile.Cons.html	\
 	$(srcdir)/doc/classes/zile.Set.html	\
 	$(srcdir)/doc/classes/zile.Symbol.html	\

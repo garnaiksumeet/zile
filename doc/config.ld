@@ -6,6 +6,7 @@ dir = "."
 
 file = {
   -- Classes
+  "../lib/zile/astr.lua",
   "../lib/zile/Cons.lua",
   "../lib/zile/Set.lua",
   "../lib/zile/Symbol.lua",
