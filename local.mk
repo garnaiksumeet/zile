@@ -118,6 +118,12 @@ dist_modules_DATA +=					\
 	$(srcdir)/doc/modules/zz.eval.html		\
 	$(NOTHING_ELSE)
 
-$(dist_doc_DATA) $(dist_classes_DATA) $(dist_modules_DATA): $(ldoc_DEPS)
-	test -d "$(srcdir)/doc" || mkdir "$(srcdir)/doc"
+## Parallel make gets confused when one command ($(LDOC)) produces
+## multiple targets (all the html files above), so use the doc/.ldocs
+## as a sentinel file.
+$(dist_doc_DATA) $(dist_classes_DATA) $(dist_modules_DATA): $(srcdir)/doc/.ldocs
+
+$(srcdir)/doc/.ldocs: $(srcdir/doc) $(ldoc_DEPS)
+	test -d $(srcdir)/doc || mkdir $(srcdir)/doc
+	touch $@
 	$(LDOC) -c build-aux/config.ld -d $(abs_srcdir)/doc .
