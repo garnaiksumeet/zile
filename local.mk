@@ -90,7 +90,7 @@ _travis_yml	= $(NOTHING_ELSE)
 
 EXTRA_DIST +=						\
 	FAQ						\
-	doc/config.ld					\
+	build-aux/config.ld				\
 	$(NOTHING_ELSE)
 
 
