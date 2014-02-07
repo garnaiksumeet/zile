@@ -1,6 +1,6 @@
 dnl configure.ac
 dnl
-dnl Copyright (c) 1997-2012 Free Software Foundation, Inc.
+dnl Copyright (c) 1997-2014 Free Software Foundation, Inc.
 dnl
 dnl This file is part of GNU Zile.
 dnl
@@ -168,9 +168,15 @@ if test "$enable_debug" != "yes"; then
   if test "x$gc_ok" != "xyes"; then
     AC_MSG_FAILURE([cannot find libgc])
   fi
-  LIBGC_CPPFLAGS="-DREDIRECT_MALLOC=GC_malloc -DIGNORE_FREE"
   AC_SUBST([LIBGC_CPPFLAGS])
 fi
+AH_TOP([
+#define malloc GC_malloc
+#define realloc GC_realloc
+#define free GC_free
+#define strdup GC_strdup
+#define strndup GC_strndup
+])
 
 dnl Emacs
 AX_WITH_PROG([EMACSPROG], [emacs])
