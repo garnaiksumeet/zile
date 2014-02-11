@@ -168,11 +168,11 @@ if test "x$gc_ok" != "xyes"; then
   AC_MSG_FAILURE([cannot find libgc])
 fi
 AH_TOP([
-#define malloc GC_malloc
-#define realloc GC_realloc
-#define free GC_free
-#define strdup GC_strdup
-#define strndup GC_strndup
+#define malloc GC_MALLOC
+#define realloc GC_REALLOC
+#define free GC_FREE
+#define strdup GC_STRDUP
+#define STRNDUP GC_STRNDUP
 ])
 
 dnl Emacs
