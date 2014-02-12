@@ -83,7 +83,7 @@ int warn_if_readonly_buffer (void);
 _GL_ATTRIBUTE_PURE Region region_new (size_t o1, size_t o2);
 Region calculate_the_region (void);
 bool delete_region (const Region r);
-_GL_ATTRIBUTE_PURE bool in_region (size_t o, size_t x, Region r);
+_GL_ATTRIBUTE_PURE bool region_contains (Region r, size_t o);
 void set_temporary_buffer (Buffer * bp);
 void activate_mark (void);
 void deactivate_mark (void);

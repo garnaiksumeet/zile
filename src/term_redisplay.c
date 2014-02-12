@@ -51,7 +51,7 @@ draw_line (size_t line, size_t startcol, Window * wp,
   size_t x, i, line_len = buffer_line_len (get_window_bp (wp), o);
   for (x = 0, i = startcol;; i++)
     {
-      term_attrset (highlight && in_region (o, i, r) ? FONT_REVERSE : FONT_NORMAL);
+      term_attrset (highlight && region_contains (r, o + i) ? FONT_REVERSE : FONT_NORMAL);
       if (i >= line_len || x >= get_window_ewidth (wp))
         break;
       char c = get_buffer_char (get_window_bp (wp), o + i);

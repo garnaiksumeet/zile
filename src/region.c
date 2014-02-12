@@ -81,7 +81,7 @@ delete_region (const Region r)
 }
 
 bool
-in_region (size_t o, size_t x, Region r)
+region_contains (Region r, size_t o)
 {
-  return o + x >= get_region_start (r) && o + x < get_region_end (r);
+  return o >= get_region_start (r) && o < get_region_end (r);
 }
