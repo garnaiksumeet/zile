@@ -21,9 +21,9 @@
 
 doc_DATA += src/dotzile.sample
 
-AM_CFLAGS = $(WARN_CFLAGS)
+AM_CFLAGS = $(WARN_CFLAGS) $(LIBGC_CFLAGS)
 AM_CPPFLAGS = -I$(builddir)/src -I$(srcdir)/src $(ISYSTEM)$(builddir)/lib $(ISYSTEM)$(srcdir)/lib -DPATH_DOCDIR="\"$(docdir)\""
-LDADD = $(builddir)/lib/lib$(PACKAGE).a $(LIB_ACL) $(LIB_EACCESS) $(LIBINTL) $(CURSES_LIB)
+LDADD = $(builddir)/lib/lib$(PACKAGE).a $(LIB_ACL) $(LIB_EACCESS) $(LIBINTL) $(CURSES_LIB) $(LIBGC_LIBS)
 
 BUILT_SOURCES =						\
 	src/tbl_funcs.h					\
