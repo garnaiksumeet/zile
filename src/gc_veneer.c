@@ -22,15 +22,18 @@
 #include <config.h>
 
 #include <stdlib.h>
+#include <string.h>
 
 
-/* These veneers allow libgc to be used via preprocessor trickery to
-   override the standard function names, without upsetting system
+/* This veneer allows libgc to be used via preprocessor trickery to
+   override the standard function names without upsetting system
    headers. In particular, this means we cannot use macros with
-   arguments, so as libgc has no calloc function, we must implement
-   it as a trivial function. */
+   arguments, so as libgc has no calloc function, we must implement it
+   as a trivial function. */
 void *
 zile_calloc(size_t n, size_t s)
 {
-  return malloc(n * s);
+  size_t size = n * s;
+  void *p = malloc(size);
+  return p ? memset(p, 0, size) : NULL;
 }
