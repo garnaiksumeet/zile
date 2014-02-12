@@ -551,7 +551,31 @@ write_buffer (Buffer *bp, bool needname, bool confirm,
 
   if (confirm && exist_file (astr_cstr (name)))
     {
-      ans = minibuf_read_yn ("File `%s' exists; overwrite? (y or n) ", astr_cstr (name));
+      char *buf = xasprintf ("File `%s' exists; overwrite? (y or n) ", astr_cstr (name));
+      const char *errmsg = "";
+
+      for (ans = -2; ans == -2;) {
+        minibuf_write ("%s%s", errmsg, buf);
+        switch (getkeystroke (GETKEY_DEFAULT))
+          {
+          case 'y':
+          case 'Y':
+          case ' ':
+          case KBD_RET:
+            ans = true;
+            break;
+          case 'N':
+          case 'n':
+          case KBD_DEL:
+            ans = false;
+            break;
+          case KBD_CTRL | 'g':
+            ans = -1;
+          default:
+            errmsg = "Please answer y or n.  ";
+          }
+      }
+
       if (ans == -1)
         FUNCALL (keyboard_quit);
       else if (ans == false)

@@ -204,42 +204,6 @@ minibuf_test_in_completions (const char *ms, gl_list_t completions)
 }
 
 int
-minibuf_read_yn (const char *fmt, ...)
-{
-  va_list ap;
-  char *buf;
-  const char *errmsg = "";
-  int ret;
-
-  va_start (ap, fmt);
-  buf = xvasprintf (fmt, ap);
-  va_end (ap);
-
-  for (ret = -2; ret == -2;) {
-    size_t key;
-
-    minibuf_write ("%s%s", errmsg, buf);
-    key = getkeystroke (GETKEY_DEFAULT);
-    switch (key)
-      {
-      case 'y':
-        ret = true;
-        break;
-      case 'n':
-        ret = false;
-        break;
-      case KBD_CTRL | 'g':
-        ret = -1;
-        break;
-      default:
-        errmsg = "Please answer y or n.  ";
-      }
-  }
-
-  return ret;
-}
-
-int
 minibuf_read_yesno (const char *fmt, ...)
 {
   va_list ap;
