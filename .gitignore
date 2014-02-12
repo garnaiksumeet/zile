@@ -10,6 +10,7 @@ TAGS
 /README-release
 /lib
 /maint.mk
+/test-suite.log
 ChangeLog
 Makefile
 Makefile.in
