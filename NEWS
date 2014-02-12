@@ -2,6 +2,18 @@ GNU Zile NEWS                                         -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  Actually use libgc. All of the previous 2.4 releases were eating all
+  your memory.
+
+  Fix speed of search on large buffers (previously, the entire buffer
+  was copied for each search). The fix was copied from Zee.
+
+** Build-related
+
+  Use pkgconfig to find libgc.
+
 
 * Noteworthy changes in release 2.4.9 (2012-10-01) [stable]
 
