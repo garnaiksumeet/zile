@@ -1,5 +1,7 @@
 .dirstamp
 astr
+astr.log
+astr.trs
 zile
 tbl_funcs.h
 tbl_opts.h
