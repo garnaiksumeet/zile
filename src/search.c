@@ -72,7 +72,9 @@ find_substr (castr as1, castr as2, const char *n, size_t nsize, size_t from, siz
   if (!re_find_err)
     /* FIXME: The current implementation memcpys the two strings into
        a freshly malloced block, i.e. is horribly inefficient for
-       large buffers. */
+       large buffers. The Lua version of Zile fixes this by always
+       having point in the right place and searching forward from
+       it. */
     ret = re_search_2 (&pattern,
                        astr_cstr (as1), (int) astr_len (as1),
                        astr_cstr (as2), (int) astr_len (as2),
