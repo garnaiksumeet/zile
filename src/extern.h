@@ -75,10 +75,15 @@ _GL_ATTRIBUTE_PURE Buffer * find_buffer (const char *name);
 void switch_to_buffer (Buffer * bp);
 int warn_if_no_mark (void);
 int warn_if_readonly_buffer (void);
-_GL_ATTRIBUTE_CONST Region region_new (size_t o1, size_t o2);
+#define FIELD(ty, field)                                \
+  ty get_region_ ## field (const Region cp);            \
+  void set_region_ ## field (Region cp, ty field);
+#include "region.h"
+#undef FIELD
+_GL_ATTRIBUTE_PURE Region region_new (size_t o1, size_t o2);
 Region calculate_the_region (void);
 bool delete_region (const Region r);
-_GL_ATTRIBUTE_CONST bool in_region (size_t o, size_t x, Region r);
+_GL_ATTRIBUTE_PURE bool in_region (size_t o, size_t x, Region r);
 void set_temporary_buffer (Buffer * bp);
 void activate_mark (void);
 void deactivate_mark (void);

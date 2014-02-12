@@ -965,7 +965,7 @@ setcase_region (int (*func) (int))
   undo_start_sequence ();
 
   Marker *m = point_marker ();
-  goto_offset (r.start);
+  goto_offset (get_region_start (r));
   for (size_t size = get_region_size (r); size > 0; size--)
     {
       char c = func (following_char ());
@@ -1059,7 +1059,7 @@ pipe_command (castr cmd, astr input, bool do_insert, bool do_replace)
           if (do_replace && !warn_if_no_mark ())
             {
               Region r = calculate_the_region ();
-              goto_offset (r.start);
+              goto_offset (get_region_start (r));
               del = get_region_size (r);
             }
           replace_estr (del, estr_new_astr (inout.out));
@@ -1182,19 +1182,18 @@ On nonblank line, delete any immediately following blank lines.
 +*/
 {
   Marker *m = point_marker ();
-  Region r;
-  r.start = r.end = get_buffer_line_o (cur_bp);
+  Region r = region_new (get_buffer_line_o (cur_bp), get_buffer_line_o (cur_bp));
 
   undo_start_sequence ();
 
   /* Find following blank lines.  */
   if (FUNCALL (forward_line) == leT && is_blank_line ())
     {
-      r.start = get_buffer_pt (cur_bp);
+      set_region_start (r, get_buffer_pt (cur_bp));
       do
-        r.end = buffer_next_line (cur_bp, get_buffer_pt (cur_bp));
+        set_region_end (r, buffer_next_line (cur_bp, get_buffer_pt (cur_bp)));
       while (FUNCALL (forward_line) == leT && is_blank_line ());
-      r.end = MIN (r.end, get_buffer_size (cur_bp));
+      set_region_end (r, MIN (get_region_end (r), get_buffer_size (cur_bp)));
     }
   goto_offset (get_marker_o (m));
 
@@ -1202,24 +1201,24 @@ On nonblank line, delete any immediately following blank lines.
   bool singleblank = true;
   if (is_blank_line ())
     {
-      r.end = MAX (r.end, buffer_next_line (cur_bp, get_buffer_pt (cur_bp)));
+      set_region_end (r, MAX (get_region_end (r), buffer_next_line (cur_bp, get_buffer_pt (cur_bp))));
       do
-        r.start = get_buffer_line_o (cur_bp);
+        set_region_start (r, get_buffer_line_o (cur_bp));
       while (FUNCALL_ARG (forward_line, -1) == leT && is_blank_line ());
       goto_offset (get_marker_o (m));
-      if (r.start != get_buffer_line_o (cur_bp) ||
-          r.end > buffer_next_line (cur_bp, get_buffer_pt (cur_bp)))
+      if (get_region_start (r) != get_buffer_line_o (cur_bp) ||
+          get_region_end (r) > buffer_next_line (cur_bp, get_buffer_pt (cur_bp)))
         singleblank = false;
-      r.end = MIN (r.end, get_buffer_size (cur_bp));
+      set_region_end (r, MIN (get_region_end (r), get_buffer_size (cur_bp)));
     }
 
   /* If we are deleting to EOB, need to fudge extra line. */
-  bool at_eob = r.end == get_buffer_size (cur_bp) && r.start > 0;
+  bool at_eob = get_region_end (r) == get_buffer_size (cur_bp) && get_region_start (r) > 0;
   if (at_eob)
-    r.start -= strlen (get_buffer_eol (cur_bp));
+    set_region_start (r, get_region_start (r) - strlen (get_buffer_eol (cur_bp)));
 
   /* Delete any blank lines found. */
-  if (r.start < r.end)
+  if (get_region_start (r) < get_region_end (r))
     delete_region (r);
 
   /* If we found more than one blank line, leave one. */

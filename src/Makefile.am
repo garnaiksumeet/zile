@@ -77,6 +77,8 @@ src_zile_base_SOURCE_FILES =				\
 	src/marker.h					\
 	src/marker.c					\
 	src/minibuf.c					\
+	src/region.h					\
+	src/region.c					\
 	src/window.h					\
 	src/term_minibuf.c				\
 	src/term_redisplay.c				\

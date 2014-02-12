@@ -52,7 +52,8 @@
  * Main editor structures.
  *--------------------------------------------------------------------------*/
 
-/* Opaque types. */
+/* Opaque types.  FIXME: Make them all pointer types */
+typedef struct Region *Region;
 typedef struct Marker Marker;
 typedef struct History History;
 typedef struct Undo Undo;
@@ -61,15 +62,6 @@ typedef struct Binding *Binding;
 typedef struct Buffer Buffer;
 typedef struct Window Window;
 typedef struct Completion Completion;
-
-/* FIXME: Types which should really be opaque. */
-typedef struct Region Region;
-
-struct Region
-{
-  size_t start;		/* The region start. */
-  size_t end;		/* The region end. */
-};
 
 enum
 {
@@ -98,6 +90,20 @@ enum
 #define SETTER(Obj, name, ty, field)            \
   void                                          \
   set_ ## name ## _ ## field (Obj *p, ty field) \
+  {                                             \
+    p->field = field;                           \
+  }
+
+#define POINTER_GETTER(Obj, name, ty, field)    \
+  _GL_ATTRIBUTE_PURE ty                         \
+  get_ ## name ## _ ## field (const Obj p)      \
+  {                                             \
+    return p->field;                            \
+  }                                             \
+
+#define POINTER_SETTER(Obj, name, ty, field)    \
+  void                                          \
+  set_ ## name ## _ ## field (Obj p, ty field)  \
   {                                             \
     p->field = field;                           \
   }

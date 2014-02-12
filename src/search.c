@@ -453,7 +453,7 @@ what to do with it.
         }
 
       Marker *m = point_marker ();
-      goto_offset (r.start);
+      goto_offset (get_region_start (r));
       replace_estr (astr_len (find), estr_new_astr (case_repl));
       goto_offset (get_marker_o (m));
       unchain_marker (m);

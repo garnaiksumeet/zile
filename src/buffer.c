@@ -239,12 +239,12 @@ estr
 get_buffer_region (Buffer *bp, Region r)
 {
   astr as = astr_new ();
-  if (r.start < get_buffer_pt (bp))
-    astr_cat (as, astr_substr (get_buffer_pre_point (bp), r.start, MIN (r.end, get_buffer_pt (bp)) - r.start));
-  if (r.end > get_buffer_pt (bp))
+  if (get_region_start (r) < get_buffer_pt (bp))
+    astr_cat (as, astr_substr (get_buffer_pre_point (bp), get_region_start (r), MIN (get_region_end (r), get_buffer_pt (bp)) - get_region_start (r)));
+  if (get_region_end (r) > get_buffer_pt (bp))
     {
-      size_t from = MAX (r.start, get_buffer_pt (bp));
-      astr_cat (as, astr_substr (get_buffer_post_point (bp), from - get_buffer_pt (bp), r.end - from));
+      size_t from = MAX (get_region_start (r), get_buffer_pt (bp));
+      astr_cat (as, astr_substr (get_buffer_post_point (bp), from - get_buffer_pt (bp), get_region_end (r) - from));
     }
   return (estr) {.as = as, .eol = get_buffer_eol (bp)};
 }
@@ -453,50 +453,6 @@ warn_if_no_mark (void)
       return true;
     }
   return false;
-}
-
-/*
- * Make a region from two offsets.
- */
-Region
-region_new (size_t o1, size_t o2)
-{
-  return (Region) {.start = MIN (o1, o2), .end = MAX (o1, o2)};
-}
-
-size_t
-get_region_size (const Region r)
-{
-  return r.end - r.start;
-}
-
-/*
- * Return the region between point and mark.
- */
-Region
-calculate_the_region (void)
-{
-  return region_new (cur_bp->pt, get_marker_o (cur_bp->mark));
-}
-
-bool
-delete_region (const Region r)
-{
-  if (warn_if_readonly_buffer ())
-    return false;
-
-  Marker *m = point_marker ();
-  goto_offset (r.start);
-  replace_estr (get_region_size (r), estr_empty);
-  goto_offset (get_marker_o (m));
-  unchain_marker (m);
-  return true;
-}
-
-bool
-in_region (size_t o, size_t x, Region r)
-{
-  return o + x >= r.start && o + x < r.end;
 }
 
 /*
