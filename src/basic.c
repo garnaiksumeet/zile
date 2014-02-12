@@ -1,6 +1,6 @@
 /* Basic movement functions
 
-   Copyright (c) 1997-2004, 2008-2009, 2011 Free Software Foundation, Inc.
+   Copyright (c) 1997-2004, 2008-2009, 2011, 2014 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 
@@ -121,7 +121,7 @@ Beginning of buffer is position 1.
   if (ok == leNIL || n >= LONG_MAX - 1)
     return leNIL;
 
-  goto_offset (MIN (get_buffer_size (cur_bp), MAX (n, 1) - 1));
+  goto_offset (MIN (get_buffer_size (cur_bp), (size_t)MAX (n, 1) - 1));
 }
 END_DEFUN
 
