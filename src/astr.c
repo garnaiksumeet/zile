@@ -288,6 +288,8 @@ astr_recase (astr as, enum casing newcase)
 
 #include "main.h"
 
+#include "gc_veneer.c"
+
 static void
 assert_eq (astr as, const char *s)
 {

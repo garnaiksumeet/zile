@@ -172,6 +172,9 @@ astr chordtodesc (size_t key);
 gl_list_t keystrtovec (const char *key);
 astr keyvectodesc (gl_list_t keys);
 
+/* libgc_extra.c ---------------------------------------------------------- */
+void *zile_calloc(size_t n, size_t s);
+
 /* line.c ----------------------------------------------------------------- */
 bool insert_newline (void);
 bool intercalate_newline (void);

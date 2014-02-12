@@ -83,6 +83,19 @@ else
 fi
 AC_SUBST([ISYSTEM])
 
+dnl Extra debugging
+AC_ARG_ENABLE(debug,
+  [AS_HELP_STRING([--enable-debug],
+                  [include extra debugging code])],
+  [case $enableval in
+     yes|no) ;;
+     *)      AC_MSG_ERROR([bad value $enableval for --enable-debug]) ;;
+   esac],
+  [])
+if test "$enable_debug" = "yes"; then
+  AC_DEFINE(DEBUG, 1, [Define this to include extra debugging code.])
+fi
+
 dnl help2man
 dnl Set a value even if not found, so that an invocation via build-aux/missing works
 AX_WITH_PROG([HELP2MAN], [help2man], [help2man])
@@ -96,9 +109,8 @@ AC_ARG_ENABLE([valgrind],
                   [use Valgrind to run tests])],
   [case $enableval in
      yes|no) ;;
-     *)      AC_MSG_ERROR([bad value $enableval for Valgrind option]) ;;
-   esac
-   ],
+     *)      AC_MSG_ERROR([bad value $enableval for --enable-valgrind]) ;;
+   esac],
   [])
 if test "$enable_valgrind" = "yes"; then
   AX_WITH_PROG([VALGRIND], [valgrind])
@@ -167,12 +179,21 @@ AC_CHECK_HEADERS([gc.h gc/gc.h], [
 if test "x$gc_ok" != "xyes"; then
   AC_MSG_FAILURE([cannot find libgc])
 fi
-AH_TOP([
-#define malloc GC_MALLOC
-#define realloc GC_REALLOC
-#define free GC_FREE
-#define strdup GC_STRDUP
-#define STRNDUP GC_STRNDUP
+AH_BOTTOM([
+#ifdef DEBUG
+# define malloc GC_debug_malloc
+# define realloc GC_debug_realloc
+# define free GC_debug_free
+# define strdup GC_debug_strdup
+# define strndup GC_debug_strndup
+#else
+# define malloc GC_malloc
+# define realloc GC_realloc
+# define free GC_free
+# define strdup GC_strdup
+# define strndup GC_strndup
+#endif
+#define calloc zile_calloc
 ])
 
 dnl Emacs

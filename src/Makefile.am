@@ -43,6 +43,7 @@ src_zile_function_SOURCE_FILES =			\
 	src/help.c					\
 	src/killring.c					\
 	src/line.c					\
+	src/gc_veneer.c					\
 	src/lisp.c					\
 	src/macro.c					\
 	src/redisplay.c					\

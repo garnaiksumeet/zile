@@ -116,15 +116,6 @@ enum {ARG_FUNCTION = 1, ARG_LOADFILE, ARG_FILE};
 int
 main (int argc, char **argv)
 {
-  int qflag = false;
-  gl_list_t arg_type = gl_list_create_empty (GL_LINKED_LIST,
-                                             NULL, NULL, NULL, false);
-  gl_list_t arg_arg = gl_list_create_empty (GL_LINKED_LIST,
-                                             NULL, NULL, NULL, false);
-  gl_list_t arg_line = gl_list_create_empty (GL_LINKED_LIST,
-                                             NULL, NULL, NULL, false);
-  size_t line = 1;
-
   GC_INIT ();
   set_program_name (argv[0]);
   estr_init ();
@@ -134,6 +125,15 @@ main (int argc, char **argv)
   init_lisp ();
   init_variables ();
   init_eval ();
+
+  int qflag = false;
+  gl_list_t arg_type = gl_list_create_empty (GL_LINKED_LIST,
+                                             NULL, NULL, NULL, false);
+  gl_list_t arg_arg = gl_list_create_empty (GL_LINKED_LIST,
+                                             NULL, NULL, NULL, false);
+  gl_list_t arg_line = gl_list_create_empty (GL_LINKED_LIST,
+                                             NULL, NULL, NULL, false);
+  size_t line = 1;
 
   opterr = 0; /* Don't display errors for unknown options */
   for (;;)
