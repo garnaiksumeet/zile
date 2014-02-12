@@ -411,55 +411,51 @@ what to do with it.
         {
           if (thisflag & FLAG_NEED_RESYNC)
             window_resync (cur_wp);
-          for (;;)
-            {
-              minibuf_write
-                ("Query replacing `%s' with `%s' (y, n, !, ., q)? ", astr_cstr (find),
-                 astr_cstr (repl));
-              c = getkey (GETKEY_DEFAULT);
-              if (c == KBD_CANCEL || c == KBD_RET || c == ' ' || c == 'y'
-                  || c == 'n' || c == 'q' || c == '.' || c == '!')
-                break;
-              /* FIXME: Remove this prompt (see Lua Zile) */
-              minibuf_error ("Please answer y, n, !, . or q.");
-              waitkey ();
-            }
+
+          minibuf_write ("Query replacing `%s' with `%s' (y, n, !, ., q)? ", astr_cstr (find),
+                         astr_cstr (repl));
+          c = getkey (GETKEY_DEFAULT);
           minibuf_clear ();
 
           if (c == 'q')			/* Quit immediately. */
             break;
-          else if (c == KBD_CANCEL)	/* C-g */
+          else if (c == KBD_CANCEL)
             {
-             ok = FUNCALL (keyboard_quit);
-             break;
+              ok = FUNCALL (keyboard_quit);
+              break;
             }
-          else if (c == '!')		/* Replace all without asking. */
+          else if (c == '!')
             noask = true;
-          else if (c == 'n' || c == KBD_RET || c == KBD_DEL) /* Do not replace. */
-            continue;
         }
 
-      /* Perform replacement. */
-      ++count;
-      castr case_repl = repl;
-      Region r = region_new (get_buffer_pt (cur_bp) - astr_len (find), get_buffer_pt (cur_bp));
-      if (find_no_upper && get_variable_bool ("case-replace"))
+      if (c == KBD_RET || c == ' ' || c == 'y' || c == 'Y' ||  c == '.' || c == '!')
+        { /* Perform replacement. */
+          ++count;
+          castr case_repl = repl;
+          Region r = region_new (get_buffer_pt (cur_bp) - astr_len (find), get_buffer_pt (cur_bp));
+          if (find_no_upper && get_variable_bool ("case-replace"))
+            {
+              int case_type = check_case (get_buffer_region (cur_bp, r).as);
+              if (case_type != 0)
+                case_repl = astr_recase (astr_cpy (astr_new (), repl),
+                                         case_type == 1 ? case_capitalized : case_upper);
+            }
+
+          Marker *m = point_marker ();
+          goto_offset (get_region_start (r));
+          replace_estr (astr_len (find), estr_new_astr (case_repl));
+          goto_offset (get_marker_o (m));
+          unchain_marker (m);
+
+          if (c == '.')		/* Replace and quit. */
+            break;
+        }
+      else if (!(c == KBD_RET || c == KBD_DEL || c == 'n' || c == 'N'))
         {
-          int case_type = check_case (get_buffer_region (cur_bp, r).as);
-
-          if (case_type != 0)
-            case_repl = astr_recase (astr_cpy (astr_new (), repl),
-                                     case_type == 1 ? case_capitalized : case_upper);
+          ungetkey (c);
+          ok = false;
+          break;
         }
-
-      Marker *m = point_marker ();
-      goto_offset (get_region_start (r));
-      replace_estr (astr_len (find), estr_new_astr (case_repl));
-      goto_offset (get_marker_o (m));
-      unchain_marker (m);
-
-      if (c == '.')		/* Replace and quit. */
-        break;
     }
 
   if (thisflag & FLAG_NEED_RESYNC)
