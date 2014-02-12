@@ -1,6 +1,6 @@
 /* Search and replace functions
 
-   Copyright (c) 1997-2012 Free Software Foundation, Inc.
+   Copyright (c) 1997-2014 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 
@@ -49,7 +49,7 @@ no_upper (const char *s, size_t len, int regex)
 static const char *re_find_err = NULL;
 
 static int
-find_substr (castr as1, castr as2, const char *n, size_t nsize, size_t from, size_t to,
+find_substr (castr as, const char *n, size_t nsize,
              bool forward, bool notbol, bool noteol, bool regex, bool icase)
 {
   int ret = -1;
@@ -69,19 +69,10 @@ find_substr (castr as1, castr as2, const char *n, size_t nsize, size_t from, siz
   re_find_err = re_compile_pattern (n, (int) nsize, &pattern);
   pattern.not_bol = notbol;
   pattern.not_eol = noteol;
+  size_t len = astr_len (as);
   if (!re_find_err)
-    /* FIXME: The current implementation memcpys the two strings into
-       a freshly malloced block, i.e. is horribly inefficient for
-       large buffers. The Lua version of Zile fixes this by always
-       having point in the right place and searching forward from
-       it. */
-    ret = re_search_2 (&pattern,
-                       astr_cstr (as1), (int) astr_len (as1),
-                       astr_cstr (as2), (int) astr_len (as2),
-                       forward ? from : to - 1,
-                       forward ? (to - from) : -(to - 1 - from),
-                       &search_regs,
-                       (int) astr_len (as1) + astr_len (as2));
+    ret = re_search (&pattern, astr_cstr (as), (int) len,
+                     forward ? 0 : len, forward ? len : -len, &search_regs);
 
   if (ret >= 0)
     ret = forward ? search_regs.end[0] : ret;
@@ -90,24 +81,23 @@ find_substr (castr as1, castr as2, const char *n, size_t nsize, size_t from, siz
 }
 
 static bool
-search (size_t o, const char *s, int forward, int regexp)
+search (const char *s, int forward, int regexp)
 {
   size_t ssize = strlen (s);
   if (ssize < 1)
     return false;
 
   /* Attempt match. */
+  size_t o = get_buffer_pt (cur_bp);
   bool notbol = forward ? o > 0 : false;
   bool noteol = forward ? false : o < get_buffer_size (cur_bp);
-  size_t from = forward ? o : 0;
-  size_t to = forward ? get_buffer_size (cur_bp) : o;
-  int pos = find_substr (get_buffer_pre_point (cur_bp), get_buffer_post_point (cur_bp),
-                         s, ssize, from, to, forward, notbol, noteol, regexp,
+  int pos = find_substr (forward ? get_buffer_post_point (cur_bp) : get_buffer_pre_point (cur_bp),
+                         s, ssize, forward, notbol, noteol, regexp,
                          get_variable_bool ("case-fold-search") && no_upper (s, ssize, regexp));
   if (pos < 0)
     return false;
 
-  goto_offset (pos);
+  goto_offset (pos + (forward ? get_buffer_pt (cur_bp) : 0));
   thisflag |= FLAG_NEED_RESYNC;
   return true;
 }
@@ -129,7 +119,7 @@ do_search (bool forward, bool regexp, castr pattern)
     {
       last_search = pattern;
 
-      if (!search (get_buffer_pt (cur_bp), astr_cstr (pattern), forward, regexp))
+      if (!search (astr_cstr (pattern), forward, regexp))
         minibuf_error ("Search failed: \"%s\"", pattern);
       else
         ok = leT;
@@ -299,7 +289,10 @@ isearch (int forward, int regexp)
         astr_cat_char (pattern, c);
 
       if (astr_len (pattern) > 0)
-        last = search (cur, astr_cstr (pattern), forward, regexp);
+        {
+          goto_offset (cur);
+          last = search (astr_cstr (pattern), forward, regexp);
+        }
       else
         last = true;
 
@@ -410,7 +403,7 @@ what to do with it.
 
   bool noask = false;
   size_t count = 0;
-  while (search (get_buffer_pt (cur_bp), astr_cstr (find), true, false))
+  while (search (astr_cstr (find), true, false))
     {
       int c = ' ';
 
