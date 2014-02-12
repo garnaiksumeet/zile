@@ -93,7 +93,7 @@ AC_ARG_ENABLE(debug,
    esac],
   [])
 if test "$enable_debug" = "yes"; then
-  AC_DEFINE(DEBUG, 1, [Define this to include extra debugging code.])
+  AC_DEFINE([DEBUG], 1, [Define this to include extra debugging code.])
 fi
 
 dnl help2man
