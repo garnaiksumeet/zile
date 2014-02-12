@@ -30,7 +30,9 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 dnl Checks for programs
 gl_EARLY
 AM_PROG_CC_C_O
+PKG_PROG_PKG_CONFIG
 
+dnl Extra warnings with GCC
 AC_ARG_ENABLE([gcc-warnings],
   [AS_HELP_STRING([--enable-gcc-warnings],
                   [turn on lots of GCC warnings (for developers)])],
@@ -41,7 +43,6 @@ AC_ARG_ENABLE([gcc-warnings],
    gl_gcc_warnings=$enableval],
   [gl_gcc_warnings=no]
 )
-
 if test "$gl_gcc_warnings" = yes; then
   dnl Set up the list of undesired warnings.
   nw=
@@ -146,39 +147,8 @@ if test "$ax_cv_curses" != "yes"; then
 fi
 AC_ARG_VAR(CURSES_LIB, [linker flags for curses library])
 
-dnl FIXME: Use pkg-config
 dnl libgc (BDW garbage collector)
-AC_CHECK_HEADERS([gc.h gc/gc.h], [
-  dnl To test for the different required libs, we have to
-  dnl overcome autoconf's caching system, so we change the
-  dnl desired function name.  They're all in libgc.
-  dnl The "break" will exit from the top level
-  dnl AC_CHECK_HEADERS.
-  gc_libs=""
-  AC_CHECK_LIB([gc], [GC_init], [
-    gc_ok=yes;
-    LIBS="-lgc $gc_libs $LIBS";
-    break], [gc_ok=no], [$gc_libs])
-  gc_libs="-lpthread"
-  AC_CHECK_LIB([gc], [GC_malloc], [
-    gc_ok=yes;
-    LIBS="-lgc $gc_libs $LIBS";
-    break], [gc_ok=no], [$gc_libs])
-  gc_libs="-ldl"
-  AC_CHECK_LIB([gc], [GC_realloc], [
-    gc_ok=yes;
-    LIBS="-lgc $gc_libs $LIBS";
-    break], [gc_ok=no], [$gc_libs])
-  gc_libs="-lpthread -ldl"
-  AC_CHECK_LIB([gc], [GC_free], [
-    gc_ok=yes;
-    LIBS="-lgc $gc_libs $LIBS";
-    break], [gc_ok=no], [$gc_libs])
-  break],
-  [gc_ok=no])
-if test "x$gc_ok" != "xyes"; then
-  AC_MSG_FAILURE([cannot find libgc])
-fi
+PKG_CHECK_MODULES([LIBGC],[bdw-gc])
 AH_BOTTOM([
 #ifdef DEBUG
 # define malloc GC_debug_malloc
