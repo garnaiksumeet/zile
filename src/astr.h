@@ -42,7 +42,7 @@
  * The opaque string type.
  */
 typedef struct astr *astr;
-typedef struct astr const *castr; // FIXME: rename const_astr
+typedef struct astr const *const_astr;
 
 /*
  * Allocate a new string with zero length.
@@ -57,40 +57,40 @@ astr astr_new_cstr (const char *s);
 /*
  * Make a new constant string from a counted C string.
  */
-castr castr_new_nstr (const char *s, size_t n);
+const_astr const_astr_new_nstr (const char *s, size_t n);
 
 /*
  * Convert as into a C null-terminated string.
  * as[0] to as[astr_len (as) - 1] inclusive may be read.
  */
-_GL_ATTRIBUTE_PURE const char *astr_cstr (castr as);
+_GL_ATTRIBUTE_PURE const char *astr_cstr (const_astr as);
 
 /*
  * Return the length of the argument string `as'.
  */
-_GL_ATTRIBUTE_PURE size_t astr_len (castr as);
+_GL_ATTRIBUTE_PURE size_t astr_len (const_astr as);
 
 /*
  * Return the `pos'th character of `as'.
  */
-_GL_ATTRIBUTE_PURE char astr_get (castr as, size_t pos);
+_GL_ATTRIBUTE_PURE char astr_get (const_astr as, size_t pos);
 
 /*
  * Return a new astr consisting of `size' characters from string `as'
  * starting from position `pos'.
  */
-astr astr_substr (castr as, size_t pos, size_t size);
+astr astr_substr (const_astr as, size_t pos, size_t size);
 
 /*
  * Assign the contents of the argument string to the string `as'.
  */
-astr astr_cpy (astr as, castr src);
+astr astr_cpy (astr as, const_astr src);
 astr astr_cpy_cstr (astr as, const char *s);
 
 /*
  * Append the contents of the argument string or character to `as'.
  */
-astr astr_cat (astr as, castr src);
+astr astr_cat (astr as, const_astr src);
 astr astr_cat_cstr (astr as, const char *s);
 astr astr_cat_nstr (astr as, const char *s, size_t len);
 astr astr_cat_char (astr as, int c);

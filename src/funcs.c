@@ -1038,7 +1038,7 @@ done_read (void *data, size_t n, void *priv)
 }
 
 static le *
-pipe_command (castr cmd, astr input, bool do_insert, bool do_replace)
+pipe_command (const_astr cmd, astr input, bool do_insert, bool do_replace)
 {
   const char *prog_argv[] = { "/bin/sh", "-c", astr_cstr (cmd), NULL };
   pipe_data inout = { .in = input, .out = astr_new (), .done = 0 };
@@ -1078,10 +1078,10 @@ pipe_command (castr cmd, astr input, bool do_insert, bool do_replace)
   return leT;
 }
 
-static castr
+static const_astr
 minibuf_read_shell_command (void)
 {
-  castr ms = minibuf_read ("Shell command: ", "");
+  const_astr ms = minibuf_read ("Shell command: ", "");
 
   if (ms == NULL)
     {

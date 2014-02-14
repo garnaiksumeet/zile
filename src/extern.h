@@ -52,8 +52,8 @@ bool insert_estr (estr as);
 #undef FIELD
 #undef FIELD_STR
 void set_buffer_text (Buffer *bp, estr es);
-castr get_buffer_pre_point (Buffer *bp);
-castr get_buffer_post_point (Buffer *bp);
+const_astr get_buffer_pre_point (Buffer *bp);
+const_astr get_buffer_post_point (Buffer *bp);
 _GL_ATTRIBUTE_PURE size_t get_buffer_pt (Buffer *bp);
 _GL_ATTRIBUTE_PURE size_t get_buffer_size (Buffer * bp);
 _GL_ATTRIBUTE_PURE const char *get_buffer_eol (Buffer *bp);
@@ -138,7 +138,7 @@ _GL_ATTRIBUTE_PURE Function get_function (const char *name);
 _GL_ATTRIBUTE_PURE const char *get_function_doc (const char *name);
 _GL_ATTRIBUTE_PURE int get_function_interactive (const char *name);
 _GL_ATTRIBUTE_PURE const char *get_function_name (Function p);
-castr minibuf_read_function_name (const char *fmt, ...);
+const_astr minibuf_read_function_name (const char *fmt, ...);
 void init_eval (void);
 
 /* file.c ----------------------------------------------------------------- */
@@ -224,17 +224,17 @@ _GL_ATTRIBUTE_PURE int minibuf_no_error (void);
 void minibuf_refresh (void);
 void minibuf_write (const char *fmt, ...);
 void minibuf_error (const char *fmt, ...);
-castr minibuf_read (const char *fmt, const char *value, ...);
+const_astr minibuf_read (const char *fmt, const char *value, ...);
 long minibuf_read_number (const char *fmt, ...);
 bool minibuf_test_in_completions (const char *ms, gl_list_t completions);
 int minibuf_read_yesno (const char *fmt, ...);
-castr minibuf_read_completion (const char *fmt, const char *value, Completion * cp,
+const_astr minibuf_read_completion (const char *fmt, const char *value, Completion * cp,
                                History * hp, ...);
-castr minibuf_vread_completion (const char *fmt, const char *value, Completion * cp,
+const_astr minibuf_vread_completion (const char *fmt, const char *value, Completion * cp,
                                       History * hp, const char *empty_err,
                                       bool (*test) (const char *s, gl_list_t completions),
                                       const char *invalid_err, va_list ap);
-castr minibuf_read_filename (const char *fmt, const char *value,
+const_astr minibuf_read_filename (const char *fmt, const char *value,
                              const char *file, ...);
 void minibuf_clear (void);
 
@@ -265,7 +265,7 @@ void term_ungetkey (size_t key);
 
 /* term_minibuf.c --------------------------------------------------------- */
 void term_minibuf_write (const char *fmt);
-castr term_minibuf_read (const char *prompt, const char *value, size_t pos,
+const_astr term_minibuf_read (const char *prompt, const char *value, size_t pos,
                          Completion * cp, History * hp);
 
 /* term_redisplay.c ------------------------------------------------------- */
@@ -282,7 +282,7 @@ void undo_set_unchanged (Undo *up);
 
 /* variables.c ------------------------------------------------------------ */
 void init_variables (void);
-castr minibuf_read_variable_name (const char *fmt, ...);
+const_astr minibuf_read_variable_name (const char *fmt, ...);
 void set_variable (const char *var, const char *val);
 const char *get_variable_doc (const char *var, const char **defval);
 const char *get_variable (const char *var);

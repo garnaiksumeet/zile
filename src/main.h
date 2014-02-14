@@ -149,7 +149,7 @@ typedef le * (*Function) (long uniarg, bool is_uniarg, le * list);
 
 /* String argument. */
 #define STR_ARG(name)                           \
-  castr name = NULL;
+  const_astr name = NULL;
 #define STR_INIT(name)                                  \
   if (arglist && arglist->next)                         \
     {                                                   \

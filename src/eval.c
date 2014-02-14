@@ -237,7 +237,7 @@ Read function name, then read its arguments and call it.
     }
   astr_cat_cstr (msg, "M-x ");
 
-  castr name = minibuf_read_function_name (astr_cstr (msg));
+  const_astr name = minibuf_read_function_name (astr_cstr (msg));
   if (name == NULL)
     return false;
 
@@ -249,7 +249,7 @@ END_DEFUN
  * Read a function name from the minibuffer.
  */
 static History *functions_history = NULL;
-castr
+const_astr
 minibuf_read_function_name (const char *fmt, ...)
 {
   va_list ap;
@@ -261,7 +261,7 @@ minibuf_read_function_name (const char *fmt, ...)
                          xstrdup (fentry_table[i].name));
 
   va_start (ap, fmt);
-  castr ms = minibuf_vread_completion (fmt, "", cp, functions_history,
+  const_astr ms = minibuf_vread_completion (fmt, "", cp, functions_history,
                                        "No function name given",
                                        minibuf_test_in_completions,
                                        "Undefined function name `%s'", ap);

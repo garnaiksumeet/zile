@@ -104,7 +104,7 @@ minibuf_error (const char *fmt, ...)
 /*
  * Read a string from the minibuffer.
  */
-castr
+const_astr
 minibuf_read (const char *fmt, const char *value, ...)
 {
   va_list ap;
@@ -133,7 +133,7 @@ minibuf_read_number (const char *fmt, ...)
 
   do
     {
-      castr as = minibuf_read (buf, "");
+      const_astr as = minibuf_read (buf, "");
       if (as == NULL || astr_cstr (as) == NULL)
         {
           n = LONG_MAX;
@@ -158,11 +158,11 @@ minibuf_read_number (const char *fmt, ...)
 /*
  * Read a filename from the minibuffer.
  */
-castr
+const_astr
 minibuf_read_filename (const char *fmt, const char *value,
                        const char *file, ...)
 {
-  castr p = NULL;
+  const_astr p = NULL;
 
   astr as = astr_new_cstr (value);
   if (file == NULL && astr_len (as) > 0 && astr_get (as, astr_len (as) - 1) != '/')
@@ -215,7 +215,7 @@ minibuf_read_yesno (const char *fmt, ...)
   gl_sortedlist_add (get_completion_completions (cp), completion_strcmp, xstrdup ("no"));
 
   va_start (ap, fmt);
-  castr ms = minibuf_vread_completion (fmt, "", cp, NULL, errmsg,
+  const_astr ms = minibuf_vread_completion (fmt, "", cp, NULL, errmsg,
                                        minibuf_test_in_completions, errmsg, ap);
   va_end (ap);
 
@@ -231,7 +231,7 @@ minibuf_read_yesno (const char *fmt, ...)
   return ret;
 }
 
-castr
+const_astr
 minibuf_read_completion (const char *fmt, const char *value, Completion * cp,
                          History * hp, ...)
 {
@@ -248,13 +248,13 @@ minibuf_read_completion (const char *fmt, const char *value, Completion * cp,
 /*
  * Read a string from the minibuffer using a completion.
  */
-castr
+const_astr
 minibuf_vread_completion (const char *fmt, const char *value, Completion * cp,
                           History * hp, const char *empty_err,
                           bool (*test) (const char *s, gl_list_t completions),
                           const char *invalid_err, va_list ap)
 {
-  castr ms;
+  const_astr ms;
   char *buf = xvasprintf (fmt, ap);
 
   for (;;)

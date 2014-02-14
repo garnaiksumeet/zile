@@ -49,7 +49,7 @@ no_upper (const char *s, size_t len, int regex)
 static const char *re_find_err = NULL;
 
 static int
-find_substr (castr as, const char *n, size_t nsize,
+find_substr (const_astr as, const char *n, size_t nsize,
              bool forward, bool notbol, bool noteol, bool regex, bool icase)
 {
   int ret = -1;
@@ -102,10 +102,10 @@ search (const char *s, int forward, int regexp)
   return true;
 }
 
-static castr last_search = NULL;
+static const_astr last_search = NULL;
 
 static le *
-do_search (bool forward, bool regexp, castr pattern)
+do_search (bool forward, bool regexp, const_astr pattern)
 {
   le * ok = leNIL;
 
@@ -390,14 +390,14 @@ As each match is found, the user must type a character saying
 what to do with it.
 +*/
 {
-  castr find = minibuf_read ("Query replace string: ", "");
+  const_astr find = minibuf_read ("Query replace string: ", "");
   if (find == NULL)
     return FUNCALL (keyboard_quit);
   if (astr_len (find) == 0)
     return leNIL;
   bool find_no_upper = no_upper (astr_cstr (find), astr_len (find), false);
 
-  castr repl = minibuf_read ("Query replace `%s' with: ", "", astr_cstr (find));
+  const_astr repl = minibuf_read ("Query replace `%s' with: ", "", astr_cstr (find));
   if (repl == NULL)
     return FUNCALL (keyboard_quit);
 
@@ -431,7 +431,7 @@ what to do with it.
       if (c == KBD_RET || c == ' ' || c == 'y' || c == 'Y' ||  c == '.' || c == '!')
         { /* Perform replacement. */
           ++count;
-          castr case_repl = repl;
+          const_astr case_repl = repl;
           Region r = region_new (get_buffer_pt (cur_bp) - astr_len (find), get_buffer_pt (cur_bp));
           if (find_no_upper && get_variable_bool ("case-replace"))
             {

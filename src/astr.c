@@ -58,8 +58,8 @@ astr_new (void)
   return as;
 }
 
-castr
-castr_new_nstr (const char *s, size_t n)
+const_astr
+const_astr_new_nstr (const char *s, size_t n)
 {
   astr as;
   as = (astr) XZALLOC (struct astr);
@@ -69,13 +69,13 @@ castr_new_nstr (const char *s, size_t n)
 }
 
 const char *
-astr_cstr (castr as)
+astr_cstr (const_astr as)
 {
   return (const char *) (as->text);
 }
 
 size_t
-astr_len (castr as)
+astr_len (const_astr as)
 {
   return as->len;
 }
@@ -162,7 +162,7 @@ astr_set (astr as, size_t pos, int c, size_t n)
  */
 
 char
-astr_get (castr as, size_t pos)
+astr_get (const_astr as, size_t pos)
 {
   assert (pos <= astr_len (as));
   return (astr_cstr (as))[pos];
@@ -182,7 +182,7 @@ astr_new_cstr (const char *s)
 }
 
 astr
-astr_cpy (astr as, castr src)
+astr_cpy (astr as, const_astr src)
 {
   return astr_ncpy_cstr (as, astr_cstr (src), astr_len (src));
 }
@@ -194,7 +194,7 @@ astr_cpy_cstr (astr as, const char *s)
 }
 
 astr
-astr_cat (astr as, castr src)
+astr_cat (astr as, const_astr src)
 {
   return astr_cat_nstr (as, astr_cstr (src), astr_len (src));
 }
@@ -213,7 +213,7 @@ astr_cat_char (astr as, int c)
 }
 
 astr
-astr_substr (castr as, size_t pos, size_t size)
+astr_substr (const_astr as, size_t pos, size_t size)
 {
   assert (pos + size <= astr_len (as));
   return astr_cat_nstr (astr_new (), astr_cstr (as) + pos, size);

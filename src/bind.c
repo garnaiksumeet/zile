@@ -491,7 +491,7 @@ walk_bindings_tree (Binding tree, gl_list_t keys,
           astr key = astr_new ();
           for (size_t j = 0; j < gl_list_size (keys); j++)
             {
-              astr_cat (key, (castr) gl_list_get_at (keys, j));
+              astr_cat (key, (const_astr) gl_list_get_at (keys, j));
               astr_cat_char (key, ' ');
             }
           astr_cat (key, chordtodesc (p->key));
@@ -539,7 +539,7 @@ Print message listing key sequences that invoke the command DEFINITION.
 Argument is a command name.
 +*/
 {
-  castr name = minibuf_read_function_name ("Where is command: ");
+  const_astr name = minibuf_read_function_name ("Where is command: ");
   gather_bindings_state g;
 
   ok = leNIL;

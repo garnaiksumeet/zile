@@ -190,7 +190,7 @@ get_variable_bool (const char *var)
   return false;
 }
 
-castr
+const_astr
 minibuf_read_variable_name (const char *fmt, ...)
 {
   Completion *cp = completion_new (false);
@@ -205,7 +205,7 @@ minibuf_read_variable_name (const char *fmt, ...)
 
   va_list ap;
   va_start (ap, fmt);
-  castr ms = minibuf_vread_completion (fmt, "", cp, NULL,
+  const_astr ms = minibuf_vread_completion (fmt, "", cp, NULL,
                                        "No variable name given",
                                        minibuf_test_in_completions,
                                        "Undefined variable name `%s'", ap);

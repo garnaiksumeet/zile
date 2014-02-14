@@ -52,7 +52,7 @@ estr_init (void)
 }
 
 estr
-estr_new (castr as, const char *eol)
+estr_new (const_astr as, const char *eol)
 {
   estr es = XZALLOC (struct estr);
   es->as = astr_cpy (astr_new (), as);
@@ -75,7 +75,7 @@ estr_get_eol (estr es)
 /* Maximum number of EOLs to check before deciding type. */
 #define MAX_EOL_CHECK_COUNT 3
 estr
-estr_new_astr (castr as)
+estr_new_astr (const_astr as)
 {
   bool first_eol = true;
   size_t total_eols = 0;

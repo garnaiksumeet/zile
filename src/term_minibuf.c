@@ -84,7 +84,7 @@ maybe_close_popup (Completion *cp)
     }
 }
 
-castr
+const_astr
 term_minibuf_read (const char *prompt, const char *value, size_t pos,
                Completion * cp, History * hp)
 {

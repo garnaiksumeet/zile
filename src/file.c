@@ -294,7 +294,7 @@ If the current buffer now contains an empty file that you just visited
     buf = astr_cstr (get_buffer_dir (cur_bp));
   else
     base = base_name (buf);
-  castr ms = minibuf_read_filename ("Find alternate: ", buf, base);
+  const_astr ms = minibuf_read_filename ("Find alternate: ", buf, base);
 
   ok = leNIL;
   if (ms == NULL)
@@ -442,7 +442,7 @@ write_to_disk (Buffer * bp, const char *filename, mode_t mode)
     return -1;
 
   int ret = 0;
-  castr as = get_buffer_pre_point (bp);
+  const_astr as = get_buffer_pre_point (bp);
   ssize_t written = write (fd, astr_cstr (as), astr_len (as));
   if (written < 0 || (size_t) written != astr_len (as))
     ret = written;
@@ -534,7 +534,7 @@ write_buffer (Buffer *bp, bool needname, bool confirm,
 {
   bool ans = true;
   le * ok = leT;
-  castr name;
+  const_astr name;
 
   if (!needname)
     name = astr_new_cstr (name0);

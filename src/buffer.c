@@ -67,18 +67,18 @@ set_buffer_text (Buffer *bp, estr es)
   bp->text = es;
 }
 
-castr
+const_astr
 get_buffer_pre_point (Buffer *bp)
 {
-  return castr_new_nstr (astr_cstr (estr_get_as (bp->text)), bp->pt);
+  return const_astr_new_nstr (astr_cstr (estr_get_as (bp->text)), bp->pt);
 }
 
-castr
+const_astr
 get_buffer_post_point (Buffer *bp)
 {
   size_t post_gap = bp->pt + bp->gap;
-  castr as = estr_get_as (bp->text);
-  return castr_new_nstr (astr_cstr (as) + post_gap, astr_len (as) - post_gap);
+  const_astr as = estr_get_as (bp->text);
+  return const_astr_new_nstr (astr_cstr (as) + post_gap, astr_len (as) - post_gap);
 }
 
 size_t
@@ -255,7 +255,7 @@ int
 insert_char (int c)
 {
   const char ch = (char) c;
-  return insert_estr (estr_new (castr_new_nstr (&ch, 1), coding_eol_lf));
+  return insert_estr (estr_new (const_astr_new_nstr (&ch, 1), coding_eol_lf));
 }
 
 bool

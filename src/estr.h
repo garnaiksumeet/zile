@@ -32,10 +32,10 @@ void estr_init (void);
 astr estr_get_as (estr es);
 const char *estr_get_eol (estr es);
 
-estr estr_new (castr as, const char *eol);
+estr estr_new (const_astr as, const char *eol);
 
 /* Make estr from astr, determining EOL type from astr's contents. */
-estr estr_new_astr (castr as);
+estr estr_new_astr (const_astr as);
 
 _GL_ATTRIBUTE_PURE size_t estr_prev_line (estr es, size_t o);
 _GL_ATTRIBUTE_PURE size_t estr_next_line (estr es, size_t o);
