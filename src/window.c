@@ -81,7 +81,7 @@ Both windows display the same buffer now current.
   /* Windows smaller than 4 lines cannot be split. */
   if (cur_wp->fheight < 4)
     {
-      minibuf_error ("Window height %d too small (after splitting)",
+      minibuf_error ("Window height %zu too small (after splitting)",
                      cur_wp->fheight);
       return leNIL;
     }

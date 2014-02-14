@@ -233,11 +233,11 @@ Read function name, then read its arguments and call it.
       if (lastflag & FLAG_UNIARG_EMPTY)
         msg = astr_fmt ("C-u ");
       else
-        msg = astr_fmt ("%d ", uniarg);
+        msg = astr_fmt ("%ld ", uniarg);
     }
   astr_cat_cstr (msg, "M-x ");
 
-  const_astr name = minibuf_read_function_name (astr_cstr (msg));
+  const_astr name = minibuf_read_function_name ("%s", astr_cstr (msg));
   if (name == NULL)
     return false;
 

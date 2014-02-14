@@ -123,9 +123,9 @@ write_registers_list (va_list ap _GL_UNUSED_PARAMETER)
         const char *s = astr_cstr (estr_get_as (regs[i]));
         while (*s == ' ' || *s == '\t' || *s == '\n')
           s++;
-        size_t len = MIN (20, MAX (0, ((int) get_window_ewidth (cur_wp)) - 6)) + 1;
+        int len = MIN (20, MAX (0, ((int) get_window_ewidth (cur_wp)) - 6)) + 1;
 
-        bprintf ("Register %s contains ", astr_cstr (astr_fmt (isprint (i) ? "%c" : "\\%o", i)));
+        bprintf ("Register %s contains ", astr_cstr (astr_fmt (isprint (i) ? "%c" : "\\%o", (int) i)));
         if (strlen (s) > 0)
           bprintf ("text starting with\n    %.*s\n", len, s);
         else if (s != astr_cstr (estr_get_as (regs[i])))

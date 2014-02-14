@@ -163,7 +163,7 @@ write_completion (va_list ap)
   bprintf ("Possible completions are:\n");
   for (size_t i = 0, col = 0; i < gl_list_size (l); i++)
     {
-      bprintf ("%-*s", max, (const char *) gl_list_get_at (l, i));
+      bprintf ("%-*s", (int) max, (const char *) gl_list_get_at (l, i));
 
       col = (col + 1) % numcols;
       if (col == 0)

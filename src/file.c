@@ -541,7 +541,7 @@ write_buffer (Buffer *bp, bool needname, bool confirm,
 
   if (needname)
     {
-      name = minibuf_read_filename (prompt, "", NULL);
+      name = minibuf_read_filename ("%s", "", NULL, prompt);
       if (name == NULL)
         return FUNCALL (keyboard_quit);
       if (astr_len (name) == 0)
@@ -791,7 +791,7 @@ Make DIR become the current buffer's default directory.
         }
       else if (chdir (astr_cstr (dir)) == -1)
         {
-          minibuf_write ("%s: %s", dir, strerror (errno));
+          minibuf_write ("%s: %s", astr_cstr (dir), strerror (errno));
           ok = leNIL;
         }
     }

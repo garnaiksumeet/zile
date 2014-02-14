@@ -138,7 +138,7 @@ _GL_ATTRIBUTE_PURE Function get_function (const char *name);
 _GL_ATTRIBUTE_PURE const char *get_function_doc (const char *name);
 _GL_ATTRIBUTE_PURE int get_function_interactive (const char *name);
 _GL_ATTRIBUTE_PURE const char *get_function_name (Function p);
-const_astr minibuf_read_function_name (const char *fmt, ...);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) const_astr minibuf_read_function_name (const char *fmt, ...);
 void init_eval (void);
 
 /* file.c ----------------------------------------------------------------- */
@@ -184,7 +184,7 @@ void *zile_calloc(size_t n, size_t s);
 bool insert_newline (void);
 bool intercalate_newline (void);
 bool fill_break_line (void);
-void bprintf (const char *fmt, ...);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) void bprintf (const char *fmt, ...);
 
 /* lisp.c ----------------------------------------------------------------- */
 void init_lisp (void);
@@ -222,20 +222,20 @@ void set_mark (void);
 void init_minibuf (void);
 _GL_ATTRIBUTE_PURE int minibuf_no_error (void);
 void minibuf_refresh (void);
-void minibuf_write (const char *fmt, ...);
-void minibuf_error (const char *fmt, ...);
-const_astr minibuf_read (const char *fmt, const char *value, ...);
-long minibuf_read_number (const char *fmt, ...);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) void minibuf_write (const char *fmt, ...);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) void minibuf_error (const char *fmt, ...);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 3) const_astr minibuf_read (const char *fmt, const char *value, ...);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) long minibuf_read_number (const char *fmt, ...);
 bool minibuf_test_in_completions (const char *ms, gl_list_t completions);
-int minibuf_read_yesno (const char *fmt, ...);
-const_astr minibuf_read_completion (const char *fmt, const char *value, Completion * cp,
-                               History * hp, ...);
-const_astr minibuf_vread_completion (const char *fmt, const char *value, Completion * cp,
-                                      History * hp, const char *empty_err,
-                                      bool (*test) (const char *s, gl_list_t completions),
-                                      const char *invalid_err, va_list ap);
-const_astr minibuf_read_filename (const char *fmt, const char *value,
-                             const char *file, ...);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) int minibuf_read_yesno (const char *fmt, ...);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 5) const_astr minibuf_read_completion (const char *fmt, const char *value, Completion * cp,
+                                                                      History * hp, ...);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 0) const_astr minibuf_vread_completion (const char *fmt, const char *value, Completion * cp,
+                                                                       History * hp, const char *empty_err,
+                                                                       bool (*test) (const char *s, gl_list_t completions),
+                                                                       const char *invalid_err, va_list ap);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 4) const_astr minibuf_read_filename (const char *fmt, const char *value,
+                                                                    const char *file, ...);
 void minibuf_clear (void);
 
 /* redisplay.c ------------------------------------------------------------ */
@@ -282,7 +282,7 @@ void undo_set_unchanged (Undo *up);
 
 /* variables.c ------------------------------------------------------------ */
 void init_variables (void);
-const_astr minibuf_read_variable_name (const char *fmt, ...);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) const_astr minibuf_read_variable_name (const char *fmt, ...);
 void set_variable (const char *var, const char *val);
 const char *get_variable_doc (const char *var, const char **defval);
 const char *get_variable (const char *var);

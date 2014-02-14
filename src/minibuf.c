@@ -62,7 +62,7 @@ minibuf_refresh (void)
     }
 }
 
-static void
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 0) static void
 minibuf_vwrite (const char *fmt, va_list ap)
 {
   char *s = xvasprintf (fmt, ap);
@@ -133,7 +133,7 @@ minibuf_read_number (const char *fmt, ...)
 
   do
     {
-      const_astr as = minibuf_read (buf, "");
+      const_astr as = minibuf_read ("%s", "", buf);
       if (as == NULL || astr_cstr (as) == NULL)
         {
           n = LONG_MAX;
@@ -268,7 +268,7 @@ minibuf_vread_completion (const char *fmt, const char *value, Completion * cp,
         }
       else if (astr_len (ms) == 0)
         {
-          minibuf_error (empty_err);
+          minibuf_error ("%s", empty_err);
           ms = NULL;
           break;
         }
@@ -288,7 +288,10 @@ minibuf_vread_completion (const char *fmt, const char *value, Completion * cp,
             }
           else
             {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
               minibuf_error (invalid_err, astr_cstr (ms));
+#pragma GCC diagnostic pop
               waitkey ();
             }
         }

@@ -29,8 +29,8 @@ extern const char *coding_eol_crlf;
 extern const char *coding_eol_cr;
 
 void estr_init (void);
-astr estr_get_as (estr es);
-const char *estr_get_eol (estr es);
+_GL_ATTRIBUTE_PURE astr estr_get_as (estr es);
+_GL_ATTRIBUTE_PURE const char *estr_get_eol (estr es);
 
 estr estr_new (const_astr as, const char *eol);
 

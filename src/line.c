@@ -34,7 +34,7 @@ static void
 insert_expanded_tab (void)
 {
   size_t t = tab_width (cur_bp);
-  bprintf ("%*s", t - get_goalc () % t);
+  bprintf ("%*s", (int) (t - get_goalc () % t), "");
 }
 
 static bool

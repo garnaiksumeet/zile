@@ -135,8 +135,8 @@ astr astr_readf (const char *filename);
 /*
  * Format text into a string and return it.
  */
-astr astr_vfmt (const char *fmt, va_list ap);
-astr astr_fmt (const char *fmt, ...);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 0) astr astr_vfmt (const char *fmt, va_list ap);
+_GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) astr astr_fmt (const char *fmt, ...);
 
 /* Enumeration for casing. */
 enum casing {

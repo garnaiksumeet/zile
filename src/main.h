@@ -22,8 +22,6 @@
 #ifndef ZILE_H
 #define ZILE_H
 
-#include <config.h>
-
 #include <stdlib.h>
 #include <stdbool.h>
 #include <limits.h>
@@ -175,7 +173,7 @@ typedef le * (*Function) (long uniarg, bool is_uniarg, le * list);
 /* Integer argument which can either be argument or uniarg. */
 #define INT_OR_UNIARG(name) \
   long name = 1;            \
-  bool noarg = false;
+  _GL_UNUSED bool noarg = false;
 #define INT_OR_UNIARG_INIT(name)                             \
   INT_INIT (name)                                            \
   else                                                       \

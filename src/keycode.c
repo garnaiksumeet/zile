@@ -128,7 +128,7 @@ chordtodesc (size_t key)
       if (key <= 0xff && isgraph (key))
         astr_cat_char (as, (int) key);
       else
-        astr_cat (as, astr_fmt ("<%x>", key));
+        astr_cat (as, astr_fmt ("<%x>", (unsigned) key));
     }
 
   return as;

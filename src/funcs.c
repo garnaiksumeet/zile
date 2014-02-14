@@ -125,7 +125,7 @@ write_buffers_list (va_list ap)
          this one (the *Buffer List*). */
       if (cur_bp != bp && get_buffer_name (bp)[0] == ' ')
         {
-          bprintf ("%c%c%c %-19s %6u  %-17s",
+          bprintf ("%c%c%c %-19s %6zu  %-17s",
                    get_window_bp (old_wp) == bp ? '.' : ' ',
                    get_buffer_readonly (bp) ? '%' : ' ',
                    get_buffer_modified (bp) ? '*' : ' ',
@@ -190,7 +190,7 @@ Just C-u as argument means to use the current column.
 
   if (!(lastflag & FLAG_SET_UNIARG) && arglist == NULL)
     {
-      fill_col = minibuf_read_number ("Set fill-column to (default %d): ", o);
+      fill_col = minibuf_read_number ("Set fill-column to (default %zu): ", o);
       if (fill_col == LONG_MAX)
         return leNIL;
       else if (fill_col == LONG_MAX - 1)
@@ -211,7 +211,7 @@ Just C-u as argument means to use the current column.
     {
       buf = xasprintf ("%ld", fill_col);
       /* Only print message when run interactively. */
-      minibuf_write ("Fill column set to %s (was %d)", buf,
+      minibuf_write ("Fill column set to %s (was %ld)", buf,
                      get_variable_number ("fill-column"));
     }
 
@@ -1124,12 +1124,16 @@ says to insert the output in the current buffer.
 END_DEFUN
 
 /* The `start' and `end' arguments are fake, hence their string type,
-   so they can be ignored. */
+   so they can be ignored, hence the pragma (FIXME: work out how to
+   apply just to `start' and `end'). */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 DEFUN_ARGS ("shell-command-on-region", shell_command_on_region,
             STR_ARG (start)
             STR_ARG (end)
             STR_ARG (cmd)
             BOOL_ARG (insert))
+#pragma GCC diagnostic pop
 /*+
 Execute string command in inferior shell with region as input.
 Normally display output (if any) in temp buffer `*Shell Command Output*';

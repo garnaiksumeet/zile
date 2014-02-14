@@ -285,7 +285,7 @@ term_minibuf_read (const char *prompt, const char *value, size_t pos,
             ding ();
           else
             {
-              astr_cpy (as, astr_fmt ("%s%c%s", astr_cstr (astr_substr (as, 0, pos)), c, astr_cstr (astr_substr (as, pos, astr_len (as) - pos))));
+              astr_cpy (as, astr_fmt ("%s%c%s", astr_cstr (astr_substr (as, 0, pos)), (int) c, astr_cstr (astr_substr (as, pos, astr_len (as) - pos))));
               pos++;
             }
         }

@@ -27,7 +27,6 @@
 #include <stdlib.h>
 
 #include "main.h"
-#include <config.h>
 #include "extern.h"
 
 static const char *
@@ -143,7 +142,7 @@ draw_status_line (size_t line, Window * wp)
   size_t n = offset_to_line (get_window_bp (wp), window_o (wp));
   astr as = astr_fmt ("--%s%2s  %-15s   %s %-9s (Fundamental",
                       eol_type, make_mode_line_flags (wp), get_buffer_name (get_window_bp (wp)),
-                      make_screen_pos (wp), astr_cstr (astr_fmt ("(%d,%d)", n + 1,
+                      make_screen_pos (wp), astr_cstr (astr_fmt ("(%zu,%zu)", n + 1,
                                                                  get_goalc_bp (get_window_bp (wp), window_o (wp)))));
 
   if (get_buffer_autofill (get_window_bp (wp)))

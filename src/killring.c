@@ -212,7 +212,7 @@ kill_text (int uniarg, Function mark_func)
   pop_mark ();
 
   set_this_command (F_kill_region);
-  minibuf_write ("");		/* Erase "Set mark" message.  */
+  minibuf_write ("%s", "");		/* Erase "Set mark" message.  */
   return leT;
 }
 

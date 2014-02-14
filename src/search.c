@@ -120,7 +120,7 @@ do_search (bool forward, bool regexp, const_astr pattern)
       last_search = pattern;
 
       if (!search (astr_cstr (pattern), forward, regexp))
-        minibuf_error ("Search failed: \"%s\"", pattern);
+        minibuf_error ("Search failed: \"%s\"", astr_cstr (pattern));
       else
         ok = leT;
     }
@@ -462,6 +462,6 @@ what to do with it.
     window_resync (cur_wp);
 
   if (ok)
-    minibuf_write ("Replaced %d occurrences", count);
+    minibuf_write ("Replaced %zu occurrences", count);
 }
 END_DEFUN

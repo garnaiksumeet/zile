@@ -357,7 +357,7 @@ set_buffer_names (Buffer * bp, const char *filename)
   char *name = xstrdup (s);
   /* Note: there can't be more than SIZE_MAX buffers. */
   for (size_t i = 2; find_buffer (name) != NULL; i++)
-    name = xasprintf ("%s<%zd>", s, i);
+    name = xasprintf ("%s<%zu>", s, i);
   set_buffer_name (bp, name);
 }
 
