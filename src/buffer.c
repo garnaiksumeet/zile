@@ -139,7 +139,7 @@ buffer_line_len (Buffer *bp, size_t o)
 #define MIN_GAP 1024 /* Minimum gap size after resize. */
 #define MAX_GAP 4096 /* Maximum permitted gap size. */
 bool
-replace_estr (size_t del, estr es)
+replace_estr (size_t del, const_estr es)
 {
   if (warn_if_readonly_buffer ())
     return false;
@@ -183,7 +183,7 @@ replace_estr (size_t del, estr es)
 }
 
 bool
-insert_estr (estr es)
+insert_estr (const_estr es)
 {
   return replace_estr (0, es);
 }

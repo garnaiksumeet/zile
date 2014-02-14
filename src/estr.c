@@ -61,13 +61,13 @@ estr_new (const_astr as, const char *eol)
 }
 
 astr
-estr_get_as (estr es)
+estr_get_as (const_estr es)
 {
   return es->as;
 }
 
 const char *
-estr_get_eol (estr es)
+estr_get_eol (const_estr es)
 {
   return es->eol;
 }
@@ -113,21 +113,21 @@ estr_new_astr (const_astr as)
 }
 
 size_t
-estr_prev_line (estr es, size_t o)
+estr_prev_line (const_estr es, size_t o)
 {
   size_t so = estr_start_of_line (es, o);
   return (so == 0) ? SIZE_MAX : estr_start_of_line (es, so - strlen (es->eol));
 }
 
 size_t
-estr_next_line (estr es, size_t o)
+estr_next_line (const_estr es, size_t o)
 {
   size_t eo = estr_end_of_line (es, o);
   return (eo == astr_len (es->as)) ? SIZE_MAX : eo + strlen (es->eol);
 }
 
 size_t
-estr_start_of_line (estr es, size_t o)
+estr_start_of_line (const_estr es, size_t o)
 {
   size_t eol_len = strlen (es->eol);
   const char *prev = memrmem (astr_cstr (es->as), o, es->eol, eol_len);
@@ -135,7 +135,7 @@ estr_start_of_line (estr es, size_t o)
 }
 
 size_t
-estr_end_of_line (estr es, size_t o)
+estr_end_of_line (const_estr es, size_t o)
 {
   const char *next = memmem (astr_cstr (es->as) + o, astr_len (es->as) - o,
                              es->eol, strlen (es->eol));
@@ -143,13 +143,13 @@ estr_end_of_line (estr es, size_t o)
 }
 
 size_t
-estr_line_len (estr es, size_t o)
+estr_line_len (const_estr es, size_t o)
 {
   return estr_end_of_line (es, o) - estr_start_of_line (es, o);
 }
 
 size_t
-estr_lines (estr es)
+estr_lines (const_estr es)
 {
   size_t es_eol_len = strlen (es->eol);
   const char *s = astr_cstr (es->as), *next;
@@ -162,7 +162,7 @@ estr_lines (estr es)
 }
 
 estr
-estr_replace_estr (estr es, size_t pos, estr src)
+estr_replace_estr (estr es, size_t pos, const_estr src)
 {
   const char *s = astr_cstr (src->as);
   size_t src_eol_len = strlen (src->eol), es_eol_len = strlen (es->eol);
@@ -186,7 +186,7 @@ estr_replace_estr (estr es, size_t pos, estr src)
 }
 
 estr
-estr_cat (estr es, estr src)
+estr_cat (estr es, const_estr src)
 {
   size_t oldlen = astr_len (es->as);
   astr_insert (es->as, oldlen, estr_len (src, es->eol));

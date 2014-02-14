@@ -21,6 +21,7 @@
 
 /* String with encoding */
 typedef struct estr *estr;
+typedef struct estr const *const_estr;
 
 extern estr estr_empty;
 
@@ -29,22 +30,23 @@ extern const char *coding_eol_crlf;
 extern const char *coding_eol_cr;
 
 void estr_init (void);
-_GL_ATTRIBUTE_PURE astr estr_get_as (estr es);
-_GL_ATTRIBUTE_PURE const char *estr_get_eol (estr es);
+_GL_ATTRIBUTE_PURE astr estr_get_as (const_estr es);
+_GL_ATTRIBUTE_PURE const char *estr_get_eol (const_estr es);
 
 estr estr_new (const_astr as, const char *eol);
+const_estr const_estr_new (const_astr as, const char *eol);
 
 /* Make estr from astr, determining EOL type from astr's contents. */
 estr estr_new_astr (const_astr as);
 
-_GL_ATTRIBUTE_PURE size_t estr_prev_line (estr es, size_t o);
-_GL_ATTRIBUTE_PURE size_t estr_next_line (estr es, size_t o);
-_GL_ATTRIBUTE_PURE size_t estr_start_of_line (estr es, size_t o);
-_GL_ATTRIBUTE_PURE size_t estr_end_of_line (estr es, size_t o);
-_GL_ATTRIBUTE_PURE size_t estr_line_len (estr es, size_t o);
-_GL_ATTRIBUTE_PURE size_t estr_lines (estr es);
-estr estr_replace_estr (estr es, size_t pos, estr src);
-estr estr_cat (estr es, estr src);
+_GL_ATTRIBUTE_PURE size_t estr_prev_line (const_estr es, size_t o);
+_GL_ATTRIBUTE_PURE size_t estr_next_line (const_estr es, size_t o);
+_GL_ATTRIBUTE_PURE size_t estr_start_of_line (const_estr es, size_t o);
+_GL_ATTRIBUTE_PURE size_t estr_end_of_line (const_estr es, size_t o);
+_GL_ATTRIBUTE_PURE size_t estr_line_len (const_estr es, size_t o);
+_GL_ATTRIBUTE_PURE size_t estr_lines (const_estr es);
+estr estr_replace_estr (estr es, size_t pos, const_estr src);
+estr estr_cat (estr es, const_estr src);
 
 #define estr_len(es, eol_type) (astr_len (estr_get_as (es)) +  estr_lines (es) * (strlen (eol_type) - strlen (estr_get_eol (es))))
 
