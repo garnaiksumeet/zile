@@ -1,6 +1,6 @@
 /* Main types and definitions
 
-   Copyright (c) 1997-2011 Free Software Foundation, Inc.
+   Copyright (c) 1997-2014 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 

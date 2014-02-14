@@ -1,6 +1,6 @@
 /* Global function prototypes
 
-   Copyright (c) 1997-2012 Free Software Foundation, Inc.
+   Copyright (c) 1997-2014 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 

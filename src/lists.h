@@ -1,6 +1,6 @@
-/* Lisp variables
+/* Lisp lists
 
-   Copyright (c) 2001, 2005, 2008, 2011 Free Software Foundation, Inc.
+   Copyright (c) 2001-2011 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 

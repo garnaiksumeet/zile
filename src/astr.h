@@ -42,7 +42,7 @@
  * The opaque string type.
  */
 typedef struct astr *astr;
-typedef struct astr const *castr;
+typedef struct astr const *castr; // FIXME: rename const_astr
 
 /*
  * Allocate a new string with zero length.

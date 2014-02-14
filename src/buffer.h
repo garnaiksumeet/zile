@@ -1,6 +1,6 @@
 /* Buffer fields
 
-   Copyright (c) 2009, 2011 Free Software Foundation, Inc.
+   Copyright (c) 2009-2011 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 
