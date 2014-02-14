@@ -223,10 +223,10 @@ find_file (const char *filename)
           set_buffer_dir (bp, astr_new_cstr (dir_name (filename)));
 
           estr es = estr_readf (filename);
-          if (es.as)
+          if (es)
             set_buffer_readonly (bp, !check_writable (filename));
           else
-            es.as = astr_new ();
+            es = estr_new_astr (astr_new ());
           set_buffer_text (bp, es);
 
           /* Reset undo history. */
@@ -417,7 +417,7 @@ Set mark after the inserted text.
   if (ok != leNIL)
     {
       estr es = estr_readf (astr_cstr (file));
-      if (es.as != NULL)
+      if (es)
         {
           insert_estr (es);
           FUNCALL (set_mark_command);

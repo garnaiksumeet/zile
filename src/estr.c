@@ -1,6 +1,6 @@
 /* Dynamically allocated encoded strings
 
-   Copyright (c) 2011-2012 Free Software Foundation, Inc.
+   Copyright (c) 2011-2014 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 
@@ -23,11 +23,19 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include "xalloc.h"
 #include "size_max.h"
 
 #include "astr.h"
 #include "estr.h"
 #include "memrmem.h"
+
+
+struct estr
+{
+  astr as;			/* String. */
+  const char *eol;		/* EOL type. */
+};
 
 
 /* Formats of end-of-line. */
@@ -43,6 +51,27 @@ estr_init (void)
   estr_empty = estr_new_astr (astr_new ());
 }
 
+estr
+estr_new (castr as, const char *eol)
+{
+  estr es = XZALLOC (struct estr);
+  es->as = astr_cpy (astr_new (), as);
+  es->eol = eol;
+  return es;
+}
+
+astr
+estr_get_as (estr es)
+{
+  return es->as;
+}
+
+const char *
+estr_get_eol (estr es)
+{
+  return es->eol;
+}
+
 /* Maximum number of EOLs to check before deciding type. */
 #define MAX_EOL_CHECK_COUNT 3
 estr
@@ -50,7 +79,7 @@ estr_new_astr (castr as)
 {
   bool first_eol = true;
   size_t total_eols = 0;
-  estr es = (estr) {.as = astr_cpy (astr_new (), as), .eol = coding_eol_lf};
+  estr es = estr_new (as, coding_eol_lf);
   for (size_t i = 0; i < astr_len (as) && total_eols < MAX_EOL_CHECK_COUNT; i++)
     {
       char c = astr_get (as, i);
@@ -70,12 +99,12 @@ estr_new_astr (castr as)
 
           if (first_eol)
             { /* This is the first end-of-line. */
-              es.eol = this_eol_type;
+              es->eol = this_eol_type;
               first_eol = false;
             }
-          else if (es.eol != this_eol_type)
+          else if (es->eol != this_eol_type)
             { /* This EOL is different from the last; arbitrarily choose LF. */
-              es.eol = coding_eol_lf;
+              es->eol = coding_eol_lf;
               break;
             }
         }
@@ -87,30 +116,30 @@ size_t
 estr_prev_line (estr es, size_t o)
 {
   size_t so = estr_start_of_line (es, o);
-  return (so == 0) ? SIZE_MAX : estr_start_of_line (es, so - strlen (es.eol));
+  return (so == 0) ? SIZE_MAX : estr_start_of_line (es, so - strlen (es->eol));
 }
 
 size_t
 estr_next_line (estr es, size_t o)
 {
   size_t eo = estr_end_of_line (es, o);
-  return (eo == astr_len (es.as)) ? SIZE_MAX : eo + strlen (es.eol);
+  return (eo == astr_len (es->as)) ? SIZE_MAX : eo + strlen (es->eol);
 }
 
 size_t
 estr_start_of_line (estr es, size_t o)
 {
-  size_t eol_len = strlen (es.eol);
-  const char *prev = memrmem (astr_cstr (es.as), o, es.eol, eol_len);
-  return prev ? prev - astr_cstr (es.as) + eol_len : 0;
+  size_t eol_len = strlen (es->eol);
+  const char *prev = memrmem (astr_cstr (es->as), o, es->eol, eol_len);
+  return prev ? prev - astr_cstr (es->as) + eol_len : 0;
 }
 
 size_t
 estr_end_of_line (estr es, size_t o)
 {
-  const char *next = memmem (astr_cstr (es.as) + o, astr_len (es.as) - o,
-                             es.eol, strlen (es.eol));
-  return next ? (size_t) (next - astr_cstr (es.as)) : astr_len (es.as);
+  const char *next = memmem (astr_cstr (es->as) + o, astr_len (es->as) - o,
+                             es->eol, strlen (es->eol));
+  return next ? (size_t) (next - astr_cstr (es->as)) : astr_len (es->as);
 }
 
 size_t
@@ -122,11 +151,11 @@ estr_line_len (estr es, size_t o)
 size_t
 estr_lines (estr es)
 {
-  size_t es_eol_len = strlen (es.eol);
-  const char *s = astr_cstr (es.as), *next;
+  size_t es_eol_len = strlen (es->eol);
+  const char *s = astr_cstr (es->as), *next;
   size_t lines = 0;
-  for (size_t len = astr_len (es.as);
-       (next = memmem (s, len, es.eol, es_eol_len)) != NULL;
+  for (size_t len = astr_len (es->as);
+       (next = memmem (s, len, es->eol, es_eol_len)) != NULL;
        lines++, len -= (size_t) (next - s) + es_eol_len, s = next + es_eol_len)
     ;
   return lines;
@@ -135,19 +164,19 @@ estr_lines (estr es)
 estr
 estr_replace_estr (estr es, size_t pos, estr src)
 {
-  const char *s = astr_cstr (src.as);
-  size_t src_eol_len = strlen (src.eol), es_eol_len = strlen (es.eol);
-  for (size_t len = astr_len (src.as); len > 0;)
+  const char *s = astr_cstr (src->as);
+  size_t src_eol_len = strlen (src->eol), es_eol_len = strlen (es->eol);
+  for (size_t len = astr_len (src->as); len > 0;)
     {
-      const char *next = memmem (s, len, src.eol, src_eol_len);
+      const char *next = memmem (s, len, src->eol, src_eol_len);
       size_t line_len = next ? (size_t) (next - s) : len;
-      astr_replace_nstr (es.as, pos, s, line_len);
+      astr_replace_nstr (es->as, pos, s, line_len);
       pos += line_len;
       len -= line_len;
       s = next;
       if (len > 0)
         {
-          astr_replace_nstr (es.as, pos, es.eol, es_eol_len);
+          astr_replace_nstr (es->as, pos, es->eol, es_eol_len);
           s += src_eol_len;
           len -= src_eol_len;
           pos += es_eol_len;
@@ -159,17 +188,14 @@ estr_replace_estr (estr es, size_t pos, estr src)
 estr
 estr_cat (estr es, estr src)
 {
-  size_t oldlen = astr_len (es.as);
-  astr_insert (es.as, oldlen, estr_len (src, es.eol));
+  size_t oldlen = astr_len (es->as);
+  astr_insert (es->as, oldlen, estr_len (src, es->eol));
   return estr_replace_estr (es, oldlen, src);
 }
 
 estr
 estr_readf (const char *filename)
 {
-  estr es = (estr) {.as = NULL, .eol = coding_eol_lf};
   astr as = astr_readf (filename);
-  if (as)
-    es = estr_new_astr (as);
-  return es;
+  return as ? estr_new_astr (as) : NULL;
 }

@@ -1,6 +1,6 @@
 /* Kill ring facility functions
 
-   Copyright (c) 2001, 2003-2012 Free Software Foundation, Inc.
+   Copyright (c) 2001-2014 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 
@@ -34,14 +34,14 @@ static void
 maybe_free_kill_ring (void)
 {
   if (last_command () != F_kill_region)
-    kill_ring_text.as = NULL;
+    kill_ring_text = NULL;
 }
 
 static void
 kill_ring_push (estr es)
 {
-  if (kill_ring_text.as == NULL)
-    kill_ring_text = (estr) {.as = astr_new (), .eol = coding_eol_lf};
+  if (kill_ring_text == NULL)
+    kill_ring_text = estr_new_astr (astr_new ());
   estr_cat (kill_ring_text, es);
 }
 
@@ -100,7 +100,7 @@ kill_line (bool whole_line)
       if (FUNCALL (delete_char) == leNIL)
         return false;
 
-      kill_ring_push ((estr) {.as = astr_new_cstr ("\n"), .eol = coding_eol_lf});
+      kill_ring_push (estr_new_astr (astr_new_cstr ("\n")));
       set_this_command (F_kill_region);
     }
 
@@ -258,7 +258,7 @@ More precisely, reinsert the stretch of killed text most recently
 killed @i{or} yanked.  Put point at end, and set mark at beginning.
 +*/
 {
-  if (kill_ring_text.as == NULL)
+  if (kill_ring_text == NULL)
     {
       minibuf_error ("Kill ring is empty");
       return leNIL;

@@ -1,6 +1,6 @@
 /* Buffer-oriented functions
 
-   Copyright (c) 1997-2006, 2008-2012 Free Software Foundation, Inc.
+   Copyright (c) 1997-2006, 2008-2014 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 
@@ -70,14 +70,15 @@ set_buffer_text (Buffer *bp, estr es)
 castr
 get_buffer_pre_point (Buffer *bp)
 {
-  return castr_new_nstr (astr_cstr (bp->text.as), get_buffer_pt (bp));
+  return castr_new_nstr (astr_cstr (estr_get_as (bp->text)), bp->pt);
 }
 
 castr
 get_buffer_post_point (Buffer *bp)
 {
-  return castr_new_nstr (astr_cstr (bp->text.as) + bp->pt + bp->gap,
-                         astr_len (bp->text.as) - (bp->pt + bp->gap));
+  size_t post_gap = bp->pt + bp->gap;
+  castr as = estr_get_as (bp->text);
+  return castr_new_nstr (astr_cstr (as) + post_gap, astr_len (as) - post_gap);
 }
 
 size_t
@@ -91,13 +92,13 @@ set_buffer_pt (Buffer *bp, size_t o)
 {
   if (o < bp->pt)
     {
-      astr_move (bp->text.as, o + bp->gap, o, bp->pt - o);
-      astr_set (bp->text.as, o, '\0', MIN (bp->pt - o, bp->gap));
+      astr_move (estr_get_as (bp->text), o + bp->gap, o, bp->pt - o);
+      astr_set (estr_get_as (bp->text), o, '\0', MIN (bp->pt - o, bp->gap));
     }
   else if (o > bp->pt)
     {
-      astr_move (bp->text.as, bp->pt, bp->pt + bp->gap, o - bp->pt);
-      astr_set (bp->text.as, o + bp->gap - MIN (o - bp->pt, bp->gap), '\0', MIN (o - bp->pt, bp->gap));
+      astr_move (estr_get_as (bp->text), bp->pt, bp->pt + bp->gap, o - bp->pt);
+      astr_set (estr_get_as (bp->text), o + bp->gap - MIN (o - bp->pt, bp->gap), '\0', MIN (o - bp->pt, bp->gap));
     }
   bp->pt = o;
 }
@@ -122,7 +123,7 @@ o_to_realo (Buffer *bp, size_t o)
 size_t
 get_buffer_size (Buffer * bp)
 {
-  return realo_to_o (bp, astr_len (bp->text.as));
+  return realo_to_o (bp, astr_len (estr_get_as (bp->text)));
 }
 
 size_t
@@ -151,12 +152,12 @@ replace_estr (size_t del, estr es)
   size_t added_gap = oldgap + del < newlen ? MIN_GAP : 0;
   if (added_gap > 0)
     { /* If gap would vanish, open it to MIN_GAP. */
-      astr_insert (cur_bp->text.as, cur_bp->pt, (newlen + MIN_GAP) - (oldgap + del));
+      astr_insert (estr_get_as (cur_bp->text), cur_bp->pt, (newlen + MIN_GAP) - (oldgap + del));
       cur_bp->gap = MIN_GAP;
     }
   else if (oldgap + del > MAX_GAP + newlen)
     { /* If gap would be larger than MAX_GAP, restrict it to MAX_GAP. */
-      astr_remove (cur_bp->text.as, cur_bp->pt + newlen + MAX_GAP, (oldgap + del) - (MAX_GAP + newlen));
+      astr_remove (estr_get_as (cur_bp->text), cur_bp->pt + newlen + MAX_GAP, (oldgap + del) - (MAX_GAP + newlen));
       cur_bp->gap = MAX_GAP;
     }
   else
@@ -164,7 +165,7 @@ replace_estr (size_t del, estr es)
 
   /* Zero any new bit of gap not produced by astr_insert. */
   if (MAX (oldgap, newlen) + added_gap < cur_bp->gap + newlen)
-    astr_set (cur_bp->text.as, cur_bp->pt + MAX (oldgap, newlen) + added_gap, '\0', newlen + cur_bp->gap - MAX (oldgap, newlen) - added_gap);
+    astr_set (estr_get_as (cur_bp->text), cur_bp->pt + MAX (oldgap, newlen) + added_gap, '\0', newlen + cur_bp->gap - MAX (oldgap, newlen) - added_gap);
 
   /* Insert `newlen' chars. */
   estr_replace_estr (cur_bp->text, cur_bp->pt, es);
@@ -190,7 +191,7 @@ insert_estr (estr es)
 char
 get_buffer_char (Buffer *bp, size_t o)
 {
-  return astr_get (bp->text.as, o_to_realo (bp, o));
+  return astr_get (estr_get_as (bp->text), o_to_realo (bp, o));
 }
 
 size_t
@@ -229,24 +230,22 @@ get_buffer_line_o (Buffer *bp)
 const char *
 get_buffer_eol (Buffer *bp)
 {
-  return bp->text.eol;
+  return estr_get_eol (bp->text);
 }
 
-/*
- * Copy a region of text into an allocated buffer.
- */
+/* Get the buffer region as an estr. */
 estr
 get_buffer_region (Buffer *bp, Region r)
 {
   astr as = astr_new ();
-  if (get_region_start (r) < get_buffer_pt (bp))
-    astr_cat (as, astr_substr (get_buffer_pre_point (bp), get_region_start (r), MIN (get_region_end (r), get_buffer_pt (bp)) - get_region_start (r)));
-  if (get_region_end (r) > get_buffer_pt (bp))
+  if (get_region_start (r) < bp->pt)
+    astr_cat (as, astr_substr (get_buffer_pre_point (bp), get_region_start (r), MIN (get_region_end (r), bp->pt) - get_region_start (r)));
+  if (get_region_end (r) > bp->pt)
     {
-      size_t from = MAX (get_region_start (r), get_buffer_pt (bp));
-      astr_cat (as, astr_substr (get_buffer_post_point (bp), from - get_buffer_pt (bp), get_region_end (r) - from));
+      size_t from = MAX (get_region_start (r), bp->pt);
+      astr_cat (as, astr_substr (get_buffer_post_point (bp), from - bp->pt, get_region_end (r) - from));
     }
-  return (estr) {.as = as, .eol = get_buffer_eol (bp)};
+  return estr_new (as, get_buffer_eol (bp));
 }
 
 /*
@@ -256,7 +255,7 @@ int
 insert_char (int c)
 {
   const char ch = (char) c;
-  return replace_estr (false, (estr) {.as = astr_cat_nstr (astr_new (), &ch, 1), .eol = coding_eol_lf});
+  return insert_estr (estr_new (castr_new_nstr (&ch, 1), coding_eol_lf));
 }
 
 bool
@@ -290,8 +289,8 @@ void
 insert_buffer (Buffer * bp)
 {
   /* Copy text to avoid problems when bp == cur_bp. */
-  insert_estr ((estr) {.as = astr_cpy (astr_new (), get_buffer_pre_point (bp)), .eol = get_buffer_eol (bp)});
-  insert_estr ((estr) {.as = astr_cpy (astr_new (), get_buffer_post_point (bp)), .eol = get_buffer_eol (bp)});
+  insert_estr (estr_new (get_buffer_pre_point (bp), get_buffer_eol (bp)));
+  insert_estr (estr_new (get_buffer_post_point (bp), get_buffer_eol (bp)));
 }
 
 /*
@@ -302,8 +301,7 @@ Buffer *
 buffer_new (void)
 {
   Buffer *bp = (Buffer *) XZALLOC (Buffer);
-  bp->text.as = astr_new ();
-  bp->text.eol = coding_eol_lf;
+  bp->text = estr_new_astr (astr_new ());
   bp->dir = agetcwd ();
 
   /* Insert into buffer list. */

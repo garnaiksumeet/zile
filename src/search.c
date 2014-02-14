@@ -435,7 +435,7 @@ what to do with it.
           Region r = region_new (get_buffer_pt (cur_bp) - astr_len (find), get_buffer_pt (cur_bp));
           if (find_no_upper && get_variable_bool ("case-replace"))
             {
-              int case_type = check_case (get_buffer_region (cur_bp, r).as);
+              int case_type = check_case (estr_get_as (get_buffer_region (cur_bp, r)));
               if (case_type != 0)
                 case_repl = astr_recase (astr_cpy (astr_new (), repl),
                                          case_type == 1 ? case_capitalized : case_upper);

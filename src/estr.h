@@ -1,6 +1,6 @@
 /* Dynamically allocated encoded strings
 
-   Copyright (c) 2011-2012 Free Software Foundation, Inc.
+   Copyright (c) 2011-2014 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 
@@ -20,12 +20,7 @@
    MA 02111-1301, USA.  */
 
 /* String with encoding */
-typedef struct estr estr;  /* FIXME: Should really be opaque. */
-struct estr
-{
-  astr as;			/* String. */
-  const char *eol;		/* EOL type. */
-};
+typedef struct estr *estr;
 
 extern estr estr_empty;
 
@@ -34,10 +29,12 @@ extern const char *coding_eol_crlf;
 extern const char *coding_eol_cr;
 
 void estr_init (void);
+astr estr_get_as (estr es);
+const char *estr_get_eol (estr es);
 
-/*
- * Make estr from astr, determining EOL type from astr's contents.
- */
+estr estr_new (castr as, const char *eol);
+
+/* Make estr from astr, determining EOL type from astr's contents. */
 estr estr_new_astr (castr as);
 
 _GL_ATTRIBUTE_PURE size_t estr_prev_line (estr es, size_t o);
@@ -49,10 +46,8 @@ _GL_ATTRIBUTE_PURE size_t estr_lines (estr es);
 estr estr_replace_estr (estr es, size_t pos, estr src);
 estr estr_cat (estr es, estr src);
 
-#define estr_len(es, eol_type) astr_len (es.as) +  estr_lines (es) * (strlen (eol_type) - strlen (es.eol))
+#define estr_len(es, eol_type) (astr_len (estr_get_as (es)) +  estr_lines (es) * (strlen (eol_type) - strlen (estr_get_eol (es))))
 
-/*
- * Read file contents into an estr.
- * The `as' member is NULL if the file doesn't exist, or other error.
- */
+/* Read file contents into an estr.
+ * The `as' member is NULL if the file doesn't exist, or other error. */
 estr estr_readf (const char *filename);

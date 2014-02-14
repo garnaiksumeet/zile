@@ -97,7 +97,7 @@ Puts point before and mark after the inserted text.
       minibuf_clear ();
       reg %= NUM_REGISTERS;
 
-      if (regs[reg].as == NULL)
+      if (regs[reg] == NULL)
         {
           minibuf_error ("Register does not contain text");
           ok = leNIL;
@@ -118,9 +118,9 @@ static void
 write_registers_list (va_list ap _GL_UNUSED_PARAMETER)
 {
   for (size_t i = 0; i < NUM_REGISTERS; ++i)
-    if (regs[i].as != NULL)
+    if (regs[i] != NULL)
       {
-        const char *s = astr_cstr (regs[i].as);
+        const char *s = astr_cstr (estr_get_as (regs[i]));
         while (*s == ' ' || *s == '\t' || *s == '\n')
           s++;
         size_t len = MIN (20, MAX (0, ((int) get_window_ewidth (cur_wp)) - 6)) + 1;
@@ -128,7 +128,7 @@ write_registers_list (va_list ap _GL_UNUSED_PARAMETER)
         bprintf ("Register %s contains ", astr_cstr (astr_fmt (isprint (i) ? "%c" : "\\%o", i)));
         if (strlen (s) > 0)
           bprintf ("text starting with\n    %.*s\n", len, s);
-        else if (s != astr_cstr (regs[i].as))
+        else if (s != astr_cstr (estr_get_as (regs[i])))
           bprintf ("whitespace\n");
         else
           bprintf ("the empty string\n");

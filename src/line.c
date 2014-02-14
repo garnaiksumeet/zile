@@ -167,7 +167,7 @@ END_DEFUN
 bool
 insert_newline (void)
 {
-  return insert_estr ((estr) {.as = astr_new_cstr ("\n"), .eol = coding_eol_lf});
+  return insert_estr (estr_new_astr (astr_new_cstr ("\n")));
 }
 
 DEFUN_NONINTERACTIVE_ARGS ("insert", insert,
@@ -187,7 +187,7 @@ bprintf (const char *fmt, ...)
   va_list ap;
 
   va_start (ap, fmt);
-  insert_estr ((estr) {.as = astr_vfmt (fmt, ap), .eol = coding_eol_lf});
+  insert_estr (estr_new (astr_vfmt (fmt, ap), coding_eol_lf));
   va_end (ap);
 }
 

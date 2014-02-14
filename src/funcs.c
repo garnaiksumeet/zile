@@ -559,7 +559,7 @@ static void
 astr_append_region (astr s)
 {
   activate_mark ();
-  astr_cat (s, get_buffer_region (cur_bp, calculate_the_region ()).as);
+  astr_cat (s, estr_get_as (get_buffer_region (cur_bp, calculate_the_region ())));
 }
 
 static bool
@@ -1001,7 +1001,7 @@ END_DEFUN
 static void
 write_shell_output (va_list ap)
 {
-  insert_estr ((estr) {.as = va_arg (ap, astr), .eol = coding_eol_lf});
+  insert_estr (estr_new (va_arg (ap, astr), coding_eol_lf));
 }
 
 typedef struct {
@@ -1157,7 +1157,7 @@ The output is available in that buffer in both cases.
       if (warn_if_no_mark ())
         ok = leNIL;
       else
-        ok = pipe_command (cmd, get_buffer_region (cur_bp, calculate_the_region ()).as, insert, true);
+        ok = pipe_command (cmd, estr_get_as (get_buffer_region (cur_bp, calculate_the_region ())), insert, true);
     }
 }
 END_DEFUN
