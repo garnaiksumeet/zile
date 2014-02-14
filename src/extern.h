@@ -62,7 +62,7 @@ _GL_ATTRIBUTE_PURE size_t buffer_next_line (Buffer *bp, size_t o);
 _GL_ATTRIBUTE_PURE size_t buffer_start_of_line (Buffer *bp, size_t o);
 _GL_ATTRIBUTE_PURE size_t buffer_end_of_line (Buffer *bp, size_t o);
 _GL_ATTRIBUTE_PURE size_t buffer_line_len (Buffer *bp, size_t o);
-_GL_ATTRIBUTE_CONST size_t get_region_size (const Region r);
+_GL_ATTRIBUTE_PURE size_t get_region_size (const Region r);
 _GL_ATTRIBUTE_PURE size_t get_buffer_line_o (Buffer *bp);
 _GL_ATTRIBUTE_PURE char get_buffer_char (Buffer *bp, size_t o);
 void free_buffer (Buffer * bp);

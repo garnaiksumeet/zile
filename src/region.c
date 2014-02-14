@@ -51,7 +51,7 @@ region_new (size_t o1, size_t o2)
   return r;
 }
 
-_GL_ATTRIBUTE_PURE size_t
+size_t
 get_region_size (const Region r)
 {
   return get_region_end (r) - get_region_start (r);
