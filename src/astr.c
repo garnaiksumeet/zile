@@ -305,6 +305,8 @@ main (int argc _GL_UNUSED_PARAMETER, char **argv)
 {
   astr as1, as2, as3;
 
+  GC_init ();
+
   set_program_name (argv[0]);
 
   as1 = astr_new ();
