@@ -78,7 +78,7 @@ completion_STREQ (const void *p1, const void *p2)
  * Allocate a new completion structure.
  */
 Completion *
-completion_new (int fileflag)
+completion_new (bool fileflag)
 {
   Completion *cp = (Completion *) XZALLOC (Completion);
 
@@ -243,7 +243,7 @@ completion_readdir (Completion * cp, astr path)
  * Match completions.
  */
 int
-completion_try (Completion * cp, astr search, int popup_when_complete)
+completion_try (Completion * cp, astr search, bool popup_when_complete)
 {
   cp->matches = gl_list_create_empty (GL_LINKED_LIST, completion_STREQ, NULL, NULL, false);
 

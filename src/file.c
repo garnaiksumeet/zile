@@ -37,7 +37,7 @@
 #include "main.h"
 #include "extern.h"
 
-int
+bool
 exist_file (const char *filename)
 {
   struct stat st;
@@ -749,7 +749,7 @@ END_DEFUN
  * otherwise, exit.
  */
 void
-zile_exit (int doabort)
+zile_exit (bool doabort)
 {
   fprintf (stderr, "Trying to save modified buffers (if any)...\r\n");
   for (Buffer *bp = head_bp; bp != NULL; bp = get_buffer_next (bp))

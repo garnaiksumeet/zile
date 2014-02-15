@@ -38,7 +38,7 @@ void get_and_run_command (void);
 void init_default_bindings (void);
 
 /* buffer.c --------------------------------------------------------------- */
-int insert_char (int c);
+bool insert_char (int c);
 bool delete_char (void);
 bool replace_estr (size_t del, const_estr es);
 bool insert_estr (const_estr as);
@@ -73,8 +73,8 @@ _GL_ATTRIBUTE_PURE const char *get_buffer_filename_or_name (Buffer * bp);
 void set_buffer_names (Buffer * bp, const char *filename);
 _GL_ATTRIBUTE_PURE Buffer * find_buffer (const char *name);
 void switch_to_buffer (Buffer * bp);
-int warn_if_no_mark (void);
-int warn_if_readonly_buffer (void);
+bool warn_if_no_mark (void);
+bool warn_if_readonly_buffer (void);
 #define FIELD(ty, field)                                \
   ty get_region_ ## field (const Region cp);            \
   void set_region_ ## field (Region cp, ty field);
@@ -94,8 +94,8 @@ Buffer *create_scratch_buffer (void);
 void kill_buffer (Buffer * kill_bp);
 Completion *make_buffer_completion (void);
 bool check_modified_buffer (Buffer * bp);
-bool move_char (int dir);
-bool move_line (int n);
+bool move_char (ptrdiff_t dir);
+bool move_line (ptrdiff_t n);
 _GL_ATTRIBUTE_PURE size_t offset_to_line (Buffer *bp, size_t offset);
 void goto_offset (size_t o);
 
@@ -110,10 +110,10 @@ void goto_offset (size_t o);
 #undef FIELD
 #undef FIELD_STR
 _GL_ATTRIBUTE_PURE int completion_strcmp (const void *p1, const void *p2);
-Completion *completion_new (int fileflag);
+Completion *completion_new (bool fileflag);
 void completion_scroll_up (void);
 void completion_scroll_down (void);
-int completion_try (Completion * cp, astr search, int popup_when_complete);
+int completion_try (Completion * cp, astr search, bool popup_when_complete);
 
 /* editfns.c -------------------------------------------------------------- */
 _GL_ATTRIBUTE_PURE bool is_empty_line (void);
@@ -132,23 +132,23 @@ _GL_ATTRIBUTE_PURE size_t countNodes (le * branch);
 void leEval (le * list);
 le *execute_with_uniarg (bool undo, int uniarg, bool (*forward) (void),
                          bool (*backward) (void));
-le *move_with_uniarg (int uniarg, bool (*move) (int dir));
+le *move_with_uniarg (int uniarg, bool (*move) (ptrdiff_t dir));
 le *execute_function (const char *name, int uniarg, bool is_uniarg);
 _GL_ATTRIBUTE_PURE Function get_function (const char *name);
 _GL_ATTRIBUTE_PURE const char *get_function_doc (const char *name);
-_GL_ATTRIBUTE_PURE int get_function_interactive (const char *name);
+_GL_ATTRIBUTE_PURE bool get_function_interactive (const char *name);
 _GL_ATTRIBUTE_PURE const char *get_function_name (Function p);
 _GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) const_astr minibuf_read_function_name (const char *fmt, ...);
 void init_eval (void);
 
 /* file.c ----------------------------------------------------------------- */
-int exist_file (const char *filename);
+bool exist_file (const char *filename);
 astr get_home_dir (void);
 astr agetcwd (void);
 bool expand_path (astr path);
 astr compact_path (astr path);
 bool find_file (const char *filename);
-void _Noreturn zile_exit (int doabort);
+void _Noreturn zile_exit (bool doabort);
 
 /* funcs.c ---------------------------------------------------------------- */
 void set_mark_interactive (void);
@@ -220,7 +220,7 @@ void set_mark (void);
 
 /* minibuf.c -------------------------------------------------------------- */
 void init_minibuf (void);
-_GL_ATTRIBUTE_PURE int minibuf_no_error (void);
+_GL_ATTRIBUTE_PURE bool minibuf_no_error (void);
 void minibuf_refresh (void);
 _GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) void minibuf_write (const char *fmt, ...);
 _GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) void minibuf_error (const char *fmt, ...);
@@ -274,7 +274,7 @@ void term_redisplay (void);
 void term_finish (void);
 
 /* undo.c ----------------------------------------------------------------- */
-extern int undo_nosave;
+extern bool undo_nosave;
 void undo_start_sequence (void);
 void undo_end_sequence (void);
 void undo_save_block (size_t o, size_t osize, size_t size);

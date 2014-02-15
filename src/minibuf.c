@@ -42,7 +42,7 @@ init_minibuf (void)
   files_history = history_new ();
 }
 
-int
+bool
 minibuf_no_error (void)
 {
   return minibuf_contents == NULL;

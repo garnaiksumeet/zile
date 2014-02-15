@@ -388,7 +388,7 @@ iswordchar (int c)
 }
 
 static bool
-move_word (int dir)
+move_word (ptrdiff_t dir)
 {
   bool gotword = false;
   do
@@ -446,7 +446,7 @@ isclosebracketchar (int c, bool single_quote, bool double_quote)
 }
 
 static bool
-move_sexp (int dir)
+move_sexp (ptrdiff_t dir)
 {
   int gotsexp = false, level = 0;
   int single_quote = dir < 0, double_quote = single_quote;
@@ -563,7 +563,7 @@ astr_append_region (astr s)
 }
 
 static bool
-transpose_subr (bool (*move_func) (int dir))
+transpose_subr (bool (*move_func) (ptrdiff_t dir))
 {
   /* For transpose-chars. */
   if (move_func == move_char && eolp ())
@@ -662,7 +662,7 @@ transpose_subr (bool (*move_func) (int dir))
 }
 
 static le *
-transpose (int uniarg, bool (*move) (int dir))
+transpose (int uniarg, bool (*move) (ptrdiff_t dir))
 {
   if (warn_if_readonly_buffer ())
     return leNIL;

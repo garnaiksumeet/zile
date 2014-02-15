@@ -251,7 +251,7 @@ get_buffer_region (Buffer *bp, Region r)
 /*
  * Insert the character `c' at point in the current buffer.
  */
-int
+bool
 insert_char (int c)
 {
   const char ch = (char) c;
@@ -425,7 +425,7 @@ switch_to_buffer (Buffer * bp)
  * Print an error message into the echo area and return true
  * if the current buffer is readonly; otherwise return false.
  */
-int
+bool
 warn_if_readonly_buffer (void)
 {
   if (get_buffer_readonly (cur_bp))
@@ -437,7 +437,7 @@ warn_if_readonly_buffer (void)
   return false;
 }
 
-int
+bool
 warn_if_no_mark (void)
 {
   if (!cur_bp->mark)
@@ -659,7 +659,7 @@ check_modified_buffer (Buffer * bp)
 /* Basic movement routines */
 
 bool
-move_char (int offset)
+move_char (ptrdiff_t offset)
 {
   int dir = offset >= 0 ? 1 : -1;
   for (size_t i = 0; i < (size_t) (abs (offset)); i++)
@@ -705,7 +705,7 @@ goto_goalc (void)
 }
 
 bool
-move_line (int n)
+move_line (ptrdiff_t n)
 {
   size_t (*func) (Buffer *bp, size_t o) = buffer_next_line;
   if (n < 0)

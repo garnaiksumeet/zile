@@ -69,7 +69,7 @@ get_function (const char *name)
 }
 
 /* Return function's interactive flag, or -1 if not found. */
-int
+bool
 get_function_interactive (const char *name)
 {
   fentry * f = get_fentry (name);
@@ -206,7 +206,7 @@ execute_with_uniarg (bool undo, int uniarg, bool (*forward) (void), bool (*backw
 }
 
 le *
-move_with_uniarg (int uniarg, bool (*move) (int dir))
+move_with_uniarg (int uniarg, bool (*move) (ptrdiff_t dir))
 {
   bool ret = true;
   for (unsigned long uni = 0; ret && uni < (unsigned) abs (uniarg); ++uni)
