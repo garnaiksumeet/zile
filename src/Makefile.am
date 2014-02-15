@@ -110,7 +110,7 @@ check_PROGRAMS = src/astr
 TESTS = $(check_PROGRAMS)
 
 src_astr_CPPFLAGS = -DTEST -DSRCPATH="\"$(top_srcdir)/src\"" $(AM_CPPFLAGS)
-src_astr_LDADD = $(LDADD) src/memrmem.o
+src_astr_LDADD = $(LDADD) src/memrmem.o src/gc_veneer.o
 
 EXTRA_DIST +=						\
 	src/dotzile.sample				\

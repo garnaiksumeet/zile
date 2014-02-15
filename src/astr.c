@@ -281,14 +281,10 @@ astr_recase (astr as, enum casing newcase)
 
 #ifdef TEST
 
-#include <config.h>
-
 #include <stdio.h>
 #include "progname.h"
 
 #include "main.h"
-
-#include "gc_veneer.c"
 
 static void
 assert_eq (astr as, const char *s)
