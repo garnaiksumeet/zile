@@ -31,7 +31,7 @@
 static estr kill_ring_text;
 
 static void
-maybe_free_kill_ring (void)
+maybe_destroy_kill_ring (void)
 {
   if (last_command () != F_kill_region)
     kill_ring_text = NULL;
@@ -134,7 +134,7 @@ including its terminating newline, when used at the beginning of a line
 with no argument.
 +*/
 {
-  maybe_free_kill_ring ();
+  maybe_destroy_kill_ring ();
 
   INT_OR_UNIARG_INIT (arg);
 
@@ -163,7 +163,7 @@ copy_or_kill_the_region (bool kill)
   if (!warn_if_no_mark ())
     {
       Region r = calculate_the_region ();
-      maybe_free_kill_ring ();
+      maybe_destroy_kill_ring ();
       ok = copy_or_kill_region (kill, r);
     }
 
@@ -199,7 +199,7 @@ END_DEFUN
 static le *
 kill_text (int uniarg, Function mark_func)
 {
-  maybe_free_kill_ring ();
+  maybe_destroy_kill_ring ();
 
   if (warn_if_readonly_buffer ())
     return leNIL;

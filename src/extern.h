@@ -65,7 +65,7 @@ _GL_ATTRIBUTE_PURE size_t buffer_line_len (Buffer *bp, size_t o);
 _GL_ATTRIBUTE_PURE size_t get_region_size (const Region r);
 _GL_ATTRIBUTE_PURE size_t get_buffer_line_o (Buffer *bp);
 _GL_ATTRIBUTE_PURE char get_buffer_char (Buffer *bp, size_t o);
-void free_buffer (Buffer * bp);
+void destroy_buffer (Buffer * bp);
 void init_buffer (Buffer * bp);
 void insert_buffer (Buffer * bp);
 Buffer * buffer_new (void);
@@ -163,7 +163,7 @@ size_t getkey (int delay);
 size_t getkey_unfiltered (int delay);
 void waitkey (void);
 void init_getkey (void);
-void free_getkey (void);
+void destroy_getkey (void);
 
 /* history.c -------------------------------------------------------------- */
 History *history_new (void);

@@ -317,7 +317,7 @@ buffer_new (void)
  * Unchain the buffer's markers.
  */
 void
-free_buffer (Buffer * bp)
+destroy_buffer (Buffer * bp)
 {
   while (bp->markers)
     unchain_marker (bp->markers);
@@ -545,7 +545,7 @@ kill_buffer (Buffer * kill_bp)
       {
         set_window_bp (wp, next_bp);
         set_window_topdelta (wp, 0);
-        set_window_saved_pt (wp, NULL); /* The old marker will be freed. */
+        set_window_saved_pt (wp, NULL);
       }
 
   /* Remove the buffer from the buffer list. */
@@ -560,7 +560,7 @@ kill_buffer (Buffer * kill_bp)
         break;
       }
 
-  free_buffer (kill_bp);
+  destroy_buffer (kill_bp);
 
   /* If no buffers left, recreate scratch buffer and point windows at
      it. */
