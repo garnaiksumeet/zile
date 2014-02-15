@@ -12,9 +12,13 @@ GNU Zile NEWS                                         -*- outline -*-
 
   Make query-replace and save file prompt handling closer to Emacs.
 
+  Fix many printf format bugs in user functions, thanks to GCC.
+
 ** Build-related
 
   Use pkgconfig to find libgc.
+
+  Improve use of GCC warnings.
 
 ** Miscellaneous
 
