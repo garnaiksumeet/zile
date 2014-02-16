@@ -139,15 +139,15 @@ _GL_ATTRIBUTE_FORMAT_PRINTF(1, 0) astr astr_vfmt (const char *fmt, va_list ap);
 _GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) astr astr_fmt (const char *fmt, ...);
 
 /* Enumeration for casing. */
-enum casing {
+typedef enum {
   case_upper = 1,
   case_lower,
-  case_capitalized
-};
+  case_capitalized,
+} casing;
 
 /*
  * Recase as according to newcase.
  */
-astr astr_recase (astr as, enum casing newcase);
+astr astr_recase (astr as, casing newcase);
 
 #endif /* !ASTR_H */

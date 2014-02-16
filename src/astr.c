@@ -263,7 +263,7 @@ astr_fmt (const char *fmt, ...)
 }
 
 astr
-astr_recase (astr as, enum casing newcase)
+astr_recase (astr as, casing newcase)
 {
   astr bs = astr_new ();
 

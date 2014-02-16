@@ -113,7 +113,7 @@ _GL_ATTRIBUTE_PURE int completion_strcmp (const void *p1, const void *p2);
 Completion completion_new (bool fileflag);
 void completion_scroll_up (void);
 void completion_scroll_down (void);
-int completion_try (Completion cp, astr search, bool popup_when_complete);
+completion_code completion_try (Completion cp, astr search, bool popup_when_complete);
 
 /* editfns.c -------------------------------------------------------------- */
 _GL_ATTRIBUTE_PURE bool is_empty_line (void);

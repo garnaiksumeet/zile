@@ -275,7 +275,7 @@ minibuf_vread_completion (const char *fmt, const char *value, Completion cp,
         {
           astr as = astr_cpy (astr_new (), ms);
           /* Complete partial words if possible. */
-          if (completion_try (cp, as, false) == COMPLETION_MATCHED)
+          if (completion_try (cp, as, false) == completion_matched)
             ms = astr_new_cstr (get_completion_match (cp));
 
           if (test (astr_cstr (ms), get_completion_completions (cp)))

@@ -242,14 +242,14 @@ completion_readdir (Completion cp, astr path)
 /*
  * Match completions.
  */
-int
+completion_code
 completion_try (Completion cp, astr search, bool popup_when_complete)
 {
   cp->matches = gl_list_create_empty (GL_LINKED_LIST, completion_STREQ, NULL, NULL, false);
 
   if (cp->flags & CFLAG_FILENAME)
     if (!completion_readdir (cp, search))
-      return COMPLETION_NOTMATCHED;
+      return completion_notmatched;
 
   size_t ssize = astr_len (search);
   if (ssize == 0)
@@ -259,12 +259,12 @@ completion_try (Completion cp, astr search, bool popup_when_complete)
         {
           cp->matchsize = 0;
           popup_completion (cp, true);
-          return COMPLETION_NONUNIQUE;
+          return completion_nonunique;
         }
       else
         {
           cp->matchsize = strlen (cp->match);
-          return COMPLETION_MATCHED;
+          return completion_matched;
         }
     }
 
@@ -281,12 +281,12 @@ completion_try (Completion cp, astr search, bool popup_when_complete)
     }
 
   if (gl_list_size (cp->matches) == 0)
-    return COMPLETION_NOTMATCHED;
+    return completion_notmatched;
   else if (gl_list_size (cp->matches) == 1)
     {
       cp->match = xstrdup ((const char *) gl_list_get_at (cp->matches, 0));
       cp->matchsize = strlen (cp->match);
-      return COMPLETION_MATCHED;
+      return completion_matched;
     }
   else if (gl_list_size (cp->matches) > 1 && fullmatches == 1)
     {
@@ -294,7 +294,7 @@ completion_try (Completion cp, astr search, bool popup_when_complete)
       cp->matchsize = strlen (cp->match);
       if (popup_when_complete)
         popup_completion (cp, false);
-      return COMPLETION_MATCHEDNONUNIQUE;
+      return completion_matchednonunique;
     }
 
   for (size_t j = ssize;; ++j)
@@ -307,7 +307,7 @@ completion_try (Completion cp, astr search, bool popup_when_complete)
               cp->match = xstrdup ((const char *) gl_list_get_at (cp->matches, 0));
               cp->matchsize = j;
               popup_completion (cp, false);
-              return COMPLETION_NONUNIQUE;
+              return completion_nonunique;
             }
         }
     }

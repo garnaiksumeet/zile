@@ -111,7 +111,7 @@ struct option longopts[] = {
   {0, 0, 0, 0}
 };
 
-enum {ARG_FUNCTION = 1, ARG_LOADFILE, ARG_FILE};
+enum {arg_function = 1, arg_loadfile, arg_file};
 
 int
 main (int argc, char **argv)
@@ -171,13 +171,13 @@ main (int argc, char **argv)
           qflag = true;
           break;
         case 1:
-          gl_list_add_last (arg_type, (void *) ARG_FUNCTION);
+          gl_list_add_last (arg_type, (void *) arg_function);
           gl_list_add_last (arg_arg, (const void *) astr_new_cstr (optarg));
           gl_list_add_last (arg_line, (void *) 0);
           break;
         case 2:
           {
-            gl_list_add_last (arg_type, (void *) ARG_LOADFILE);
+            gl_list_add_last (arg_type, (void *) arg_loadfile);
             astr as = astr_new_cstr (optarg);
             expand_path (as);
             gl_list_add_last (arg_arg, (const void *) astr_cstr (as));
@@ -218,7 +218,7 @@ main (int argc, char **argv)
             line = strtoul (optarg + 1, NULL, 10);
           else
             {
-              gl_list_add_last (arg_type, (void *) ARG_FILE);
+              gl_list_add_last (arg_type, (void *) arg_file);
               astr as = astr_new_cstr (optarg);
               expand_path (as);
               gl_list_add_last (arg_arg, (const void *) astr_cstr (as));
@@ -280,7 +280,7 @@ main (int argc, char **argv)
 
       switch ((ptrdiff_t) gl_list_get_at (arg_type, i))
         {
-        case ARG_FUNCTION:
+        case arg_function:
           {
             le *res = execute_function (arg, 1, false);
             if (res == NULL)
@@ -288,12 +288,12 @@ main (int argc, char **argv)
             ok = res == leT;
             break;
           }
-        case ARG_LOADFILE:
+        case arg_loadfile:
           ok = lisp_loadfile (arg);
           if (!ok)
             minibuf_error ("Cannot open load file: %s\n", arg);
           break;
-        case ARG_FILE:
+        case arg_file:
           {
             ok = find_file (arg);
             if (ok)

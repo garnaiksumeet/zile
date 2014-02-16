@@ -61,13 +61,13 @@ typedef struct Buffer *Buffer;
 typedef struct Window *Window;
 typedef struct Completion *Completion;
 
-enum
+typedef enum
 {
-  COMPLETION_NOTMATCHED,
-  COMPLETION_MATCHED,
-  COMPLETION_MATCHEDNONUNIQUE,
-  COMPLETION_NONUNIQUE
-};
+  completion_notmatched,
+  completion_matched,
+  completion_matchednonunique,
+  completion_nonunique,
+} completion_code;
 
 /* Completion flags */
 #define CFLAG_POPPEDUP	0000001	/* Completion window has been popped up. */

@@ -34,15 +34,15 @@ init_lisp (void)
 }
 
 
-enum tokenname
+typedef enum
 {
-  T_EOF,
-  T_CLOSEPAREN,
-  T_OPENPAREN,
-  T_NEWLINE,
-  T_QUOTE,
-  T_WORD
-};
+  t_eof,
+  t_closeparen,
+  t_openparen,
+  t_newline,
+  t_quote,
+  t_word,
+} tokenname;
 
 static int
 read_char (astr as, size_t * pos)
@@ -53,13 +53,13 @@ read_char (astr as, size_t * pos)
 }
 
 static astr
-read_token (enum tokenname *tokenid, astr as, size_t * pos)
+read_token (tokenname *tokenid, astr as, size_t * pos)
 {
   int c;
   int doublequotes = 0;
   astr tok = astr_new ();
 
-  *tokenid = T_EOF;
+  *tokenid = t_eof;
 
   /* Chew space to next token */
   do
@@ -77,27 +77,27 @@ read_token (enum tokenname *tokenid, astr as, size_t * pos)
   /* Snag token */
   if (c == '(')
     {
-      *tokenid = T_OPENPAREN;
+      *tokenid = t_openparen;
       return tok;
     }
   else if (c == ')')
     {
-      *tokenid = T_CLOSEPAREN;
+      *tokenid = t_closeparen;
       return tok;
     }
   else if (c == '\'')
     {
-      *tokenid = T_QUOTE;
+      *tokenid = t_quote;
       return tok;
     }
   else if (c == '\n')
     {
-      *tokenid = T_NEWLINE;
+      *tokenid = t_newline;
       return tok;
     }
   else if (c == EOF)
     {
-      *tokenid = T_EOF;
+      *tokenid = t_eof;
       return tok;
     }
 
@@ -119,7 +119,7 @@ read_token (enum tokenname *tokenid, astr as, size_t * pos)
             {
               (*pos)--;
               astr_truncate (tok, astr_len (tok) - 1);
-              *tokenid = T_WORD;
+              *tokenid = t_word;
               return tok;
             }
         }
@@ -135,7 +135,7 @@ read_token (enum tokenname *tokenid, astr as, size_t * pos)
 
             case '\"':
               astr_truncate (tok, astr_len (tok) -1);
-              *tokenid = T_WORD;
+              *tokenid = t_word;
               return tok;
               break;
 
@@ -157,31 +157,31 @@ lisp_read (le * list, astr as, size_t * pos)
 
   for (;;)
     {
-      enum tokenname tokenid;
+      tokenname tokenid;
       astr tok = read_token (&tokenid, as, pos);
 
       switch (tokenid)
         {
-        case T_QUOTE:
+        case t_quote:
           quoted = true;
           break;
 
-        case T_OPENPAREN:
+        case t_openparen:
           list = leAddBranchElement (list, lisp_read (NULL, as, pos), quoted);
           quoted = false;
           break;
 
-        case T_NEWLINE:
+        case t_newline:
           quoted = false;
           break;
 
-        case T_WORD:
+        case t_word:
           list = leAddDataElement (list, astr_cstr (tok), quoted);
           quoted = false;
           break;
 
-        case T_CLOSEPAREN:
-        case T_EOF:
+        case t_closeparen:
+        case t_eof:
           return list;
 
         default:

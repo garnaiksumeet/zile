@@ -103,13 +103,13 @@ term_minibuf_read (const char *prompt, const char *value, size_t pos, Completion
       const char *s;
       switch (lasttab)
         {
-        case COMPLETION_MATCHEDNONUNIQUE:
+        case completion_matchednonunique:
           s = " [Complete, but not unique]";
           break;
-        case COMPLETION_NOTMATCHED:
+        case completion_notmatched:
           s = " [No match]";
           break;
-        case COMPLETION_MATCHED:
+        case completion_matched:
           s = " [Sole completion]";
           break;
         default:
@@ -236,7 +236,7 @@ term_minibuf_read (const char *prompt, const char *value, size_t pos, Completion
               break;
             }
 
-          if (lasttab != -1 && lasttab != COMPLETION_NOTMATCHED
+          if (lasttab != -1 && lasttab != completion_notmatched
               && get_completion_flags (cp) & CFLAG_POPPEDUP)
             {
               completion_scroll_up ();
@@ -249,12 +249,12 @@ term_minibuf_read (const char *prompt, const char *value, size_t pos, Completion
               thistab = completion_try (cp, bs, true);
               switch (thistab)
                 {
-                case COMPLETION_MATCHED:
+                case completion_matched:
                   maybe_close_popup (cp);
                   set_completion_flags (cp, get_completion_flags (cp) & ~CFLAG_POPPEDUP);
                   /* FALLTHROUGH */
-                case COMPLETION_MATCHEDNONUNIQUE:
-                case COMPLETION_NONUNIQUE:
+                case completion_matchednonunique:
+                case completion_nonunique:
                   {
                     bs = astr_new ();
                     if (get_completion_flags (cp) & CFLAG_FILENAME)
@@ -267,7 +267,7 @@ term_minibuf_read (const char *prompt, const char *value, size_t pos, Completion
                     pos = astr_len (as);
                     break;
                   }
-                case COMPLETION_NOTMATCHED:
+                case completion_notmatched:
                   ding ();
                   break;
                 default:
