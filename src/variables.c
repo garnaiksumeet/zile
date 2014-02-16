@@ -123,7 +123,7 @@ set_variable (const char *var, const char *val)
 static var_entry
 get_variable_entry (Buffer bp, const char *var)
 {
-  var_entry p = NULL, key = XZALLOC (var_entry);
+  var_entry p = NULL, key = XZALLOC (struct var_entry);
 
   key->var = xstrdup (var);
 
