@@ -203,7 +203,7 @@ check_writable (const char *filename)
 bool
 find_file (const char *filename)
 {
-  Buffer *bp;
+  Buffer bp;
   for (bp = head_bp; bp != NULL; bp = get_buffer_next (bp))
     if (get_buffer_filename (bp) != NULL &&
         STREQ (get_buffer_filename (bp), filename))
@@ -313,12 +313,12 @@ DEFUN_ARGS ("switch-to-buffer", switch_to_buffer,
 Select buffer @i{buffer} in the current window.
 +*/
 {
-  Buffer *bp = ((get_buffer_next (cur_bp) != NULL) ? get_buffer_next (cur_bp) : head_bp);
+  Buffer bp = ((get_buffer_next (cur_bp) != NULL) ? get_buffer_next (cur_bp) : head_bp);
 
   STR_INIT (buf)
   else
     {
-      Completion *cp = make_buffer_completion ();
+      Completion cp = make_buffer_completion ();
       buf = minibuf_read_completion ("Switch to buffer (default %s): ",
                                      "", cp, NULL, get_buffer_name (bp));
 
@@ -352,7 +352,7 @@ Insert after point the contents of BUFFER.
 Puts mark after the inserted text.
 +*/
 {
-  Buffer *def_bp = ((get_buffer_next (cur_bp) != NULL) ? get_buffer_next (cur_bp) : head_bp);
+  Buffer def_bp = ((get_buffer_next (cur_bp) != NULL) ? get_buffer_next (cur_bp) : head_bp);
 
   if (warn_if_readonly_buffer ())
     return leNIL;
@@ -360,7 +360,7 @@ Puts mark after the inserted text.
   STR_INIT (buf)
   else
     {
-      Completion *cp = make_buffer_completion ();
+      Completion cp = make_buffer_completion ();
       buf = minibuf_read_completion ("Insert buffer (default %s): ",
                                      "", cp, NULL, get_buffer_name (def_bp));
       if (buf == NULL)
@@ -369,7 +369,7 @@ Puts mark after the inserted text.
 
   if (ok == leT)
     {
-      Buffer *bp;
+      Buffer bp;
 
       if (buf && astr_len (buf) > 0)
         {
@@ -435,7 +435,7 @@ END_DEFUN
  * Write buffer to given file name with given mode.
  */
 static int
-write_to_disk (Buffer * bp, const char *filename, mode_t mode)
+write_to_disk (Buffer bp, const char *filename, mode_t mode)
 {
   int fd = creat (filename, mode);
   if (fd < 0)
@@ -495,7 +495,7 @@ create_backup_filename (const char *filename, const char *backupdir)
  * Create a backup file if specified by the user variables.
  */
 static int
-backup_and_write (Buffer * bp, const char *filename)
+backup_and_write (Buffer bp, const char *filename)
 {
   /* Make backup of original file. */
   int fd, backup = get_variable_bool ("make-backup-files");
@@ -529,7 +529,7 @@ backup_and_write (Buffer * bp, const char *filename)
 }
 
 static le *
-write_buffer (Buffer *bp, bool needname, bool confirm,
+write_buffer (Buffer bp, bool needname, bool confirm,
               const char *name0, const char *prompt)
 {
   bool ans = true;
@@ -606,7 +606,7 @@ write_buffer (Buffer *bp, bool needname, bool confirm,
 }
 
 static le *
-save_buffer (Buffer * bp)
+save_buffer (Buffer bp)
 {
   if (get_buffer_modified (bp))
     return write_buffer (bp, get_buffer_needname (bp), false, get_buffer_filename (bp),
@@ -646,7 +646,7 @@ save_some_buffers (void)
   bool none_to_save = true;
   bool noask = false;
 
-  for (Buffer *bp = head_bp; bp != NULL; bp = get_buffer_next (bp))
+  for (Buffer bp = head_bp; bp != NULL; bp = get_buffer_next (bp))
     {
       if (get_buffer_modified (bp) && !get_buffer_nosave (bp))
         {
@@ -722,7 +722,7 @@ Offer to save each buffer, then kill this Zile process.
   if (!save_some_buffers ())
     return leNIL;
 
-  for (Buffer *bp = head_bp; bp != NULL; bp = get_buffer_next (bp))
+  for (Buffer bp = head_bp; bp != NULL; bp = get_buffer_next (bp))
     if (get_buffer_modified (bp) && !get_buffer_needname (bp))
       {
         for (;;)
@@ -752,7 +752,7 @@ void
 zile_exit (bool doabort)
 {
   fprintf (stderr, "Trying to save modified buffers (if any)...\r\n");
-  for (Buffer *bp = head_bp; bp != NULL; bp = get_buffer_next (bp))
+  for (Buffer bp = head_bp; bp != NULL; bp = get_buffer_next (bp))
     if (get_buffer_modified (bp) && !get_buffer_nosave (bp))
       {
         astr buf = astr_fmt ("%s.%sSAVE",

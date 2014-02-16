@@ -32,9 +32,9 @@ struct Region
 #undef FIELD
 };
 
-#define FIELD(ty, field)                         \
-  POINTER_GETTER (Region, region, ty, field)     \
-  POINTER_SETTER (Region, region, ty, field)
+#define FIELD(ty, field)                  \
+  GETTER (Region, region, ty, field)      \
+  SETTER (Region, region, ty, field)
 
 #include "region.h"
 #undef FIELD
@@ -72,7 +72,7 @@ delete_region (const Region r)
   if (warn_if_readonly_buffer ())
     return false;
 
-  Marker *m = point_marker ();
+  Marker m = point_marker ();
   goto_offset (get_region_start (r));
   replace_estr (get_region_size (r), estr_empty);
   goto_offset (get_marker_o (m));

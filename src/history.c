@@ -33,13 +33,13 @@ struct History
   ptrdiff_t sel;		/* Selected element. */
 };
 
-History *history_new (void)
+History history_new (void)
 {
-  return XZALLOC (History);
+  return XZALLOC (struct History);
 }
 
 void
-add_history_element (History * hp, const char *string)
+add_history_element (History hp, const char *string)
 {
   const char *last = NULL;
 
@@ -53,13 +53,13 @@ add_history_element (History * hp, const char *string)
 }
 
 void
-prepare_history (History * hp)
+prepare_history (History hp)
 {
   hp->sel = -1;
 }
 
 const char *
-previous_history_element (History * hp)
+previous_history_element (History hp)
 {
   const char *s = NULL;
 
@@ -88,7 +88,7 @@ previous_history_element (History * hp)
 }
 
 const char *
-next_history_element (History * hp)
+next_history_element (History hp)
 {
   const char *s = NULL;
 

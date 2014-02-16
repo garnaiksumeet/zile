@@ -41,26 +41,26 @@ struct var_entry
   bool local;			/* If true, becomes local when set. */
   const char *doc;              /* Documentation */
 };
-typedef struct var_entry var_entry;
+typedef struct var_entry *var_entry;
 
 static Hash_table *main_vars;
 
 static size_t
 var_hash (const void *v, size_t n)
 {
-  return hash_string (((const var_entry *) v)->var, n);
+  return hash_string (((var_entry) v)->var, n);
 }
 
 static bool
 var_cmp (const void *v, const void *w)
 {
-  return STREQ (((const var_entry *) v)->var, ((const var_entry *) w)->var);
+  return STREQ (((var_entry) v)->var, ((var_entry) w)->var);
 }
 
 static void
 init_builtin_var (const char *var, const char *defval, bool local, const char *doc)
 {
-  var_entry *p = XZALLOC (var_entry);
+  var_entry p = XZALLOC (struct var_entry);
   p->var = xstrdup (var);
   p->defval = xstrdup (defval);
   p->val = xstrdup (defval);
@@ -90,8 +90,8 @@ void
 set_variable (const char *var, const char *val)
 {
   Hash_table *var_list;
-  struct var_entry *ent, *key = XZALLOC (var_entry);
-  var_entry *p = XZALLOC (var_entry), *q;
+  var_entry ent, key = XZALLOC (struct var_entry);
+  var_entry p = XZALLOC (struct var_entry), q;
 
   /* Find whether variable is buffer-local when set, and if needed
      create a buffer-local variable list. */
@@ -120,10 +120,10 @@ set_variable (const char *var, const char *val)
     }
 }
 
-static var_entry *
-get_variable_entry (Buffer * bp, const char *var)
+static var_entry
+get_variable_entry (Buffer bp, const char *var)
 {
-  var_entry *p = NULL, *key = XZALLOC (var_entry);
+  var_entry p = NULL, key = XZALLOC (var_entry);
 
   key->var = xstrdup (var);
 
@@ -139,7 +139,7 @@ get_variable_entry (Buffer * bp, const char *var)
 const char *
 get_variable_doc (const char *var, const char **defval)
 {
-  var_entry *p = get_variable_entry (NULL, var);
+  var_entry p = get_variable_entry (NULL, var);
   if (p != NULL)
     {
       *defval = p->defval;
@@ -149,9 +149,9 @@ get_variable_doc (const char *var, const char **defval)
 }
 
 static const char *
-get_variable_bp (Buffer * bp, const char *var)
+get_variable_bp (Buffer bp, const char *var)
 {
-  var_entry *p = get_variable_entry (bp, var);
+  var_entry p = get_variable_entry (bp, var);
   return p ? p->val : NULL;
 }
 
@@ -162,7 +162,7 @@ get_variable (const char *var)
 }
 
 long
-get_variable_number_bp (Buffer * bp, const char *var)
+get_variable_number_bp (Buffer bp, const char *var)
 {
   long t = 0;
   const char *s = get_variable_bp (bp, var);
@@ -193,9 +193,9 @@ get_variable_bool (const char *var)
 const_astr
 minibuf_read_variable_name (const char *fmt, ...)
 {
-  Completion *cp = completion_new (false);
+  Completion cp = completion_new (false);
 
-  for (var_entry *p = hash_get_first (main_vars);
+  for (var_entry p = hash_get_first (main_vars);
        p != NULL;
        p = hash_get_next (main_vars, p))
     {
@@ -206,9 +206,9 @@ minibuf_read_variable_name (const char *fmt, ...)
   va_list ap;
   va_start (ap, fmt);
   const_astr ms = minibuf_vread_completion (fmt, "", cp, NULL,
-                                       "No variable name given",
-                                       minibuf_test_in_completions,
-                                       "Undefined variable name `%s'", ap);
+                                            "No variable name given",
+                                            minibuf_test_in_completions,
+                                            "Undefined variable name `%s'", ap);
   va_end (ap);
 
   return ms;

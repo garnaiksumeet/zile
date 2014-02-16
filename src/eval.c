@@ -248,12 +248,12 @@ END_DEFUN
 /*
  * Read a function name from the minibuffer.
  */
-static History *functions_history = NULL;
+static History functions_history = NULL;
 const_astr
 minibuf_read_function_name (const char *fmt, ...)
 {
   va_list ap;
-  Completion *cp = completion_new (false);
+  Completion cp = completion_new (false);
 
   for (size_t i = 0; i < fentry_table_size; ++i)
     if (fentry_table[i].interactive)

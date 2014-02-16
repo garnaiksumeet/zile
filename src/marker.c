@@ -47,20 +47,20 @@ struct Marker
 #include "marker.h"
 #undef FIELD
 
-Marker *
+Marker
 marker_new (void)
 {
-  return (Marker *) XZALLOC (Marker);
+  return (Marker) XZALLOC (struct Marker);
 }
 
 void
-unchain_marker (const Marker * marker)
+unchain_marker (const Marker marker)
 {
   if (!marker->bp)
     return;
 
-  Marker *prev = NULL;
-  for (Marker *m = get_buffer_markers (marker->bp); m; m = m->next)
+  Marker prev = NULL;
+  for (Marker m = get_buffer_markers (marker->bp); m; m = m->next)
     {
       if (m == marker)
         {
@@ -77,7 +77,7 @@ unchain_marker (const Marker * marker)
 }
 
 void
-move_marker (Marker * marker, Buffer * bp, size_t o)
+move_marker (Marker marker, Buffer bp, size_t o)
 {
   if (bp != marker->bp)
     {
@@ -96,10 +96,10 @@ move_marker (Marker * marker, Buffer * bp, size_t o)
   marker->o = o;
 }
 
-Marker *
-copy_marker (const Marker * m)
+Marker
+copy_marker (const Marker m)
 {
-  Marker *marker = NULL;
+  Marker marker = NULL;
   if (m)
     {
       marker = marker_new ();
@@ -108,10 +108,10 @@ copy_marker (const Marker * m)
   return marker;
 }
 
-Marker *
+Marker
 point_marker (void)
 {
-  Marker *marker = marker_new ();
+  Marker marker = marker_new ();
   move_marker (marker, cur_bp, get_buffer_pt (cur_bp));
   return marker;
 }
@@ -136,7 +136,7 @@ push_mark (void)
     gl_list_add_last (mark_ring, copy_marker (get_buffer_mark (cur_bp)));
   else
     { /* Save an invalid mark.  */
-      Marker *m = marker_new ();
+      Marker m = marker_new ();
       move_marker (m, cur_bp, 0);
       gl_list_add_last (mark_ring, m);
     }
@@ -148,8 +148,8 @@ push_mark (void)
 void
 pop_mark (void)
 {
-  const Marker *m = (const Marker *) gl_list_get_at (mark_ring,
-                                                     gl_list_size (mark_ring) - 1);
+  const Marker m = (const Marker) gl_list_get_at (mark_ring,
+                                                  gl_list_size (mark_ring) - 1);
 
   /* Replace the mark. */
   if (get_buffer_mark (m->bp))

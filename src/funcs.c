@@ -58,14 +58,14 @@ void
 write_temp_buffer (const char *name, bool show, void (*func) (va_list ap), ...)
 {
   /* Popup a window with the buffer "name". */
-  Window *old_wp = cur_wp;
-  Buffer *old_bp = cur_bp;
-  Window *wp = find_window (name);
+  Window old_wp = cur_wp;
+  Buffer old_bp = cur_bp;
+  Window wp = find_window (name);
   if (show && wp)
     set_current_window (wp);
   else
     {
-      Buffer *bp = find_buffer (name);
+      Buffer bp = find_buffer (name);
       if (show)
         set_current_window (popup_window ());
       if (bp == NULL)
@@ -77,7 +77,7 @@ write_temp_buffer (const char *name, bool show, void (*func) (va_list ap), ...)
     }
 
   /* Remove the contents of that buffer. */
-  Buffer *new_bp = buffer_new ();
+  Buffer new_bp = buffer_new ();
   set_buffer_name (new_bp, get_buffer_name (cur_bp));
   kill_buffer (cur_bp);
   cur_bp = new_bp;
@@ -110,8 +110,8 @@ write_temp_buffer (const char *name, bool show, void (*func) (va_list ap), ...)
 static void
 write_buffers_list (va_list ap)
 {
-  Window *old_wp = va_arg (ap, Window *);
-  Buffer *bp;
+  Window old_wp = va_arg (ap, Window);
+  Buffer bp;
 
   /* FIXME: Underline next line properly. */
   bprintf ("CRM Buffer                Size  Mode             File\n");
@@ -582,7 +582,7 @@ transpose_subr (bool (*move_func) (ptrdiff_t dir))
 
   /* Mark the beginning of first string. */
   push_mark ();
-  Marker *m1 = point_marker ();
+  Marker m1 = point_marker ();
 
   /* Check to make sure we can go forwards twice. */
   if (!move_func (1) || !move_func (1))
@@ -619,7 +619,7 @@ transpose_subr (bool (*move_func) (ptrdiff_t dir))
 
   /* For transpose-lines. */
   astr as2 = NULL;
-  Marker *m2;
+  Marker m2;
   if (move_func == move_line)
     m2 = point_marker ();
   else
@@ -839,14 +839,14 @@ DEFUN ("fill-paragraph", fill_paragraph)
 Fill paragraph at or after point.
 +*/
 {
-  Marker *m = point_marker ();
+  Marker m = point_marker ();
 
   undo_start_sequence ();
 
   FUNCALL (forward_paragraph);
   if (is_empty_line ())
     previous_line ();
-  Marker *m_end = point_marker ();
+  Marker m_end = point_marker ();
 
   FUNCALL (backward_paragraph);
   if (is_empty_line ())
@@ -964,7 +964,7 @@ setcase_region (int (*func) (int))
   Region r = calculate_the_region ();
   undo_start_sequence ();
 
-  Marker *m = point_marker ();
+  Marker m = point_marker ();
   goto_offset (get_region_start (r));
   for (size_t size = get_region_size (r); size > 0; size--)
     {
@@ -1185,7 +1185,7 @@ On isolated blank line, delete that one.
 On nonblank line, delete any immediately following blank lines.
 +*/
 {
-  Marker *m = point_marker ();
+  Marker m = point_marker ();
   Region r = region_new (get_buffer_line_o (cur_bp), get_buffer_line_o (cur_bp));
 
   undo_start_sequence ();

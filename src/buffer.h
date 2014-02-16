@@ -27,12 +27,12 @@ FIELD_STR(name)           /* The name of the buffer. */
 FIELD_STR(filename)       /* The file being edited. */
 
 /* Other fields of Buffer. */
-FIELD(Buffer *, next)     /* Next buffer in buffer list. */
+FIELD(Buffer, next)       /* Next buffer in buffer list. */
 FIELD(size_t, goalc)      /* Goal column for previous/next-line commands. */
-FIELD(Marker *, mark)     /* The mark. */
-FIELD(Marker *, markers)  /* Markers list (updated whenever text is changed). */
-FIELD(Undo *, last_undop) /* Most recent undo delta. */
-FIELD(Undo *, next_undop) /* Next undo delta to apply. */
+FIELD(Marker, mark)       /* The mark. */
+FIELD(Marker, markers)    /* Markers list (updated whenever text is changed). */
+FIELD(Undo, last_undop)   /* Most recent undo delta. */
+FIELD(Undo, next_undop)   /* Next undo delta to apply. */
 FIELD(Hash_table *, vars) /* Buffer-local variables. */
 FIELD(bool, modified)     /* Modified flag. */
 FIELD(bool, nosave)       /* The buffer need not be saved. */

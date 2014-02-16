@@ -30,7 +30,7 @@ void
 resize_windows (void)
 {
   /* Resize windows horizontally. */
-  Window *wp;
+  Window wp;
   for (wp = head_wp; wp != NULL; wp = get_window_next (wp))
     {
       set_window_fwidth (wp, term_width ());
@@ -71,7 +71,7 @@ resize_windows (void)
                 }
               else if (cur_wp != head_wp || get_window_next (cur_wp) != NULL)
                 {
-                  Window *new_wp = get_window_next (wp);
+                  Window new_wp = get_window_next (wp);
                   delete_window (wp);
                   wp = new_wp;
                   decreased = true;
@@ -84,7 +84,7 @@ resize_windows (void)
 }
 
 void
-recenter (Window * wp)
+recenter (Window wp)
 {
   size_t n = offset_to_line (get_window_bp (wp), window_o (wp));
 

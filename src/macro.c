@@ -35,22 +35,22 @@ struct Macro
 {
   gl_list_t keys;	/* List of keystrokes. */
   char *name;		/* Name of the macro. */
-  Macro *next;		/* Next macro in the list. */
+  Macro next;		/* Next macro in the list. */
 };
 
-static Macro *cur_mp = NULL, *cmd_mp = NULL;
+static Macro cur_mp = NULL, cmd_mp = NULL;
 
-static Macro *
+static Macro
 macro_new (void)
 {
-  Macro * mp = XZALLOC (Macro);
+  Macro mp = XZALLOC (struct Macro);
   mp->keys = gl_list_create_empty (GL_ARRAY_LIST,
                                    NULL, NULL, NULL, true);
   return mp;
 }
 
 static void
-add_macro_key (Macro * mp, size_t key)
+add_macro_key (Macro mp, size_t key)
 {
   gl_list_add_last (mp->keys, (void *) key);
 }

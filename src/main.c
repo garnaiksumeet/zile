@@ -40,9 +40,9 @@
   "Copyright (C) 2014 Free Software Foundation, Inc."
 
 /* The current window; the first window in list. */
-Window *cur_wp = NULL, *head_wp = NULL;
+Window cur_wp = NULL, head_wp = NULL;
 /* The current buffer; the first buffer in list. */
-Buffer *cur_bp = NULL, *head_bp = NULL;
+Buffer cur_bp = NULL, head_bp = NULL;
 
 /* The global editor flags. */
 int thisflag = 0, lastflag = 0;
@@ -243,7 +243,7 @@ main (int argc, char **argv)
   /* Create the `*scratch*' buffer, so that initialisation commands
      that act on a buffer have something to act on. */
   create_scratch_window ();
-  Buffer *scratch_bp = cur_bp;
+  Buffer scratch_bp = cur_bp;
   bprintf ("%s", "\
 ;; This buffer is for notes you don't want to save.\n\
 ;; If you want to create a file, visit that file with C-x C-f,\n\
@@ -264,7 +264,7 @@ main (int argc, char **argv)
   if (gl_list_size (arg_arg) == 0 && minibuf_no_error () &&
       !get_variable_bool ("inhibit-splash-screen"))
     {
-      Buffer *bp = create_auto_buffer ("*GNU " PACKAGE_NAME "*");
+      Buffer bp = create_auto_buffer ("*GNU " PACKAGE_NAME "*");
       switch_to_buffer (bp);
       bprintf ("%s", splash_str);
       set_buffer_readonly (bp, true);
@@ -309,9 +309,9 @@ main (int argc, char **argv)
   lastflag |= FLAG_NEED_RESYNC;
 
   /* Set up screen according to number of files loaded. */
-  Buffer *last_bp = NULL;
+  Buffer last_bp = NULL;
   int c = 0;
-  for (Buffer *bp = head_bp; bp; bp = get_buffer_next (bp))
+  for (Buffer bp = head_bp; bp; bp = get_buffer_next (bp))
     {
       /* Last buffer that isn't *scratch*. */
       if (get_buffer_next (bp) && !get_buffer_next (get_buffer_next (bp)))

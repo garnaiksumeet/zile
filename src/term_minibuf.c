@@ -68,9 +68,9 @@ draw_minibuf_read (const char *prompt, const char *value,
 }
 
 static void
-maybe_close_popup (Completion *cp)
+maybe_close_popup (Completion cp)
 {
-  Window *wp, *old_wp = cur_wp;
+  Window wp, old_wp = cur_wp;
   if (cp != NULL && (get_completion_flags (cp) & CFLAG_POPPEDUP)
       && (wp = find_window ("*Completions*")) != NULL)
     {
@@ -85,8 +85,7 @@ maybe_close_popup (Completion *cp)
 }
 
 const_astr
-term_minibuf_read (const char *prompt, const char *value, size_t pos,
-               Completion * cp, History * hp)
+term_minibuf_read (const char *prompt, const char *value, size_t pos, Completion cp, History hp)
 {
   if (hp)
     prepare_history (hp);

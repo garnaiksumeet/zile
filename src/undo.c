@@ -1,6 +1,6 @@
 /* Undo facility functions
 
-   Copyright (c) 1997-2011 Free Software Foundation, Inc.
+   Copyright (c) 1997-2014 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 
@@ -29,7 +29,7 @@
  */
 struct Undo
 {
-  Undo *next;      /* Next undo delta in list. */
+  Undo next;       /* Next undo delta in list. */
   int type;        /* The type of undo delta. */
   size_t o;        /* Buffer offset of the undo delta. */
   bool unchanged;  /* Flag indicating that reverting this undo leaves
@@ -55,8 +55,8 @@ undo_save (int type, size_t o, size_t osize, size_t size)
   if (get_buffer_noundo (cur_bp))
     return;
 
-  Undo * up = (Undo *) XZALLOC (Undo);
-  *up = (Undo) {
+  Undo up = (Undo) XZALLOC (struct Undo);
+  *up = (struct Undo) {
     .next = get_buffer_last_undop (cur_bp),
     .type = type,
   };
@@ -94,8 +94,8 @@ undo_save_block (size_t o, size_t osize, size_t size)
 /*
  * Revert an action.  Return the next undo entry.
  */
-static Undo *
-revert_action (Undo * up)
+static Undo
+revert_action (Undo up)
 {
   if (up->type == UNDO_END_SEQUENCE)
     {
@@ -147,7 +147,7 @@ END_DEFUN
  * Set unchanged flags to false.
  */
 void
-undo_set_unchanged (Undo *up)
+undo_set_unchanged (Undo up)
 {
   for (; up; up = up->next)
     up->unchanged = false;

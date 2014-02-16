@@ -53,7 +53,7 @@ END_DEFUN
  * Get the goal column.  Take care of expanding tabulations.
  */
 size_t
-get_goalc_bp (Buffer * bp, size_t o)
+get_goalc_bp (Buffer bp, size_t o)
 {
   size_t col = 0, t = tab_width (bp);
   size_t start = buffer_start_of_line (bp, o), end = o - start;

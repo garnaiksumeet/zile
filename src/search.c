@@ -178,7 +178,7 @@ END_DEFUN
 static le *
 isearch (int forward, int regexp)
 {
-  Marker *old_mark = copy_marker (get_buffer_mark (get_window_bp (cur_wp)));
+  Marker old_mark = copy_marker (get_buffer_mark (get_window_bp (cur_wp)));
 
   set_buffer_isearch (get_window_bp (cur_wp), true);
 
@@ -441,7 +441,7 @@ what to do with it.
                                          case_type == 1 ? case_capitalized : case_upper);
             }
 
-          Marker *m = point_marker ();
+          Marker m = point_marker ();
           goto_offset (get_region_start (r));
           replace_estr (astr_len (find), estr_new_astr (case_repl));
           goto_offset (get_marker_o (m));

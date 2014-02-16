@@ -1,6 +1,6 @@
 /* Completion facility functions
 
-   Copyright (c) 1997-2012 Free Software Foundation, Inc.
+   Copyright (c) 1997-2014 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 
@@ -77,10 +77,10 @@ completion_STREQ (const void *p1, const void *p2)
 /*
  * Allocate a new completion structure.
  */
-Completion *
+Completion
 completion_new (bool fileflag)
 {
-  Completion *cp = (Completion *) XZALLOC (Completion);
+  Completion cp = (Completion) XZALLOC (struct Completion);
 
   cp->completions = gl_list_create_empty (GL_LINKED_LIST,
                                           completion_STREQ, NULL,
@@ -104,8 +104,8 @@ completion_new (bool fileflag)
 void
 completion_scroll_up (void)
 {
-  Window *old_wp = cur_wp;
-  Window *wp = find_window ("*Completions*");
+  Window old_wp = cur_wp;
+  Window wp = find_window ("*Completions*");
   assert (wp != NULL);
   set_current_window (wp);
   if (FUNCALL (scroll_up) == leNIL)
@@ -124,8 +124,8 @@ completion_scroll_up (void)
 void
 completion_scroll_down (void)
 {
-  Window *old_wp = cur_wp;
-  Window *wp = find_window ("*Completions*");
+  Window old_wp = cur_wp;
+  Window wp = find_window ("*Completions*");
   assert (wp != NULL);
   set_current_window (wp);
   if (FUNCALL (scroll_down) == leNIL)
@@ -175,7 +175,7 @@ write_completion (va_list ap)
  * Popup the completion window.
  */
 static void
-popup_completion (Completion * cp, int allflag)
+popup_completion (Completion cp, int allflag)
 {
   cp->flags |= CFLAG_POPPEDUP;
   if (get_window_next (head_wp) == NULL)
@@ -193,7 +193,7 @@ popup_completion (Completion * cp, int allflag)
  * Reread directory for completions.
  */
 static int
-completion_readdir (Completion * cp, astr path)
+completion_readdir (Completion cp, astr path)
 {
   cp->completions = gl_list_create_empty (GL_LINKED_LIST,
                                           completion_STREQ, NULL,
@@ -243,7 +243,7 @@ completion_readdir (Completion * cp, astr path)
  * Match completions.
  */
 int
-completion_try (Completion * cp, astr search, bool popup_when_complete)
+completion_try (Completion cp, astr search, bool popup_when_complete)
 {
   cp->matches = gl_list_create_empty (GL_LINKED_LIST, completion_STREQ, NULL, NULL, false);
 

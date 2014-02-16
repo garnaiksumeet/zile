@@ -29,7 +29,7 @@
 #include "main.h"
 #include "extern.h"
 
-static History *files_history = NULL;
+static History files_history = NULL;
 static char *minibuf_contents = NULL;
 
 /*--------------------------------------------------------------------------
@@ -177,7 +177,7 @@ minibuf_read_filename (const char *fmt, const char *value,
 
       as = compact_path (as);
 
-      Completion *cp = completion_new (true);
+      Completion cp = completion_new (true);
       size_t pos = astr_len (as);
       if (file)
         pos -= strlen (file);
@@ -208,7 +208,7 @@ minibuf_read_yesno (const char *fmt, ...)
 {
   va_list ap;
   const char *errmsg = "Please answer yes or no.";
-  Completion *cp = completion_new (false);
+  Completion cp = completion_new (false);
   int ret = -1;
 
   gl_sortedlist_add (get_completion_completions (cp), completion_strcmp, xstrdup ("yes"));
@@ -216,7 +216,7 @@ minibuf_read_yesno (const char *fmt, ...)
 
   va_start (ap, fmt);
   const_astr ms = minibuf_vread_completion (fmt, "", cp, NULL, errmsg,
-                                       minibuf_test_in_completions, errmsg, ap);
+                                            minibuf_test_in_completions, errmsg, ap);
   va_end (ap);
 
   if (ms != NULL)
@@ -232,8 +232,7 @@ minibuf_read_yesno (const char *fmt, ...)
 }
 
 const_astr
-minibuf_read_completion (const char *fmt, const char *value, Completion * cp,
-                         History * hp, ...)
+minibuf_read_completion (const char *fmt, const char *value, Completion cp, History hp, ...)
 {
   va_list ap;
   char *buf;
@@ -249,8 +248,8 @@ minibuf_read_completion (const char *fmt, const char *value, Completion * cp,
  * Read a string from the minibuffer using a completion.
  */
 const_astr
-minibuf_vread_completion (const char *fmt, const char *value, Completion * cp,
-                          History * hp, const char *empty_err,
+minibuf_vread_completion (const char *fmt, const char *value, Completion cp,
+                          History hp, const char *empty_err,
                           bool (*test) (const char *s, gl_list_t completions),
                           const char *invalid_err, va_list ap)
 {

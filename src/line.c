@@ -90,7 +90,7 @@ fill_break_line (void)
       size_t break_col = 0;
 
       /* Save point. */
-      Marker *m = point_marker ();
+      Marker m = point_marker ();
 
       /* Move cursor back to fill column */
       size_t old_col = get_buffer_pt (cur_bp) - get_buffer_line_o (cur_bp);
@@ -303,7 +303,7 @@ does nothing.
     target_goalc = 0;
   else
     { /* Find goalc in previous non-blank line. */
-      Marker *m = point_marker ();
+      Marker m = point_marker ();
 
       previous_nonblank_goalc ();
 
@@ -356,7 +356,7 @@ static size_t
 previous_line_indent (void)
 {
   size_t cur_indent;
-  Marker *m = point_marker ();
+  Marker m = point_marker ();
 
   FUNCALL (previous_line);
   FUNCALL (beginning_of_line);
@@ -405,7 +405,7 @@ Indentation is done using the `indent-for-tab-command' function.
   undo_start_sequence ();
   if (insert_newline ())
     {
-      Marker *m = point_marker ();
+      Marker m = point_marker ();
 
       /* Check where last non-blank goalc is. */
       previous_nonblank_goalc ();

@@ -23,7 +23,7 @@
 FIELD_STR(match)		/* The match buffer. */
 
 /* Other fields of Completion. */
-FIELD(Buffer *, old_bp)		/* The buffer from which the completion was invoked. */
+FIELD(Buffer, old_bp)		/* The buffer from which the completion was invoked. */
 FIELD(gl_list_t, completions)	/* The completions list. */
 FIELD(gl_list_t, matches)	/* The matches list. */
 FIELD(size_t, matchsize)	/* The match buffer size. */

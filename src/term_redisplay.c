@@ -41,7 +41,7 @@ make_char_printable (char c, int x, int cur_tab_width)
 }
 
 static void
-draw_line (size_t line, size_t startcol, Window * wp,
+draw_line (size_t line, size_t startcol, Window wp,
            size_t o, Region r, int highlight, size_t cur_tab_width)
 {
   term_move (line, 0);
@@ -80,7 +80,7 @@ draw_line (size_t line, size_t startcol, Window * wp,
 }
 
 static int
-calculate_highlight_region (Window * wp, Region * rp)
+calculate_highlight_region (Window wp, Region *rp)
 {
   if ((wp != cur_wp
        && !get_variable_bool ("highlight-nonselected-windows"))
@@ -93,7 +93,7 @@ calculate_highlight_region (Window * wp, Region * rp)
 }
 
 static const char *
-make_mode_line_flags (Window * wp)
+make_mode_line_flags (Window wp)
 {
   if (get_buffer_modified (get_window_bp (wp)) && get_buffer_readonly (get_window_bp (wp)))
     return "%*";
@@ -105,7 +105,7 @@ make_mode_line_flags (Window * wp)
 }
 
 static char *
-make_screen_pos (Window * wp)
+make_screen_pos (Window wp)
 {
   bool tv = window_top_visible (wp);
   bool bv = window_bottom_visible (wp);
@@ -122,7 +122,7 @@ make_screen_pos (Window * wp)
 }
 
 static void
-draw_status_line (size_t line, Window * wp)
+draw_status_line (size_t line, Window wp)
 {
   term_attrset (FONT_REVERSE);
 
@@ -159,7 +159,7 @@ draw_status_line (size_t line, Window * wp)
 }
 
 static void
-draw_window (size_t topline, Window * wp)
+draw_window (size_t topline, Window wp)
 {
   size_t i, o;
   Region r;
@@ -208,7 +208,7 @@ void
 term_redisplay (void)
 {
   /* Calculate the start column if the line at point has to be truncated. */
-  Buffer *bp = get_window_bp (cur_wp);
+  Buffer bp = get_window_bp (cur_wp);
   size_t lastcol = 0, t = tab_width (bp);
   size_t o = window_o (cur_wp);
   size_t lineo = o - get_buffer_line_o (bp);
@@ -243,7 +243,7 @@ term_redisplay (void)
   /* Draw the windows. */
   cur_topline = 0;
   size_t topline = 0;
-  for (Window *wp = head_wp; wp != NULL; wp = get_window_next (wp))
+  for (Window wp = head_wp; wp != NULL; wp = get_window_next (wp))
     {
       if (wp == cur_wp)
         cur_topline = topline;

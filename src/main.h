@@ -50,16 +50,16 @@
  * Main editor structures.
  *--------------------------------------------------------------------------*/
 
-/* Opaque types.  FIXME: Make them all pointer types */
+/* Opaque types. */
 typedef struct Region *Region;
-typedef struct Marker Marker;
-typedef struct History History;
-typedef struct Undo Undo;
-typedef struct Macro Macro;
+typedef struct Marker *Marker;
+typedef struct History *History;
+typedef struct Undo *Undo;
+typedef struct Macro *Macro;
 typedef struct Binding *Binding;
-typedef struct Buffer Buffer;
-typedef struct Window Window;
-typedef struct Completion Completion;
+typedef struct Buffer *Buffer;
+typedef struct Window *Window;
+typedef struct Completion *Completion;
 
 enum
 {
@@ -80,26 +80,12 @@ enum
 
 #define GETTER(Obj, name, ty, field)            \
   _GL_ATTRIBUTE_PURE ty                         \
-  get_ ## name ## _ ## field (const Obj *p)     \
-  {                                             \
-    return p->field;                            \
-  }                                             \
-
-#define SETTER(Obj, name, ty, field)            \
-  void                                          \
-  set_ ## name ## _ ## field (Obj *p, ty field) \
-  {                                             \
-    p->field = field;                           \
-  }
-
-#define POINTER_GETTER(Obj, name, ty, field)    \
-  _GL_ATTRIBUTE_PURE ty                         \
   get_ ## name ## _ ## field (const Obj p)      \
   {                                             \
     return p->field;                            \
   }                                             \
 
-#define POINTER_SETTER(Obj, name, ty, field)    \
+#define SETTER(Obj, name, ty, field)            \
   void                                          \
   set_ ## name ## _ ## field (Obj p, ty field)  \
   {                                             \
@@ -108,7 +94,7 @@ enum
 
 #define STR_SETTER(Obj, name, field)                            \
   void                                                          \
-  set_ ## name ## _ ## field (Obj *p, const char *field)        \
+  set_ ## name ## _ ## field (Obj p, const char *field)         \
   {                                                             \
     p->field = field ? xstrdup (field) : NULL;                  \
   }

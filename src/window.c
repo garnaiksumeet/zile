@@ -1,6 +1,6 @@
 /* Window handling functions
 
-   Copyright (c) 1997-2012 Free Software Foundation, Inc.
+   Copyright (c) 1997-2014 Free Software Foundation, Inc.
 
    This file is part of GNU Zile.
 
@@ -51,7 +51,7 @@ struct Window
  * Set the current window and his buffer as the current buffer.
  */
 void
-set_current_window (Window * wp)
+set_current_window (Window wp)
 {
   /* Save buffer's point in a new marker.  */
   if (cur_wp->saved_pt)
@@ -86,7 +86,7 @@ Both windows display the same buffer now current.
       return leNIL;
     }
 
-  Window *newwp = (Window *) XZALLOC (Window);
+  Window newwp = (Window) XZALLOC (struct Window);
   *newwp = *cur_wp;
   newwp->fheight = cur_wp->fheight / 2 + cur_wp->fheight % 2;
   newwp->eheight = newwp->fheight - 1;
@@ -101,9 +101,9 @@ Both windows display the same buffer now current.
 END_DEFUN
 
 void
-delete_window (Window * del_wp)
+delete_window (Window del_wp)
 {
-  Window *wp;
+  Window wp;
 
   if (del_wp == head_wp)
     wp = head_wp = head_wp->next;
@@ -150,7 +150,7 @@ Make current window one line bigger.
                             cur_wp->next->fheight < 3))
     return leNIL;
 
-  Window *wp = cur_wp->next;
+  Window wp = cur_wp->next;
   if (wp == NULL || wp->fheight < 3)
     for (wp = head_wp; wp != NULL; wp = wp->next)
       if (wp->next == cur_wp)
@@ -178,7 +178,7 @@ Make current window one line smaller.
   if ((cur_wp == head_wp && cur_wp->next == NULL) || cur_wp->fheight < 3)
     return leNIL;
 
-  Window *wp = cur_wp->next;
+  Window wp = cur_wp->next;
   if (wp == NULL)
     for (wp = head_wp; wp != NULL; wp = wp->next)
       if (wp->next == cur_wp)
@@ -193,7 +193,7 @@ Make current window one line smaller.
 }
 END_DEFUN
 
-Window *
+Window
 popup_window (void)
 {
   if (head_wp && head_wp->next == NULL)
@@ -212,7 +212,7 @@ DEFUN ("delete-other-windows", delete_other_windows)
 Make the selected window fill the screen.
 +*/
 {
-  for (Window *wp = head_wp, *nextwp; wp != NULL; wp = nextwp)
+  for (Window wp = head_wp, nextwp; wp != NULL; wp = nextwp)
     {
       nextwp = wp->next;
       if (wp != cur_wp)
@@ -239,8 +239,8 @@ END_DEFUN
 void
 create_scratch_window (void)
 {
-  Buffer *bp = create_scratch_buffer ();
-  Window *wp = (Window *) XZALLOC (Window);
+  Buffer bp = create_scratch_buffer ();
+  Window wp = (Window) XZALLOC (struct Window);
   cur_wp = head_wp = wp;
   wp->fwidth = wp->ewidth = term_width ();
   /* Save space for minibuffer. */
@@ -250,10 +250,10 @@ create_scratch_window (void)
   wp->bp = cur_bp = bp;
 }
 
-Window *
+Window
 find_window (const char *name)
 {
-  for (Window *wp = head_wp; wp != NULL; wp = wp->next)
+  for (Window wp = head_wp; wp != NULL; wp = wp->next)
     if (STREQ (get_buffer_name (wp->bp), name))
       return wp;
 
@@ -261,7 +261,7 @@ find_window (const char *name)
 }
 
 size_t
-window_o (Window * wp)
+window_o (Window wp)
 {
   /* The current window uses the current buffer point; all other
      windows have a saved point, except that if a window has just been
@@ -284,19 +284,19 @@ window_o (Window * wp)
 }
 
 bool
-window_top_visible (Window * wp)
+window_top_visible (Window wp)
 {
   return offset_to_line (get_window_bp (wp), window_o (wp)) == get_window_topdelta (wp);
 }
 
 bool
-window_bottom_visible (Window * wp)
+window_bottom_visible (Window wp)
 {
   return get_window_all_displayed (wp);
 }
 
 void
-window_resync (Window * wp)
+window_resync (Window wp)
 {
   size_t n = offset_to_line (wp->bp, get_buffer_pt (wp->bp));
   ptrdiff_t delta = n - wp->lastpointn;
