@@ -858,7 +858,7 @@ Fill paragraph at or after point.
   unchain_marker (m_end);
 
   FUNCALL (end_of_line);
-  while (get_goalc () > (size_t) get_variable_number ("fill-column") + 1
+  while (get_goalc () > (size_t) get_variable_number ("fill-column")
          && fill_break_line ())
     ;
 
