@@ -286,7 +286,6 @@ void set_variable (const char *var, const char *val);
 const char *get_variable_doc (const char *var, const char **defval);
 const char *get_variable (const char *var);
 long get_variable_number_bp (Buffer bp, const char *var);
-long get_variable_number (const char *var);
 bool get_variable_bool (const char *var);
 
 /* window.c --------------------------------------------------------------- */

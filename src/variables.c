@@ -174,12 +174,6 @@ get_variable_number_bp (Buffer bp, const char *var)
   return t;
 }
 
-long
-get_variable_number (const char *var)
-{
-  return get_variable_number_bp (cur_bp, var);
-}
-
 bool
 get_variable_bool (const char *var)
 {

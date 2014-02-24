@@ -81,7 +81,7 @@ intercalate_newline (void)
 bool
 fill_break_line (void)
 {
-  size_t fillcol = get_variable_number ("fill-column");
+  size_t fillcol = get_variable_number_bp (cur_bp, "fill-column");
   bool break_made = false;
 
   /* Only break if we're beyond fill-column. */
