@@ -139,8 +139,7 @@ fill_break_line (void)
 static bool
 newline (void)
 {
-  if (get_buffer_autofill (cur_bp) &&
-      get_goalc () > (size_t) get_variable_number ("fill-column"))
+  if (get_buffer_autofill (cur_bp))
     fill_break_line ();
   return insert_newline ();
 }
