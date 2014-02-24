@@ -211,8 +211,8 @@ Just C-u as argument means to use the current column.
     {
       buf = xasprintf ("%ld", fill_col);
       /* Only print message when run interactively. */
-      minibuf_write ("Fill column set to %s (was %ld)", buf,
-                     get_variable_number ("fill-column"));
+      minibuf_write ("Fill column set to %s (was %s)", buf,
+                     get_variable ("fill-column"));
     }
 
   if (ok == leT)
