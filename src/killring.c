@@ -90,8 +90,6 @@ kill_line (bool whole_line)
       return false;
     }
 
-  undo_start_sequence ();
-
   if (!eolp ())
     ok = copy_or_kill_region (true, region_new (get_buffer_pt (cur_bp), get_buffer_line_o (cur_bp) + cur_line_len));
 
@@ -103,8 +101,6 @@ kill_line (bool whole_line)
       kill_ring_push (estr_new_astr (astr_new_cstr ("\n")));
       set_this_command (F_kill_region);
     }
-
-  undo_end_sequence ();
 
   return ok;
 }
@@ -142,13 +138,11 @@ with no argument.
     ok = bool_to_lisp (kill_line (bolp () && get_variable_bool ("kill-whole-line")));
   else
     {
-      undo_start_sequence ();
       if (arg <= 0)
         ok = bool_to_lisp (bolp () ||
                            copy_or_kill_region (true, region_new (get_buffer_line_o (cur_bp), get_buffer_pt (cur_bp))));
       if (arg != 0 && ok == leT)
-        ok = execute_with_uniarg (false, arg, kill_whole_line, kill_line_backward);
-      undo_end_sequence ();
+        ok = execute_with_uniarg (arg, kill_whole_line, kill_line_backward);
     }
 
   deactivate_mark ();
@@ -205,10 +199,8 @@ kill_text (int uniarg, Function mark_func)
     return leNIL;
 
   push_mark ();
-  undo_start_sequence ();
   mark_func (uniarg, true, NULL);
   FUNCALL (kill_region);
-  undo_end_sequence ();
   pop_mark ();
 
   set_this_command (F_kill_region);

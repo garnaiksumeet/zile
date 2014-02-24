@@ -668,10 +668,8 @@ transpose (int uniarg, bool (*move) (ptrdiff_t dir))
     return leNIL;
 
   bool ret = true;
-  undo_start_sequence ();
   for (unsigned long uni = 0; ret && uni < (unsigned) abs (uniarg); ++uni)
     ret = transpose_subr (move);
-  undo_end_sequence ();
 
   return bool_to_lisp (ret);
 }
@@ -841,8 +839,6 @@ Fill paragraph at or after point.
 {
   Marker m = point_marker ();
 
-  undo_start_sequence ();
-
   FUNCALL (forward_paragraph);
   if (is_empty_line ())
     previous_line ();
@@ -868,8 +864,6 @@ Fill paragraph at or after point.
 
   goto_offset (get_marker_o (m));
   unchain_marker (m);
-
-  undo_end_sequence ();
 }
 END_DEFUN
 
@@ -912,7 +906,7 @@ Convert following word (or @i{arg} words) to lower case, moving over.
 +*/
 {
   INT_OR_UNIARG_INIT (arg);
-  ok = execute_with_uniarg (true, arg, setcase_word_lowercase, NULL);
+  ok = execute_with_uniarg (arg, setcase_word_lowercase, NULL);
 }
 END_DEFUN
 
@@ -929,7 +923,7 @@ Convert following word (or @i{arg} words) to upper case, moving over.
 +*/
 {
   INT_OR_UNIARG_INIT (arg);
-  ok = execute_with_uniarg (true, arg, setcase_word_uppercase, NULL);
+  ok = execute_with_uniarg (arg, setcase_word_uppercase, NULL);
 }
 END_DEFUN
 
@@ -948,7 +942,7 @@ and the rest lower case.
 +*/
 {
   INT_OR_UNIARG_INIT (arg);
-  ok = execute_with_uniarg (true, arg, setcase_word_capitalize, NULL);
+  ok = execute_with_uniarg (arg, setcase_word_capitalize, NULL);
 }
 END_DEFUN
 
@@ -962,8 +956,6 @@ setcase_region (int (*func) (int))
     return leNIL;
 
   Region r = calculate_the_region ();
-  undo_start_sequence ();
-
   Marker m = point_marker ();
   goto_offset (get_region_start (r));
   for (size_t size = get_region_size (r); size > 0; size--)
@@ -974,8 +966,6 @@ setcase_region (int (*func) (int))
     }
   goto_offset (get_marker_o (m));
   unchain_marker (m);
-
-  undo_end_sequence ();
 
   return leT;
 }
@@ -1188,8 +1178,6 @@ On nonblank line, delete any immediately following blank lines.
   Marker m = point_marker ();
   Region r = region_new (get_buffer_line_o (cur_bp), get_buffer_line_o (cur_bp));
 
-  undo_start_sequence ();
-
   /* Find following blank lines.  */
   if (FUNCALL (forward_line) == leT && is_blank_line ())
     {
@@ -1233,8 +1221,6 @@ On nonblank line, delete any immediately following blank lines.
       else
         insert_newline ();
     }
-
-  undo_end_sequence ();
 
   unchain_marker (m);
   deactivate_mark ();

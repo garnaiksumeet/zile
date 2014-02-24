@@ -57,7 +57,7 @@ Insert a tabulation at the current point position into the current
 buffer.
 +*/
 {
-  ok = execute_with_uniarg (true, uniarg, insert_tab, NULL);
+  ok = execute_with_uniarg (uniarg, insert_tab, NULL);
 }
 END_DEFUN
 
@@ -151,7 +151,7 @@ Insert a newline at the current point position into
 the current buffer.
 +*/
 {
-  ok = execute_with_uniarg (true, uniarg, newline, NULL);
+  ok = execute_with_uniarg (uniarg, newline, NULL);
 }
 END_DEFUN
 
@@ -160,7 +160,7 @@ DEFUN ("open-line", open_line)
 Insert a newline and leave point before it.
 +*/
 {
-  ok = execute_with_uniarg (true, uniarg, intercalate_newline, NULL);
+  ok = execute_with_uniarg (uniarg, intercalate_newline, NULL);
 }
 END_DEFUN
 
@@ -213,7 +213,7 @@ Delete the following @i{n} characters (previous if @i{n} is negative).
 +*/
 {
   INT_OR_UNIARG_INIT (n);
-  ok = execute_with_uniarg (true, n, delete_char, backward_delete_char);
+  ok = execute_with_uniarg (n, delete_char, backward_delete_char);
 }
 END_DEFUN
 
@@ -224,7 +224,7 @@ Delete the previous @i{n} characters (following if @i{n} is negative).
 +*/
 {
   INT_OR_UNIARG_INIT (n);
-  ok = execute_with_uniarg (true, n, backward_delete_char, delete_char);
+  ok = execute_with_uniarg (n, backward_delete_char, delete_char);
 }
 END_DEFUN
 
@@ -233,15 +233,11 @@ DEFUN ("delete-horizontal-space", delete_horizontal_space)
 Delete all spaces and tabs around point.
 +*/
 {
-  undo_start_sequence ();
-
   while (!eolp () && isspace (following_char ()))
     delete_char ();
 
   while (!bolp () && isspace (preceding_char ()))
     backward_delete_char ();
-
-  undo_end_sequence ();
 }
 END_DEFUN
 
@@ -250,10 +246,8 @@ DEFUN ("just-one-space", just_one_space)
 Delete all spaces and tabs around point, leaving one space.
 +*/
 {
-  undo_start_sequence ();
   FUNCALL (delete_horizontal_space);
   insert_char (' ');
-  undo_end_sequence ();
 }
 END_DEFUN
 
@@ -325,7 +319,6 @@ does nothing.
     }
 
   /* Insert indentation.  */
-  undo_start_sequence ();
   if (target_goalc > 0)
     {
       /* If not at EOL on target line, insert spaces & tabs up to
@@ -348,7 +341,6 @@ does nothing.
     }
   else
     ok = bool_to_lisp (insert_tab ());
-  undo_end_sequence ();
 }
 END_DEFUN
 
@@ -402,7 +394,6 @@ Indentation is done using the `indent-for-tab-command' function.
 
   deactivate_mark ();
 
-  undo_start_sequence ();
   if (insert_newline ())
     {
       Marker m = point_marker ();
@@ -419,6 +410,5 @@ Indentation is done using the `indent-for-tab-command' function.
         FUNCALL (indent_for_tab_command);
       ok = leT;
     }
-  undo_end_sequence ();
 }
 END_DEFUN

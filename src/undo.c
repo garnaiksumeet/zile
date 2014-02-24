@@ -68,13 +68,28 @@ undo_save (void *type, size_t o, size_t osize, size_t size)
 void
 undo_start_sequence (void)
 {
-  undo_save (undo_start_sequence, get_buffer_pt (cur_bp), 0, 0);
+  if (cur_bp)
+    undo_save (undo_start_sequence, get_buffer_pt (cur_bp), 0, 0);
 }
 
 void
 undo_end_sequence (void)
 {
-  undo_save (undo_end_sequence, 0, 0, 0);
+  if (cur_bp)
+    {
+      Undo up = get_buffer_last_undop (cur_bp);
+      if (up)
+        {
+          if (up->type == undo_start_sequence)
+            set_buffer_last_undop (cur_bp, up->next);
+          else
+            undo_save (undo_end_sequence, 0, 0, 0);
+        }
+
+      /* Update list pointer */
+      if (last_command () != F_undo)
+        set_buffer_next_undop (cur_bp, get_buffer_last_undop (cur_bp));
+    }
 }
 
 void
@@ -90,13 +105,8 @@ static Undo
 revert_action (Undo up)
 {
   if (up->type == undo_end_sequence)
-    {
-      undo_start_sequence ();
-      up = up->next;
-      while (up->type != undo_start_sequence)
-        up = revert_action (up);
-      undo_end_sequence ();
-    }
+    for (up = up->next; up->type != undo_start_sequence; up = revert_action (up))
+      ;
 
   if (up->type != undo_end_sequence)
     goto_offset (up->o);

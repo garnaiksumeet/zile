@@ -231,7 +231,7 @@ Insert the character you type.
 Whichever character you type to run this command is inserted.
 +*/
 {
-  ok = execute_with_uniarg (true, uniarg, self_insert_command, NULL);
+  ok = execute_with_uniarg (uniarg, self_insert_command, NULL);
 }
 END_DEFUN
 
@@ -254,6 +254,7 @@ le *
 call_command (Function f, int uniarg, bool uniflag, le *branch)
 {
   thisflag = lastflag & FLAG_DEFINING_MACRO;
+  undo_start_sequence ();
 
   /* Reset last_uniarg before function call, so recursion (e.g. in
      macros) works. */
@@ -270,9 +271,7 @@ call_command (Function f, int uniarg, bool uniflag, le *branch)
   if (lastflag & FLAG_DEFINING_MACRO && thisflag & FLAG_DEFINING_MACRO)
     add_cmd_to_macro ();
 
-  if (cur_bp && last_command () != F_undo)
-    set_buffer_next_undop (cur_bp, get_buffer_last_undop (cur_bp));
-
+  undo_end_sequence ();
   lastflag = thisflag;
 
   return ok;

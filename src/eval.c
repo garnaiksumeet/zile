@@ -187,20 +187,16 @@ leEval (le * list)
 }
 
 le *
-execute_with_uniarg (bool undo, int uniarg, bool (*forward) (void), bool (*backward) (void))
+execute_with_uniarg (int uniarg, bool (*forward) (void), bool (*backward) (void))
 {
   if (backward && uniarg < 0)
     {
       forward = backward;
       uniarg = -uniarg;
     }
-  if (undo)
-    undo_start_sequence ();
   bool ret = true;
   for (int uni = 0; ret && uni < uniarg; ++uni)
     ret = forward ();
-  if (undo)
-    undo_end_sequence ();
 
   return bool_to_lisp (ret);
 }

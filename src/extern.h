@@ -130,8 +130,7 @@ void ding (void);
 extern le *leNIL, *leT;
 _GL_ATTRIBUTE_PURE size_t countNodes (le * branch);
 void leEval (le * list);
-le *execute_with_uniarg (bool undo, int uniarg, bool (*forward) (void),
-                         bool (*backward) (void));
+le *execute_with_uniarg (int uniarg, bool (*forward) (void), bool (*backward) (void));
 le *move_with_uniarg (int uniarg, bool (*move) (ptrdiff_t dir));
 le *execute_function (const char *name, int uniarg, bool is_uniarg);
 _GL_ATTRIBUTE_PURE Function get_function (const char *name);

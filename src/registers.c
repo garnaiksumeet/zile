@@ -106,7 +106,7 @@ Puts point before and mark after the inserted text.
         {
           FUNCALL (set_mark_command);
           regnum = reg;
-          execute_with_uniarg (true, uniarg, insert_register, NULL);
+          execute_with_uniarg (uniarg, insert_register, NULL);
           FUNCALL (exchange_point_and_mark);
           deactivate_mark ();
         }
