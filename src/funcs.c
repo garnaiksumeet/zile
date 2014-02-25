@@ -858,8 +858,11 @@ Fill paragraph at or after point.
   unchain_marker (m_end);
 
   FUNCALL (end_of_line);
-  while (fill_break_line ())
+  int ret;
+  while ((ret = fill_break_line ()) == true)
     ;
+  if (ret == -1)
+    ok = leNIL;
 
   goto_offset (get_marker_o (m));
   unchain_marker (m);

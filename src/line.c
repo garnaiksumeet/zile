@@ -78,11 +78,18 @@ intercalate_newline (void)
  *
  * Return flag indicating whether break was made.
  */
-bool
+int
 fill_break_line (void)
 {
-  size_t fillcol = get_variable_number_bp (cur_bp, "fill-column");
-  bool break_made = false;
+  long n;
+  if (!lisp_to_number (get_variable_bp (cur_bp, "fill-column"), &n) || n < 0)
+    {
+      minibuf_error ("Wrong type argument: number-or-markerp, nil");
+      return -1;
+    }
+  size_t fillcol = (size_t)n;
+
+  int break_made = false;
 
   /* Only break if we're beyond fill-column. */
   if (get_goalc () > fillcol)
@@ -139,9 +146,10 @@ fill_break_line (void)
 static bool
 newline (void)
 {
+  bool ret = true;
   if (get_buffer_autofill (cur_bp))
-    fill_break_line ();
-  return insert_newline ();
+    ret = fill_break_line () != -1;
+  return ret ? insert_newline () : false;
 }
 
 DEFUN ("newline", newline)

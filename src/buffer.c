@@ -505,7 +505,11 @@ deactivate_mark (void)
 size_t
 tab_width (Buffer bp)
 {
-  return MAX (get_variable_number_bp (bp, "tab-width"), 1);
+  long res = 0;
+  lisp_to_number (get_variable_bp (bp, "tab-width"), &res);
+  if (res < 1)
+    res = 8;
+  return res;
 }
 
 Buffer

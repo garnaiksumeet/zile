@@ -22,6 +22,7 @@
 #include <config.h>
 
 #include <stdlib.h>
+#include <errno.h>
 
 #include "main.h"
 #include "extern.h"
@@ -218,3 +219,13 @@ Execute a file of Lisp code named FILE.
     ok = leNIL;
 }
 END_DEFUN
+
+bool
+lisp_to_number (const char *s, long *res)
+{
+  char *end;
+  errno = 0;
+  if (s)
+    *res = strtol (s, &end, 10);
+  return s != NULL && errno == 0 && *end == '\0';
+}

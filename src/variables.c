@@ -130,25 +130,21 @@ get_variable_entry (Buffer bp, const char *var)
   if (bp && get_buffer_vars (bp))
     p = hash_lookup (get_buffer_vars (bp), key);
 
-  if (p == NULL)
-    p = hash_lookup (main_vars, key);
-
-  return p;
+  return p ? p : hash_lookup (main_vars, key);
 }
 
 const char *
 get_variable_doc (const char *var, const char **defval)
 {
   var_entry p = get_variable_entry (NULL, var);
-  if (p != NULL)
-    {
-      *defval = p->defval;
-      return p->doc;
-    }
-  return NULL;
+  if (p == NULL)
+    return NULL;
+
+  *defval = p->defval;
+  return p->doc;
 }
 
-static const char *
+const char *
 get_variable_bp (Buffer bp, const char *var)
 {
   var_entry p = get_variable_entry (bp, var);
@@ -159,19 +155,6 @@ const char *
 get_variable (const char *var)
 {
   return get_variable_bp (cur_bp, var);
-}
-
-long
-get_variable_number_bp (Buffer bp, const char *var)
-{
-  long t = 0;
-  const char *s = get_variable_bp (bp, var);
-
-  if (s)
-    t = strtol (s, NULL, 10);
-  /* FIXME: Check result and signal error. */
-
-  return t;
 }
 
 bool

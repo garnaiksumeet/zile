@@ -212,7 +212,7 @@ self_insert_command (void)
   if (key <= 0xff)
     {
       if (isspace (key) && get_buffer_autofill (cur_bp))
-        fill_break_line ();
+        ret = fill_break_line () != -1;
       insert_char (key);
     }
   else

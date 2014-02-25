@@ -182,13 +182,14 @@ void *zile_calloc(size_t n, size_t s);
 /* line.c ----------------------------------------------------------------- */
 bool insert_newline (void);
 bool intercalate_newline (void);
-bool fill_break_line (void);
+int fill_break_line (void);
 _GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) void bprintf (const char *fmt, ...);
 
 /* lisp.c ----------------------------------------------------------------- */
 void init_lisp (void);
 void lisp_loadstring (astr as);
 bool lisp_loadfile (const char *file);
+bool lisp_to_number (const char *s, long *res);
 
 /* macro.c ---------------------------------------------------------------- */
 void cancel_kbd_macro (void);
@@ -285,7 +286,7 @@ _GL_ATTRIBUTE_FORMAT_PRINTF(1, 2) const_astr minibuf_read_variable_name (const c
 void set_variable (const char *var, const char *val);
 const char *get_variable_doc (const char *var, const char **defval);
 const char *get_variable (const char *var);
-long get_variable_number_bp (Buffer bp, const char *var);
+const char *get_variable_bp (Buffer bp, const char *var);
 bool get_variable_bool (const char *var);
 
 /* window.c --------------------------------------------------------------- */
