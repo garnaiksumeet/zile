@@ -21,6 +21,8 @@
 
 #include "gl_xlist.h"
 
+/* FIXME: Split this header up into per-module headers. Rename data structure headers to avoid clashes. */
+
 /* basic.c ---------------------------------------------------------------- */
 size_t get_goalc_bp (Buffer bp, size_t o);
 size_t get_goalc (void);
