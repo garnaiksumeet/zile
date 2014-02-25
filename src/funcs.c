@@ -123,7 +123,7 @@ write_buffers_list (va_list ap)
     {
       /* Print all buffers whose names don't start with space except
          this one (the *Buffer List*). */
-      if (cur_bp != bp && get_buffer_name (bp)[0] == ' ')
+      if (cur_bp != bp && get_buffer_name (bp)[0] != ' ')
         {
           bprintf ("%c%c%c %-19s %6zu  %-17s",
                    get_window_bp (old_wp) == bp ? '.' : ' ',
