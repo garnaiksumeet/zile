@@ -22,6 +22,7 @@
 #ifndef LISTS_H
 #define LISTS_H
 
+/* FIXME: Use proper cons cells. */
 struct le
 {
   /* either data or a branch */
