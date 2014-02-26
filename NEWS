@@ -2,6 +2,11 @@ GNU Zile NEWS                                         -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
+** Bug fixes
+
+  Fix timeradd macro for systems that need it (thanks to Craig
+  Phillips for the report and fix).
+
 
 * Noteworthy changes in release 2.4.10 (2014-02-25) [stable]
 
