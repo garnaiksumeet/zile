@@ -42,6 +42,7 @@
 	  ++(_result)->tv_sec;					\
 	  (_result)->tv_usec -= 1000000;			\
 	}							\
+   }                                                            \
    while (0)
 #endif
 
