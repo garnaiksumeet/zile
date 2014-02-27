@@ -151,19 +151,11 @@ AC_ARG_VAR(CURSES_LIB, [linker flags for curses library])
 dnl libgc (BDW garbage collector)
 PKG_CHECK_MODULES([LIBGC],[bdw-gc >= 7.2])
 AH_BOTTOM([
-#ifdef DEBUG
-# define malloc GC_debug_malloc
-# define realloc GC_debug_realloc
-# define free GC_debug_free
-# define strdup GC_debug_strdup
-# define strndup GC_debug_strndup
-#else
-# define malloc GC_malloc
-# define realloc GC_realloc
-# define free GC_free
-# define strdup GC_strdup
-# define strndup GC_strndup
-#endif
+#define malloc GC_malloc
+#define realloc GC_realloc
+#define free GC_free
+#define strdup GC_strdup
+#define strndup GC_strndup
 #define calloc zile_calloc
 ])
 
