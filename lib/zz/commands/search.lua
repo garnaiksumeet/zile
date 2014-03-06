@@ -164,7 +164,7 @@ what to do with it.
     local noask = false
     local count = 0
     local ok = true
-    while search (get_buffer_pt (cur_bp), find, true, false) do
+    while search (find, true, false) do
       local c = keycode ' '
 
       if not noask then
