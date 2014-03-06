@@ -85,7 +85,7 @@ function fill_break_line ()
     if break_col >= 1 then -- Break line.
       goto_offset (get_buffer_line_o (cur_bp) + break_col)
       delete_horizontal_space ()
-      insert_newline ()
+      insert_string "\n"
       goto_offset (m.o)
       break_made = true
     else -- Undo fiddling with point.
@@ -98,13 +98,9 @@ function fill_break_line ()
   return break_made
 end
 
-function insert_newline ()
-  return insert_string ("\n")
-end
-
 -- Insert a newline at the current position without moving the cursor.
 function intercalate_newline ()
-  return insert_newline () and move_char (-1)
+  return insert_string "\n" and move_char (-1)
 end
 
 local function insert_expanded_tab ()

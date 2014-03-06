@@ -136,7 +136,7 @@ Indentation is done using the `indent_for_tab_command' function.
     deactivate_mark ()
 
     undo_start_sequence ()
-    if insert_newline () then
+    if insert_string "\n" then
       local m = point_marker ()
       local pos
 
@@ -223,7 +223,7 @@ local function newline ()
   then
     fill_break_line ()
   end
-  return insert_newline ()
+  return insert_string "\n"
 end
 
 

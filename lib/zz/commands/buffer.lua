@@ -151,7 +151,7 @@ local function write_buffers_list (old_wp)
       if bp.filename then
         insert_string (compact_path (bp.filename))
       end
-      insert_newline ()
+      insert_string "\n"
     end
   end
 end

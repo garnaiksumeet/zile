@@ -167,7 +167,7 @@ automatically breaks the line at a previous space."
       if bp.filename then
         insert_string (compact_path (bp.filename))
       end
-      insert_newline ()
+      insert_string '\n'
     end
   end")
 

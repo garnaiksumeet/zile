@@ -52,7 +52,7 @@ function completion_write (cp, width)
     insert_string (string.format ("%-" .. maxlen .. "s", v))
     col = (col + 1) % numcols
     if col == 0 then
-      insert_newline ()
+      insert_string "\n"
     end
   end
 end

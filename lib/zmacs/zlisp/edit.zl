@@ -225,7 +225,7 @@ On nonblank line, delete any immediately following blank lines."
       if not at_eob then
         intercalate_newline ()
       else
-        insert_newline ()
+        insert_string '\n'
       end
     end
 

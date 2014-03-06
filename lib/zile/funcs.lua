@@ -348,7 +348,7 @@ local function transpose_subr (move_func)
     if move_func == move_line then
       -- Add an empty line.
       end_of_line ()
-      insert_newline ()
+      insert_string "\n"
     else
       pop_mark ()
       goto_offset (m1.o)
