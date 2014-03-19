@@ -23,6 +23,30 @@ prog = require "zile.version"
 
 -- FIXME: Warn when file changes on disk
 
+local function file_change(filename)
+  local mtime = posix.stat (filename,"mtime")
+  while true do
+    if os.difftime (posix.stat (filename,"mtime"),mtime) == 0 then
+      coroutine.yield ()
+    else
+      break
+    end
+  end
+end
+
+function file_coroutine (filename)
+  file_co = coroutine.create (file_change)
+  coroutine.resume(file_co,filename)
+  coroutine.yield ()
+  if true then
+    if coroutine.resume (file_co,filename) == false then
+      --print in the messege line
+      file_co = coroutine.create (file_change)
+    end
+    coroutine.yield ()
+  end
+end
+
 function exist_file (filename)
   if posix.stat (filename) then
     return true
