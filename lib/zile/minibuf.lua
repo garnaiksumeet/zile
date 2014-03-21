@@ -47,28 +47,18 @@ function minibuf_write (s)
   end
 end
 
--- Write the specified error string in the minibuffer, or to stderr in
--- batch mode, and signal an error.
-function minibuf_error (s)
-  if bflag then
-    io.stderr:write (s .. "\n")
-  else
-    minibuf_write (s)
-  end
-  return ding ()
-end
-
 -- Maintain *Messages* buffer with less than `message_log_max` lines
 -- by trimming from the beginning of the buffer.
 -- FIXME: One of the calls below corrupts the undo tree for cur_bp if
 --        trim_messages is not called via `with_current_buffer()`.
-local function trim_messages (bp)
+local function trim_messages (bp, msg)
   bp = bp or cur_bp
+  msg = msg or minibuf_contents
 
   bp.noundo = true
   bp.readonly = false
   goto_offset (get_buffer_size (bp) + 1, bp)
-  replace_estr (0, FileString (minibuf_contents .. "\n"), bp)
+  replace_estr (0, FileString (msg .. "\n"), bp)
   bp.lines = (bp.lines or 0) + 1
 
   local max = eval.get_variable ("message_log_max")
@@ -94,6 +84,24 @@ local function trim_messages (bp)
   bp.modified = false
 end
 
+
+-- Write the specified error string in the minibuffer, or to stderr in
+-- batch mode, and signal an error.
+function minibuf_error (s)
+  if bflag then
+    io.stderr:write (s .. "\n")
+  else
+    minibuf_write (s)
+  end
+
+  local max = eval.get_variable ("message_log_max") or "nil"
+  if max ~= "nil" then
+    local bp = get_buffer_create ("*Messages*", create_auto_buffer)
+    with_current_buffer (bp, trim_messages, bp,
+                         "call-interactively: " .. minibuf_contents)
+  end
+  return ding ()
+end
 
 -- Write the specified string to the minibuffer, or to stdout in batch
 -- mode.
