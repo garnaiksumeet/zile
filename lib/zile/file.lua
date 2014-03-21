@@ -29,7 +29,7 @@ function file_change(option,filename)
   else
     if os.difftime (posix.stat (filename,"mtime"),mtime) ~= 0 then
       mtime = posix.stat (filename,"mtime")
-      posix.write (1,"File Changed On disk")
+      posix.write (2,"File Changed On disk")
     end
   end
 end
