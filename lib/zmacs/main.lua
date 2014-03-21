@@ -266,6 +266,7 @@ function main ()
       end
     elseif type == "file" then
       ok = find_file (arg)
+      filename = arg
       if ok then
         lisp.execute_function ("goto-line", line)
       end
@@ -301,16 +302,15 @@ function main ()
   -- Leave cursor in correct position.
   term_redraw_cursor ()
 
-  --Coroutine to check for file change on disk
-  croutine = coroutine.create (file_coroutine)
-  croutine.resume(croutine,filename)
-  
+  -- Check for file change on disk
+  file_change ("update",filename)
+
   -- Run the main loop.
   while not thisflag.quit do
     if lastflag.need_resync then
       window_resync (cur_wp)
     end
-    coroutine.resume (croutine,filename)
+    file_change ("check",filename)
     get_and_run_command ()
   end
 

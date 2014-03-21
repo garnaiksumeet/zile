@@ -21,29 +21,16 @@ local FileString = require "zile.FileString"
 
 prog = require "zile.version"
 
--- FIXME: Warn when file changes on disk
+local mtime = nil
 
-local function file_change(filename)
-  local mtime = posix.stat (filename,"mtime")
-  while true do
-    if os.difftime (posix.stat (filename,"mtime"),mtime) == 0 then
-      coroutine.yield ()
-    else
-      break
+function file_change(option,filename)
+  if option == "update" then
+  mtime = posix.stat (filename,"mtime")
+  else
+    if os.difftime (posix.stat (filename,"mtime"),mtime) ~= 0 then
+      mtime = posix.stat (filename,"mtime")
+      posix.write (1,"File Changed On disk")
     end
-  end
-end
-
-function file_coroutine (filename)
-  file_co = coroutine.create (file_change)
-  coroutine.resume(file_co,filename)
-  coroutine.yield ()
-  if true then
-    if coroutine.resume (file_co,filename) == false then
-      --print in the messege line
-      file_co = coroutine.create (file_change)
-    end
-    coroutine.yield ()
   end
 end
 
