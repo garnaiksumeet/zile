@@ -21,16 +21,10 @@ local FileString = require "zile.FileString"
 
 prog = require "zile.version"
 
-local mtime = nil
-
-function file_change(option,filename)
-  if option == "update" then
-  mtime = posix.stat (filename,"mtime")
-  else
-    if os.difftime (posix.stat (filename,"mtime"),mtime) ~= 0 then
-      mtime = posix.stat (filename,"mtime")
-      posix.write (2,"File Changed On disk")
-    end
+function file_change (bp)
+  if posix.stat (bp.filename,"mtime") ~= bp.timestamp then
+    bp.timestamp = posix.stat (bp.filename,"mtime")
+    posix.write (2,"File Changed On disk")
   end
 end
 
@@ -285,6 +279,7 @@ function write_buffer (bp, needname, confirm, name, prompt)
 end
 
 function save_buffer (bp)
+  file_change (bp)
   if bp.modified then
     return write_buffer (bp, bp.needname, false, bp.filename, "File to save in: ")
   end

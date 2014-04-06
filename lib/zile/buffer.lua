@@ -223,7 +223,7 @@ function buffer_new ()
   bp.gap = 0
   bp.text = FileString (MutableString (""))
   bp.markers = {}
-  bp.dir = posix.getcwd () or ""
+  bp.dir = posix.getcwd () or "" 
 
   -- Insert into buffer list.
   table.insert (buffers, bp)
@@ -259,6 +259,7 @@ function set_buffer_names (bp, filename)
     name = string.format ("%s<%d>", s, i)
     i = i + 1
   end
+  bp.timestamp = posix.stat (filename,"mtime")
   bp.name = name
 end
 

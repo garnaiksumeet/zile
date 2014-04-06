@@ -260,7 +260,6 @@ function main ()
       end
     elseif type == "loadfile" then
       ok = lisp.eval_file (arg)
-      filename = arg
       if not ok then
         minibuf_error (string.format ("Cannot open load file: %s\n", arg))
       end
@@ -302,15 +301,11 @@ function main ()
   -- Leave cursor in correct position.
   term_redraw_cursor ()
 
-  -- Check for file change on disk
-  file_change ("update",filename)
-
   -- Run the main loop.
   while not thisflag.quit do
     if lastflag.need_resync then
       window_resync (cur_wp)
     end
-    file_change ("check",filename)
     get_and_run_command ()
   end
 
