@@ -1,0 +1,81 @@
+before:
+  require "spec_helper"
+
+specify forward-char:
+- context in batch mode:
+  - before:
+      zmacs = Zmacs {"--batch"}
+
+  # Lisp context only - you can't send keystrokes in batch mode!
+  - context with lisp:
+    - it diagnoses invalid argument: |
+        pending "argument type checking"
+        expect (zmacs:edit [[(forward-char "six")]]).
+          should_match_minibuf 'forward-char: wrong-type-argument integerp "six"'
+    - it moves point forwards one character:
+        lisp = [[(end-of-line) (forward-char) (forward-delete-char)]]
+        expect (zmacs:edit (lisp, "Fix a typ_o\n")).
+          should_write_to_buffer "Fix a typo\n"
+    - it accepts a character count argument:
+        lisp = [[(end-of-line) (forward-char 6) (forward-delete-char)]]
+        expect (zmacs:edit (lisp, "Fix _a typo\n")).
+          should_write_to_buffer "Fix a typo\n"
+    - it diagnoses forward move from start of buffer: |
+        expect (zmacs:edit [[(forward-char)]]).
+          should_match_minibuf "Beginning of buffer"
+    - it move point backward with a positive character count:
+        lisp = [[(forward-char -6) (delete-char)]]
+        expect (zmacs:edit (lisp, "Fix a _typo\n")).
+          should_write_to_buffer "Fix a typo\n"
+    - it diagnoses backward move from beginning of buffer: |
+        expect (zmacs:edit ([[(forward-char -3)]], "x")).
+          should_match_minibuf "End of buffer"
+
+- context in interactive mode:
+  - before:
+      zmacs = Zmacs {"--no-init-file"}
+  - context with lisp:
+    - it diagnoses invalid argument: |
+        pending "argument type checking"
+        --expect (zmacs:edit [[(forward-char "six")]]).
+        --  should_match_minibuf 'forward-char: wrong-type-argument integerp "six"'
+    - it moves point forwards one character:
+        lisp = [[(end-of-line) (forward-char) (forward-delete-char)]]
+        expect (zmacs:edit (lisp, "Fix a typ_o\n")).
+          should_write_to_buffer "Fix a typo\n"
+    - it accepts a character count argument:
+        lisp = [[(end-of-line) (forward-char 6) (forward-delete-char)]]
+        expect (zmacs:edit (lisp, "Fix _a typo\n")).
+          should_write_to_buffer "Fix a typo\n"
+    - it diagnoses forward move from start of buffer: |
+        expect (zmacs:edit [[(forward-char)]]).
+          should_match_minibuf "Beginning of buffer"
+    - it move point forward with a negative character count:
+        lisp = [[(forward-char -6) (delete-char)]]
+        expect (zmacs:edit (lisp, "Fix a _typo\n")).
+          should_write_to_buffer "Fix a typo\n"
+    - it diagnoses forward move from end of buffer: |
+        expect (zmacs:edit ([[(forward-char -3)]], "x")).
+          should_match_minibuf "End of buffer"
+  - context with keystrokes:
+    - it moves point forwards one character: |
+        expect (zmacs:edit [[1\LEFT2\LEFT3]]).
+          should_write_to_buffer "321"
+    - it accepts a character count argument:
+        keystrokes = [[\C-e\M-6\LEFT^]]
+        expect (zmacs:edit (keystrokes, "buffer text\n")).
+          should_write_to_buffer "buffe^r text\n"
+    - it understands the universal argument:
+        keystrokes = [[\C-e\C-u\LEFT^]]
+        expect (zmacs:edit (keystrokes, "buffer text\n")).
+          should_write_to_buffer "buffer ^text\n"
+    - it diagnoses forward move from start of buffer: |
+        expect (zmacs:edit [[\LEFT]]).
+          should_match_minibuf "call%-interactively: Beginning of buffer"
+    - it move point backward with a positive character count:
+        lisp = [[\ESC-6\LEFT^]]
+        expect (zmacs:edit (lisp, "buffer text\n")).
+          should_write_to_buffer "buffer^ text\n"
+    - it diagnoses backward move from beginning of buffer: |
+        expect (zmacs:edit ([[\M--\C-u\LEFT]], "x")).
+          should_match_minibuf "call%-interactively: End of buffer"

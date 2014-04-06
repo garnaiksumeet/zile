@@ -34,7 +34,8 @@ specdir = $(srcdir)/lib/zmacs/specs
 
 specl_SPECS =					\
 	$(specdir)/zlisp_bind_spec.yaml		\
-	$(specdir)/zlisp_move_spec.yaml		\
+	$(specdir)/zlisp_move_backward_spec.yaml		\
+	$(specdir)/zlisp_move_forward_spec.yaml		\
 	$(NOTHING_ELSE)
 
 EXTRA_DIST +=					\
