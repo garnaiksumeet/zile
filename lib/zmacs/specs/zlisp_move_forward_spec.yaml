@@ -29,7 +29,7 @@ specify forward-char:
           should_write_to_buffer "Fix a typo\n"
     - it diagnoses backward move from beginning of buffer: |
         expect (zmacs:edit ([[(forward-char -3)]], "x")).
-          should_match_minibuf "End of buffer"
+          should_match_minibuf "Beginning of buffer"
 
 - context in interactive mode:
   - before:
@@ -50,32 +50,32 @@ specify forward-char:
     - it diagnoses forward move from start of buffer: |
         expect (zmacs:edit [[(forward-char)]]).
           should_match_minibuf "Beginning of buffer"
-    - it move point forward with a negative character count:
+    - it move point backward with a positive character count:
         lisp = [[(forward-char -6) (delete-char)]]
         expect (zmacs:edit (lisp, "Fix a _typo\n")).
           should_write_to_buffer "Fix a typo\n"
-    - it diagnoses forward move from end of buffer: |
+    - it diagnoses backward move from beginning of buffer: |
         expect (zmacs:edit ([[(forward-char -3)]], "x")).
-          should_match_minibuf "End of buffer"
+          should_match_minibuf "Beginning of buffer"
   - context with keystrokes:
     - it moves point forwards one character: |
-        expect (zmacs:edit [[1\LEFT2\LEFT3]]).
+        expect (zmacs:edit [[1\RIGHT2\RIGHT3]]).
           should_write_to_buffer "321"
     - it accepts a character count argument:
-        keystrokes = [[\C-e\M-6\LEFT^]]
+        keystrokes = [[\C-e\M-6\RIGHT^]]
         expect (zmacs:edit (keystrokes, "buffer text\n")).
           should_write_to_buffer "buffe^r text\n"
     - it understands the universal argument:
-        keystrokes = [[\C-e\C-u\LEFT^]]
+        keystrokes = [[\C-e\C-u\RIGHT^]]
         expect (zmacs:edit (keystrokes, "buffer text\n")).
           should_write_to_buffer "buffer ^text\n"
-    - it diagnoses forward move from start of buffer: |
-        expect (zmacs:edit [[\LEFT]]).
-          should_match_minibuf "call%-interactively: Beginning of buffer"
+    - it diagnoses forward move from end of buffer: |
+        expect (zmacs:edit [[\RIGHT]]).
+          should_match_minibuf "call%-interactively: End of buffer"
     - it move point backward with a positive character count:
-        lisp = [[\ESC-6\LEFT^]]
+        lisp = [[\ESC-6\RIGHT^]]
         expect (zmacs:edit (lisp, "buffer text\n")).
           should_write_to_buffer "buffer^ text\n"
     - it diagnoses backward move from beginning of buffer: |
-        expect (zmacs:edit ([[\M--\C-u\LEFT]], "x")).
-          should_match_minibuf "call%-interactively: End of buffer"
+        expect (zmacs:edit ([[\M--\C-u\RIGHT]], "x")).
+          should_match_minibuf "call%-interactively: Beginning of buffer"
